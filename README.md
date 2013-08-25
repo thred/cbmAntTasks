@@ -1,7 +1,7 @@
 cbmAntTasks
 ===========
 
-A collection of Ant tasks for the development with cc65 (www.cc65.org) and Vice.
+A collection of Ant tasks for the development with cc65 (http://www.cc65.org) and Vice (http://www.viceteam.org/).
 
 Tasks
 =====
@@ -17,7 +17,7 @@ Utilities for working with CBM files.
 CC65
 ----
 
-Launchers for cc65 (www.cc65.org).
+Launchers for cc65 (http://www.cc65.org).
 
 * CA65 - Calls the ca65 executable of cc65.
 * CC65 - Calls the cc65 executable of cc65.
