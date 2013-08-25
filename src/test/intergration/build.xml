@@ -1,0 +1,39 @@
+<project name="cbmAntTasksTest" default="test" basedir="../../..">
+
+	<property name="target.path" location="target" />
+	<property name="integration.target.path" location="${target.path}/integration" />
+
+	<taskdef resource="cbmAntTasks.properties" classpath="${target.path}/cbmAntTasks.jar" />
+
+	<target name="init">
+		<mkdir dir="${integration.target.path}" />
+
+		<delete dir="${integration.target.path}">
+			<include name="**/*" />
+		</delete>
+	</target>
+
+	<target name="testPRGHeader" depends="init">
+		<prgHeader source="src/test/intergration/prgHeaderTest.txt" target="${integration.target.path}/prgHeaderTest.prg" header="0x4241" />
+	</target>
+
+	<target name="testPRGSplit" depends="init">
+		<prgSplit source="src/test/intergration/prgHeaderTest.txt" hasHeader="false">
+			<part target="${integration.target.path}/prgHeaderPart1.prg" length="3" />
+			<part target="${integration.target.path}/prgHeaderPart2.prg" length="3" />
+		</prgSplit>
+	</target>
+
+	<target name="testXAny" depends="init">
+		<!--
+		<x64 autostart="foo.d64"/>-->
+	</target>
+
+	<target name="test" depends="testPRGHeader, testXAny, testPRGSplit">
+		<c1541 image="${integration.target.path}/test.d64" viceHome="C:/Users/thred/Desktop/C64/WinVICE-2.2-x86">
+			<format diskname="test" id="2a"/>
+			<write source="${integration.target.path}/prgHeaderTest.prg"/>
+		</c1541>
+	</target>
+
+</project>

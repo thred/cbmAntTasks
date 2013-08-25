@@ -1,0 +1,35 @@
+<project name="cbmAntTasks" default="dist" basedir=".">
+	
+	<property name="src.path" location="src/main"/>
+	
+	<property name="java.src.path" location="${src.path}/java" />
+	<property name="resources.src.path" location="${src.path}/resources"/>
+	
+	<property name="target.path" location="target" />
+	<property name="classes.target.path" location="${target.path}/classes" />
+
+	<target name="init">
+		<tstamp />
+		
+		<mkdir dir="${classes.target.path}" />
+	</target>
+
+	<target name="compile" depends="init" description="compile the source ">
+		<javac srcdir="${java.src.path}" destdir="${classes.target.path}" />
+		
+		<copy todir="${classes.target.path}">
+			<fileset dir="${resources.src.path}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="dist" depends="compile" description="generate the distribution">
+		<jar jarfile="${target.path}/cbmAntTasks.jar" basedir="${classes.target.path}" />
+	</target>
+
+	<target name="clean" description="clean up">
+		<delete dir="${target.path}" />
+	</target>
+	
+</project>
