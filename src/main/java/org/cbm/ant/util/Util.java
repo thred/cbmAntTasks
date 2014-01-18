@@ -16,6 +16,11 @@ import org.apache.tools.ant.types.FileSet;
 public class Util
 {
 
+    public static boolean equals(final Object obj0, final Object obj1)
+    {
+        return ((obj0 == null) && (obj1 == null)) || ((obj0 != null) && (obj0.equals(obj1)));
+    }
+
 	public static boolean isEmpty(String s)
 	{
 		return (s == null) || (s.trim().length() <= 0);

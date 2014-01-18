@@ -142,31 +142,31 @@ public class DataText implements DataCommand
 			}
 
 			switch (ch) {
-				case 'Ä':
+				case '\u00c4':
 					ch = 0x5b;
 					break;
 					
-				case 'Ö':
+				case '\u00d6':
 					ch = 0x5c;
 					break;
 
-				case 'Ü':
+				case '\u00dc':
 					ch = 0x5d;
 					break;
 					
-				case 'ä':
+				case '\u00e4':
 					ch = 0x7b;
 					break;
 					
-				case 'ö':
+				case '\u00f6':
 					ch = 0x7c;
 					break;
 
-				case 'ü':
+				case '\u00fc':
 					ch = 0x7d;
 					break;
 					
-				case 'ß':
+				case '\u00df':
 					ch = 0x7e;
 					break;
 			}
