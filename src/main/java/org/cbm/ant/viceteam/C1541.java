@@ -24,6 +24,7 @@ public class C1541 extends AbstractViceTask implements ProcessConsumer
 	private final List<C1541Command> commands;
 
 	private File image;
+	private boolean failOnError = true;
 
 	public C1541()
 	{
@@ -101,6 +102,16 @@ public class C1541 extends AbstractViceTask implements ProcessConsumer
 		this.image = image;
 	}
 
+	public boolean isFailOnError()
+	{
+		return failOnError;
+	}
+
+	public void setFailOnError(boolean failOnError)
+	{
+		this.failOnError = failOnError;
+	}
+
 	/**
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
@@ -120,7 +131,21 @@ public class C1541 extends AbstractViceTask implements ProcessConsumer
 		{
 			ProcessHandler handler = new ProcessHandler(this, executable).directory(executable.getParentFile());
 
-			log("Result: " + command.execute(this, handler, image));
+			try
+			{
+				log("Result: " + command.execute(this, handler, image));
+			}
+			catch (BuildException e)
+			{
+				if (!command.isFailOnError())
+				{
+					log("Ignoring error: " + e.getMessage());
+				}
+				else
+				{
+					throw e;
+				}
+			}
 		}
 	}
 
@@ -136,9 +161,23 @@ public class C1541 extends AbstractViceTask implements ProcessConsumer
 
 		for (C1541Command command : commands)
 		{
-			if (command.isExecutionNecessary(lastModified, exists))
+			try
 			{
-				return true;
+				if (command.isExecutionNecessary(lastModified, exists))
+				{
+					return true;
+				}
+			}
+			catch (BuildException e)
+			{
+				if (!command.isFailOnError())
+				{
+					log("Ignoring error: " + e.getMessage());
+				}
+				else
+				{
+					throw e;
+				}
 			}
 		}
 

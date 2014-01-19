@@ -5,7 +5,7 @@ import java.io.File;
 import org.apache.tools.ant.BuildException;
 import org.cbm.ant.util.ProcessHandler;
 
-public class C1541List implements C1541Command
+public class C1541List extends AbstractC1541Command
 {
 
 	public C1541List()

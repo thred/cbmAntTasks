@@ -5,7 +5,7 @@ import java.io.File;
 import org.apache.tools.ant.BuildException;
 import org.cbm.ant.util.ProcessHandler;
 
-public class C1541Write implements C1541Command
+public class C1541Write extends AbstractC1541Command
 {
 
 	private File source;
@@ -90,7 +90,7 @@ public class C1541Write implements C1541Command
 		handler.parameter(ViceUtil.escape(getSource().getAbsolutePath()));
 		handler.parameter(ViceUtil.escape(getDestination()));
 
-		task.log("Executing: " + handler.toString());
+		task.log("Executing: " + handler.toString() + " (" + getSource().length() + " bytes)");
 
 		result = handler.consume();
 

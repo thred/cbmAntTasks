@@ -6,6 +6,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -62,13 +64,20 @@ public class CBMBitmapResizeDialog extends JDialog implements ActionListener
         g.gridx += 1;
 
         widthField.setText(String.valueOf(width));
-        widthField.addKeyListener(new KeyAdapter()
+        widthField.addFocusListener(new FocusAdapter()
         {
             @Override
-            public void keyPressed(KeyEvent e)
-            {
+			public void focusLost(FocusEvent e)
+			{
                 onWidthChange();
-            }
+			}
+        });
+        widthField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e)
+			{
+                onWidthChange();
+			}
         });
 
         panel.add(widthField, g);
@@ -82,13 +91,20 @@ public class CBMBitmapResizeDialog extends JDialog implements ActionListener
         g.gridx += 1;
 
         heightField.setText(String.valueOf(height));
-        heightField.addKeyListener(new KeyAdapter()
+        heightField.addFocusListener(new FocusAdapter()
         {
             @Override
-            public void keyPressed(KeyEvent e)
-            {
+			public void focusLost(FocusEvent e)
+			{
                 onHeightChange();
-            }
+			}
+        });
+        heightField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e)
+			{
+                onHeightChange();
+			}
         });
 
         panel.add(heightField, g);
@@ -130,7 +146,7 @@ public class CBMBitmapResizeDialog extends JDialog implements ActionListener
     {
         try
         {
-            return Integer.decode(widthField.getText().trim());
+            return Integer.decode(heightField.getText().trim());
         }
         catch (NumberFormatException e)
         {
@@ -173,7 +189,7 @@ public class CBMBitmapResizeDialog extends JDialog implements ActionListener
                 @Override
                 public void run()
                 {
-                    heightField.setText(String.valueOf((int) (width * aspectRatio)));
+                    heightField.setText(String.valueOf((int) (width / aspectRatio)));
                 }
             });
         }
@@ -184,6 +200,7 @@ public class CBMBitmapResizeDialog extends JDialog implements ActionListener
         int width = getWidthValue();
         final int height = getHeightValue();
 
+        System.out.println(height + ", " + aspectRatio);
         if ((width < 0) || (height < 0))
         {
             okButton.setEnabled(false);
@@ -199,7 +216,7 @@ public class CBMBitmapResizeDialog extends JDialog implements ActionListener
                 @Override
                 public void run()
                 {
-                    widthField.setText(String.valueOf((int) (height / aspectRatio)));
+                    widthField.setText(String.valueOf((int) (aspectRatio * height)));
                 }
             });
         }

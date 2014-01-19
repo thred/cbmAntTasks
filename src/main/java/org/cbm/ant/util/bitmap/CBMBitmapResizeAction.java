@@ -26,6 +26,11 @@ public class CBMBitmapResizeAction extends AbstractCBMBitmapAction
     @Override
     public void actionPerformed(ActionEvent event)
     {
-        System.out.println(new CBMBitmapResizeDialog().consume());
+        CBMBitmapProjectController controller = getActiveController();
+        CBMBitmapResizeDialog dialog = new CBMBitmapResizeDialog();
+        
+		if (dialog.consume()) {
+        	controller.resize(dialog.getWidthValue(), dialog.getHeightValue());
+        }
     }
 }

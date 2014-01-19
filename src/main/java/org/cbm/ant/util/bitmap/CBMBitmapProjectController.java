@@ -1,81 +1,158 @@
 package org.cbm.ant.util.bitmap;
 
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.swing.JScrollPane;
 
+import org.cbm.ant.util.CBMBitmap;
+
 public class CBMBitmapProjectController
 {
 
-    private final CBMBitmapProjectModel model;
-    private final CBMBitmapProjectView view;
+	private final Object semaphore = new Object();
 
-    public CBMBitmapProjectController(CBMBitmapProjectModel model)
-    {
-        super();
+	private final CBMBitmapProjectModel model;
+	private final CBMBitmapProjectView view;
 
-        this.model = model;
+	private Thread updateThread = null;
+	private boolean updateNeeded = false;
 
-        view = new CBMBitmapProjectView(model);
-    }
+	public CBMBitmapProjectController(CBMBitmapProjectModel model)
+	{
+		super();
 
-    public CBMBitmapProjectModel getModel()
-    {
-        return model;
-    }
+		this.model = model;
 
-    public CBMBitmapProjectView getView()
-    {
-        return view;
-    }
+		view = new CBMBitmapProjectView(model);
+	}
 
-    public void setSourceImage(File file, BufferedImage image)
-    {
-        model.setSourceImage(image);
+	public CBMBitmapProjectModel getModel()
+	{
+		return model;
+	}
 
-        JScrollPane scrollPane = view.getSourceScrollPane();
-        Dimension viewSize = scrollPane.getViewport().getSize();
-        CBMBitmapCanvas canvas = view.getSourceCanvas();
+	public CBMBitmapProjectView getView()
+	{
+		return view;
+	}
 
-        canvas.setImage(image);
-        canvas.setZoom(Math.min(
-            Math.min(viewSize.getWidth() / image.getWidth(), viewSize.getHeight() / image.getHeight()), 2));
+	public void recalculate()
+	{
+		synchronized (semaphore)
+		{
+			updateNeeded = true;
 
-        view.invalidate();
-        view.repaint();
-    }
+			if (updateThread == null)
+			{
+				updateThread = new Thread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						try
+						{
+							while (updateNeeded)
+							{
+								synchronized (semaphore)
+								{
+									updateNeeded = false;
+								}
 
-    public void setZoom(double zoom)
-    {
-        view.getSourceCanvas().setZoom(zoom);
-    }
+								CBMBitmap bitmap = new CBMBitmap().blockSize(8, 8);
+								
+								bitmap.setImage(model.getSourceImage());
+								bitmap.setAntiAlias(true);
+								bitmap.setDither(true);
+								bitmap.setContrast(2);
 
-    public void zoom(double multiplier)
-    {
-        view.getSourceCanvas().zoom(multiplier, null);
-    }
+								model.setTargetImage(bitmap.getSampleImage());
+								updateTargetCanvas();
+							}
+						}
+						finally
+						{
+							updateThread = null;
+						}
+					}
+				}, "Image update");
 
-    public void zoomFit()
-    {
-        CBMBitmapCanvas canvas = view.getSourceCanvas();
-        zoomFit(canvas);
-    }
+				updateThread.setDaemon(true);
+				updateThread.start();
+			}
+		}
+	}
 
-    private void zoomFit(CBMBitmapCanvas canvas)
-    {
-        JScrollPane scrollPane = canvas.getScrollPane();
+	public void setSourceImage(File file, BufferedImage image)
+	{
+		model.setSourceImage(image);
 
-        Dimension viewSize = scrollPane.getViewport().getSize();
-        BufferedImage image = canvas.getImage();
+		JScrollPane scrollPane = view.getSourceScrollPane();
+		Dimension viewSize = scrollPane.getViewport().getSize();
+		CBMBitmapCanvas canvas = view.getSourceCanvas();
 
-        if (image == null)
-        {
-            return;
-        }
+		canvas.setImage(image);
+		canvas.setZoom(Math.min(
+				Math.min(viewSize.getWidth() / image.getWidth(), viewSize.getHeight() / image.getHeight()), 2));
 
-        canvas.setZoom(Math.min(viewSize.getWidth() / image.getWidth(), viewSize.getHeight() / image.getHeight()));
-    }
+		view.invalidate();
+		view.repaint();
 
+		recalculate();
+	}
+
+	public void setZoom(double zoom)
+	{
+		view.getSourceCanvas().setZoom(zoom);
+	}
+
+	public void zoom(double multiplier)
+	{
+		view.getSourceCanvas().zoom(multiplier, null);
+	}
+
+	public void zoomFit()
+	{
+		CBMBitmapCanvas canvas = view.getSourceCanvas();
+		zoomFit(canvas);
+	}
+
+	private void zoomFit(CBMBitmapCanvas canvas)
+	{
+		JScrollPane scrollPane = canvas.getScrollPane();
+		Dimension viewSize = scrollPane.getViewport().getSize();
+		BufferedImage image = canvas.getImage();
+
+		if (image == null)
+		{
+			return;
+		}
+
+		canvas.setZoom(Math.min(viewSize.getWidth() / image.getWidth(), viewSize.getHeight() / image.getHeight()));
+	}
+
+	public void resize(int width, int height)
+	{
+		Image image = model.getSourceImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+		resizedImage.getGraphics().drawImage(image, 0, 0, null);
+		model.setSourceImage(resizedImage);
+		recalculate();
+		updateSourceCanvas();
+	}
+
+	private void updateSourceCanvas()
+	{
+		view.getSourceCanvas().setImage(model.getSourceImage());
+		view.repaint();
+	}
+
+	private void updateTargetCanvas()
+	{
+		view.getTargetCanvas().setImage(model.getTargetImage());
+		view.repaint();
+	}
 }

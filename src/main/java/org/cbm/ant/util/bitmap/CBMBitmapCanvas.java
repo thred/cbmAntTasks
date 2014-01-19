@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -84,6 +85,11 @@ public class CBMBitmapCanvas extends JComponent implements MouseListener, MouseM
         if (image != null)
         {
             Point2D position = getImageLocationInComponent();
+            
+            if (zoom < 1) {
+            	g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            	g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            }
 
             g.drawImage(image, (int) position.getX(), (int) position.getY(), (int) (image.getWidth() * zoom),
                 (int) (image.getHeight() * zoom), null);
