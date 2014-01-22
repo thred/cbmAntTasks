@@ -36,7 +36,7 @@ public class CBMBitmapOpenSourceImageAction extends AbstractCBMBitmapAction
     @Override
     public void actionPerformed(ActionEvent event)
     {
-        CBMBitmapToolFrame frame = CBMBitmapTool.getFrame();
+        CBMBitmapFrame frame = CBMBitmapUtility.getFrame();
         CBMBitmapProjectController controller = frame.getActiveController();
 
         if (controller == null)

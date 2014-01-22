@@ -12,7 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class CBMBitmapToolUtils
+public class CBMBitmapUtils
 {
 
     private static final Map<Class<?>, Object> REGISTRY = new HashMap<Class<?>, Object>();

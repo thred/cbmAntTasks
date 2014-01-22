@@ -27,7 +27,7 @@ public class CBMBitmapNewProjectAction extends AbstractCBMBitmapAction
     @Override
     public void actionPerformed(ActionEvent event)
     {
-        CBMBitmapToolFrame frame = CBMBitmapTool.getFrame();
+        CBMBitmapFrame frame = CBMBitmapUtility.getFrame();
 
         frame.createController();
     }

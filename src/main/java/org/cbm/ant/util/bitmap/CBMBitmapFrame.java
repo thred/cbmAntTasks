@@ -14,7 +14,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-public class CBMBitmapToolFrame extends JFrame
+public class CBMBitmapFrame extends JFrame
 {
     private static final long serialVersionUID = 5112467837914889513L;
 
@@ -23,7 +23,7 @@ public class CBMBitmapToolFrame extends JFrame
 
     private final Collection<CBMBitmapProjectController> controllers = new ArrayList<CBMBitmapProjectController>();
 
-    public CBMBitmapToolFrame(GraphicsConfiguration gc)
+    public CBMBitmapFrame(GraphicsConfiguration gc)
     {
         super(gc);
 
@@ -36,12 +36,12 @@ public class CBMBitmapToolFrame extends JFrame
 
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
-        fileMenu.add(new JMenuItem(CBMBitmapToolUtils.get(CBMBitmapNewProjectAction.class)));
-        fileMenu.add(new JMenuItem(CBMBitmapToolUtils.get(CBMBitmapCloseProjectAction.class)));
+        fileMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapNewProjectAction.class)));
+        fileMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapCloseProjectAction.class)));
         fileMenu.addSeparator();
-        fileMenu.add(new JMenuItem(CBMBitmapToolUtils.get(CBMBitmapOpenSourceImageAction.class)));
+        fileMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapOpenSourceImageAction.class)));
         fileMenu.addSeparator();
-        fileMenu.add(new JMenuItem(CBMBitmapToolUtils.get(CBMBitmapExitAction.class)));
+        fileMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapExitAction.class)));
 
         menuBar.add(fileMenu);
 
@@ -49,7 +49,7 @@ public class CBMBitmapToolFrame extends JFrame
 
         editMenu.setMnemonic(KeyEvent.VK_E);
 
-        editMenu.add(new JMenuItem(CBMBitmapToolUtils.get(CBMBitmapResizeAction.class)));
+        editMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapResizeAction.class)));
 
         menuBar.add(editMenu);
 
@@ -57,16 +57,16 @@ public class CBMBitmapToolFrame extends JFrame
 
         viewMenu.setMnemonic(KeyEvent.VK_V);
 
-        viewMenu.add(new JMenuItem(CBMBitmapToolUtils.get(CBMBitmapZoomInAction.class)));
-        viewMenu.add(new JMenuItem(CBMBitmapToolUtils.get(CBMBitmapZoomOutAction.class)));
-        viewMenu.add(new JMenuItem(CBMBitmapToolUtils.get(CBMBitmapZoomFitAction.class)));
-        viewMenu.add(new JMenuItem(CBMBitmapToolUtils.get(CBMBitmapZoom100Action.class)));
+        viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoomInAction.class)));
+        viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoomOutAction.class)));
+        viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoomFitAction.class)));
+        viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoom100Action.class)));
 
         menuBar.add(viewMenu);
 
         tabbedPane.setVisible(false);
         
-        JPanel panel = CBMBitmapToolUtils.createBorderPanel(tabbedPane);
+        JPanel panel = CBMBitmapUtils.createBorderPanel(tabbedPane);
         
         add(panel, BorderLayout.CENTER);
     }

@@ -9,20 +9,20 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.cbm.ant.util.Prefs;
 import org.cbm.ant.util.WindowUtils;
 
-public class CBMBitmapTool
+public class CBMBitmapUtility
 {
 
-    private static CBMBitmapToolFrame frame;
+    private static CBMBitmapFrame frame;
 
     public static void main(String[] args) throws ClassNotFoundException, InstantiationException,
         IllegalAccessException, UnsupportedLookAndFeelException
     {
-        Prefs.setDefault(CBMBitmapTool.class);
+        Prefs.setDefault(CBMBitmapUtility.class);
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         
         frame =
-            WindowUtils.setAndRecordState(Prefs.getDefault(), "CBMBitmapTool", WindowUtils.packAndCenter(new CBMBitmapToolFrame(WindowUtils
-                .getRecordedGraphicsConfiguration(Prefs.getDefault(), "CBMBitmapTool", CBMBitmapToolFrame.class))));
+            WindowUtils.setAndRecordState(Prefs.getDefault(), "CBMBitmapTool", WindowUtils.packAndCenter(new CBMBitmapFrame(WindowUtils
+                .getRecordedGraphicsConfiguration(Prefs.getDefault(), "CBMBitmapTool", CBMBitmapFrame.class))));
 
         frame.addWindowListener(new WindowAdapter()
         {
@@ -37,7 +37,7 @@ public class CBMBitmapTool
         frame.setVisible(true);
     }
 
-    public static CBMBitmapToolFrame getFrame()
+    public static CBMBitmapFrame getFrame()
     {
         return frame;
     }

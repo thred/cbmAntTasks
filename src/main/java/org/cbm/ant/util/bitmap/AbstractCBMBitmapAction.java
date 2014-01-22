@@ -20,7 +20,7 @@ public abstract class AbstractCBMBitmapAction extends AbstractAction
 
     public CBMBitmapProjectController getActiveController()
     {
-        CBMBitmapToolFrame frame = CBMBitmapTool.getFrame();
+        CBMBitmapFrame frame = CBMBitmapUtility.getFrame();
 
         return frame.getActiveController();
     }

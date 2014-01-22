@@ -30,7 +30,7 @@ public class CBMBitmapProjectView extends JPanel
         splitPane.setRightComponent(targetScrollPane);
         splitPane.setDividerLocation(0.5);
 
-        JPanel panel = CBMBitmapToolUtils.createBorderPanel(splitPane);
+        JPanel panel = CBMBitmapUtils.createBorderPanel(splitPane);
 
         panel.setBackground(Color.WHITE);
 

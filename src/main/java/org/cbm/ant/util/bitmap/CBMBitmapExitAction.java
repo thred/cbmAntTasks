@@ -21,7 +21,7 @@ public class CBMBitmapExitAction extends AbstractCBMBitmapAction
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        CBMBitmapTool.exit();
+        CBMBitmapUtility.exit();
     }
 
 }

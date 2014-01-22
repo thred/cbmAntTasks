@@ -28,21 +28,21 @@ public class CBMBitmapResizeDialog extends JDialog implements ActionListener
     private final JTextField widthField = new JTextField(4);
     private final JTextField heightField = new JTextField(4);
     private final JCheckBox respectAspectRatioBox = new JCheckBox("Respect Aspect Ratio", true);
-    private final JButton okButton = CBMBitmapToolUtils.createButton("Ok", this);
-    private final JButton cancelButton = CBMBitmapToolUtils.createButton("Cancel", this);
+    private final JButton okButton = CBMBitmapUtils.createButton("Ok", this);
+    private final JButton cancelButton = CBMBitmapUtils.createButton("Cancel", this);
 
     private boolean ok = false;
     private double aspectRatio = 0;
 
     public CBMBitmapResizeDialog()
     {
-        super(CBMBitmapTool.getFrame(), "Resize", true);
+        super(CBMBitmapUtility.getFrame(), "Resize", true);
 
         setLayout(new BorderLayout());
 
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints g = new GridBagConstraints();
-        CBMBitmapProjectController controller = CBMBitmapTool.getFrame().getActiveController();
+        CBMBitmapProjectController controller = CBMBitmapUtility.getFrame().getActiveController();
         BufferedImage sourceImage = controller.getModel().getSourceImage();
 
         int width = sourceImage.getWidth();
@@ -58,7 +58,7 @@ public class CBMBitmapResizeDialog extends JDialog implements ActionListener
         g.anchor = GridBagConstraints.CENTER;
         g.fill = GridBagConstraints.HORIZONTAL;
 
-        panel.add(CBMBitmapToolUtils.createLabel("Size:", widthField), g);
+        panel.add(CBMBitmapUtils.createLabel("Size:", widthField), g);
 
         g.weightx = 1;
         g.gridx += 1;
@@ -115,15 +115,15 @@ public class CBMBitmapResizeDialog extends JDialog implements ActionListener
 
         panel.add(respectAspectRatioBox, g);
 
-        add(CBMBitmapToolUtils.createBorderPanel(panel), BorderLayout.CENTER);
-        add(CBMBitmapToolUtils.createBorderPanel(CBMBitmapToolUtils.createButtonPanel(okButton, cancelButton)),
+        add(CBMBitmapUtils.createBorderPanel(panel), BorderLayout.CENTER);
+        add(CBMBitmapUtils.createBorderPanel(CBMBitmapUtils.createButtonPanel(okButton, cancelButton)),
             BorderLayout.SOUTH);
     }
 
     public boolean consume()
     {
         pack();
-        setLocationRelativeTo(CBMBitmapTool.getFrame());
+        setLocationRelativeTo(CBMBitmapUtility.getFrame());
 
         setVisible(true);
 
