@@ -37,6 +37,11 @@ public class CBMBitmapProjectView extends JPanel
         add(panel, BorderLayout.CENTER);
     }
 
+    public CBMBitmapProjectModel getModel()
+    {
+        return model;
+    }
+
     public JSplitPane getSplitPane()
     {
         return splitPane;

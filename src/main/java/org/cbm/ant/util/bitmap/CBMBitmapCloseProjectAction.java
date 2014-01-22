@@ -3,6 +3,8 @@ package org.cbm.ant.util.bitmap;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
+import javax.swing.ImageIcon;
+
 public class CBMBitmapCloseProjectAction extends AbstractCBMBitmapAction
 {
 
@@ -12,6 +14,7 @@ public class CBMBitmapCloseProjectAction extends AbstractCBMBitmapAction
     {
         super("Close Project");
 
+        putValue(SMALL_ICON, new ImageIcon(getClass().getResource("close-project.png")));
         putValue(MNEMONIC_KEY, KeyEvent.VK_C);
     }
 

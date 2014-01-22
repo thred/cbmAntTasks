@@ -3,6 +3,7 @@ package org.cbm.ant.util.bitmap;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
 public class CBMBitmapNewProjectAction extends AbstractCBMBitmapAction
@@ -14,6 +15,7 @@ public class CBMBitmapNewProjectAction extends AbstractCBMBitmapAction
     {
         super("New Project");
 
+        putValue(SMALL_ICON, new ImageIcon(getClass().getResource("new-project.png")));
         putValue(MNEMONIC_KEY, KeyEvent.VK_P);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl P"));
     }

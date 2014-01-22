@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GraphicsConfiguration;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -13,12 +15,15 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class CBMBitmapFrame extends JFrame
 {
     private static final long serialVersionUID = 5112467837914889513L;
 
     private final JMenuBar menuBar = new JMenuBar();
+    private final CBMBitmapToolPanel toolPanel = new CBMBitmapToolPanel();
     private final JTabbedPane tabbedPane = new JTabbedPane();
 
     private final Collection<CBMBitmapProjectController> controllers = new ArrayList<CBMBitmapProjectController>();
@@ -49,8 +54,6 @@ public class CBMBitmapFrame extends JFrame
 
         editMenu.setMnemonic(KeyEvent.VK_E);
 
-        editMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapResizeAction.class)));
-
         menuBar.add(editMenu);
 
         JMenu viewMenu = new JMenu("View");
@@ -64,17 +67,45 @@ public class CBMBitmapFrame extends JFrame
 
         menuBar.add(viewMenu);
 
+        toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapNewProjectAction.class));
+        toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapCloseProjectAction.class));
+        toolPanel.addSeparator();
+        toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapOpenSourceImageAction.class));
+        toolPanel.addSeparator();
+        toolPanel.addTool(new CBMBitmapResizeSourceImageTool());
+
         tabbedPane.setVisible(false);
-        
+        tabbedPane.addChangeListener(new ChangeListener()
+        {
+            @Override
+            public void stateChanged(ChangeEvent e)
+            {
+                CBMBitmapProjectController controller = getController(tabbedPane.getSelectedComponent());
+
+                toolPanel.onCBMBitmapProjectUpdate(controller, (controller != null) ? controller.getModel() : null,
+                    null);
+            }
+        });
+
         JPanel panel = CBMBitmapUtils.createBorderPanel(tabbedPane);
-        
+
+        add(toolPanel, BorderLayout.NORTH);
         add(panel, BorderLayout.CENTER);
     }
 
     public CBMBitmapProjectController createController()
     {
-        CBMBitmapProjectModel model = new CBMBitmapProjectModel();
-        CBMBitmapProjectController controller = new CBMBitmapProjectController(model);
+        final CBMBitmapProjectModel model = new CBMBitmapProjectModel();
+        final CBMBitmapProjectController controller = new CBMBitmapProjectController(model);
+
+        model.addPropertyChangeListener(new PropertyChangeListener()
+        {
+            @Override
+            public void propertyChange(PropertyChangeEvent event)
+            {
+                toolPanel.onCBMBitmapProjectUpdate(controller, model, event);
+            }
+        });
 
         controllers.add(controller);
         tabbedPane.addTab(model.getName(), controller.getView());

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -16,6 +17,11 @@ public class CBMBitmapUtils
 {
 
     private static final Map<Class<?>, Object> REGISTRY = new HashMap<Class<?>, Object>();
+
+    public static boolean equals(final Object obj0, final Object obj1)
+    {
+        return ((obj0 == null) && (obj1 == null)) || ((obj0 != null) && (obj0.equals(obj1)));
+    }
 
     @SuppressWarnings("unchecked")
     public static <TYPE> TYPE get(Class<TYPE> type)
@@ -50,6 +56,17 @@ public class CBMBitmapUtils
         panel.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
 
         panel.add(component, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    public static JPanel createLabeledPanel(String label, Component component)
+    {
+        JPanel panel = new JPanel(new BorderLayout(8, 4));
+
+        panel.setOpaque(false);
+        panel.add(createLabel(label, component), BorderLayout.WEST);
+        panel.add(component);
 
         return panel;
     }
@@ -91,6 +108,16 @@ public class CBMBitmapUtils
     public static JButton createButton(String text, ActionListener listener)
     {
         return createButton(text, null, listener);
+    }
+
+    public static JCheckBox createCheckBox(String text, boolean selected)
+    {
+        JCheckBox checkBox = new JCheckBox(text);
+
+        checkBox.setOpaque(false);
+        checkBox.setSelected(selected);
+
+        return checkBox;
     }
 
 }
