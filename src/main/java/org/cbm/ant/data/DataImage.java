@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.tools.ant.BuildException;
 import org.cbm.ant.util.CBMBitmap;
+import org.cbm.ant.util.CBMBitmapDither;
 import org.cbm.ant.util.GraphicsMode;
 
 public class DataImage implements DataCommand
@@ -70,7 +71,7 @@ public class DataImage implements DataCommand
 		bitmap.setMode(mode);
 	}
 
-	public void setDither(boolean dither)
+	public void setDither(CBMBitmapDither dither)
 	{
 		bitmap.setDither(dither);
 	}

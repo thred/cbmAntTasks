@@ -14,7 +14,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-public class CBMBitmapResizeSourceImageTool extends AbstractCBMBitmapTool implements ActionListener
+public class CBMBitmapTargetSizeTool extends AbstractCBMBitmapTool implements ActionListener
 {
 
     private static final long serialVersionUID = -3018765182933957393L;
@@ -22,11 +22,12 @@ public class CBMBitmapResizeSourceImageTool extends AbstractCBMBitmapTool implem
     private final JTextField widthField = new JTextField(4);
     private final JTextField heightField = new JTextField(4);
     private final JCheckBox respectAspectRatioBox = CBMBitmapUtils.createCheckBox("Respect Aspect Ratio", true);
-    private final JButton executeButton = CBMBitmapUtils.createButton("Resize", this);
+    private final JButton clearButton = CBMBitmapUtils.createButton("Clear", this);
+    private final JButton setButton = CBMBitmapUtils.createButton("Set Size", this);
 
-    public CBMBitmapResizeSourceImageTool()
+    public CBMBitmapTargetSizeTool()
     {
-        super("resize-source-image.png", "Resize Source Image", "Resizes the source image.");
+        super("target-size.png", "Target Size", "Sets the size of the target image.");
 
         widthField.addFocusListener(new FocusAdapter()
         {
@@ -65,7 +66,8 @@ public class CBMBitmapResizeSourceImageTool extends AbstractCBMBitmapTool implem
         add(CBMBitmapUtils.createLabeledPanel("Width:", widthField));
         add(CBMBitmapUtils.createLabeledPanel("Height:", heightField));
         add(respectAspectRatioBox);
-        add(executeButton);
+        add(clearButton);
+        add(setButton);
     }
 
     @Override
@@ -78,15 +80,31 @@ public class CBMBitmapResizeSourceImageTool extends AbstractCBMBitmapTool implem
         {
             widthField.setText("");
             heightField.setText("");
+
+            return;
         }
 
-        if ((event != null) && ("sourceImage".equals(event.getPropertyName())))
+        if ((event != null) && ("targetWidth".equals(event.getPropertyName())))
         {
-            int width = sourceImage.getWidth();
-            int height = sourceImage.getHeight();
+            Integer targetWidth = model.getTargetWidth();
 
-            widthField.setText(String.valueOf(width));
-            heightField.setText(String.valueOf(height));
+            if (targetWidth == null)
+            {
+                targetWidth = sourceImage.getWidth();
+            }
+
+            widthField.setText(String.valueOf(targetWidth));
+        }
+        else if ((event != null) && ("targetHeight".equals(event.getPropertyName())))
+        {
+            Integer targetHeight = model.getTargetHeight();
+
+            if (targetHeight == null)
+            {
+                targetHeight = sourceImage.getHeight();
+            }
+
+            heightField.setText(String.valueOf(targetHeight));
         }
     }
 
@@ -97,7 +115,14 @@ public class CBMBitmapResizeSourceImageTool extends AbstractCBMBitmapTool implem
 
         if (controller != null)
         {
-            controller.resize(getWidthValue(), getHeightValue());
+            if (e.getSource() == clearButton)
+            {
+                controller.clearTargetSize();
+            }
+            else if (e.getSource() == setButton)
+            {
+                controller.targetSize(getWidthValue(), getHeightValue());
+            }
         }
     }
 
@@ -149,7 +174,7 @@ public class CBMBitmapResizeSourceImageTool extends AbstractCBMBitmapTool implem
         final int width = getWidthValue();
         int height = getHeightValue();
 
-        executeButton.setEnabled((width > 0) && (height > 0));
+        setButton.setEnabled((width > 0) && (height > 0));
 
         if ((width > 0) && (respectAspectRatioBox.isSelected()))
         {
@@ -169,7 +194,7 @@ public class CBMBitmapResizeSourceImageTool extends AbstractCBMBitmapTool implem
         int width = getWidthValue();
         final int height = getHeightValue();
 
-        executeButton.setEnabled((width > 0) && (height > 0));
+        setButton.setEnabled((width > 0) && (height > 0));
 
         if ((height > 0) && (respectAspectRatioBox.isSelected()))
         {

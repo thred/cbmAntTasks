@@ -44,8 +44,6 @@ public class CBMBitmapFrame extends JFrame
         fileMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapNewProjectAction.class)));
         fileMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapCloseProjectAction.class)));
         fileMenu.addSeparator();
-        fileMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapOpenSourceImageAction.class)));
-        fileMenu.addSeparator();
         fileMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapExitAction.class)));
 
         menuBar.add(fileMenu);
@@ -66,13 +64,30 @@ public class CBMBitmapFrame extends JFrame
         viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoom100Action.class)));
 
         menuBar.add(viewMenu);
+        
+        JMenu sourceMenu = new JMenu("Source");
 
+        sourceMenu.setMnemonic(KeyEvent.VK_S);
+        
+        fileMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapOpenSourceImageAction.class)));
+
+        menuBar.add(sourceMenu);
+        
+        JMenu targetMenu = new JMenu("Target");
+
+        targetMenu.setMnemonic(KeyEvent.VK_T);
+
+        menuBar.add(targetMenu);
+        
         toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapNewProjectAction.class));
         toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapCloseProjectAction.class));
         toolPanel.addSeparator();
         toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapOpenSourceImageAction.class));
         toolPanel.addSeparator();
         toolPanel.addTool(new CBMBitmapResizeSourceImageTool());
+        toolPanel.addSeparator();
+        toolPanel.addTool(new CBMBitmapTargetSizeTool());
+        toolPanel.addTool(new CBMBitmapDitherModeTool());
 
         tabbedPane.setVisible(false);
         tabbedPane.addChangeListener(new ChangeListener()

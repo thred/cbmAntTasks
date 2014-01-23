@@ -8,6 +8,8 @@ import java.io.File;
 import javax.swing.JScrollPane;
 
 import org.cbm.ant.util.CBMBitmap;
+import org.cbm.ant.util.CBMBitmapDither;
+import org.cbm.ant.util.GraphicsMode;
 
 public class CBMBitmapProjectController
 {
@@ -64,13 +66,29 @@ public class CBMBitmapProjectController
 								CBMBitmap bitmap = new CBMBitmap().blockSize(8, 8);
 								
 								bitmap.setImage(model.getSourceImage());
+
+								if (model.getTargetWidth() != null)
+								{
+									bitmap.setTargetWidth(model.getTargetWidth());
+								}
+
+								if (model.getTargetHeight() != null)
+								{
+									bitmap.setTargetHeight(model.getTargetHeight());
+								}
+
 								bitmap.setAntiAlias(true);
-								bitmap.setDither(true);
-								bitmap.setContrast(2);
+								bitmap.setDither(model.getDither());
+								bitmap.setMode(GraphicsMode.LORES);
+								bitmap.setContrast(5);
 
 								model.setTargetImage(bitmap.getSampleImage());
 								updateTargetCanvas();
 							}
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace(System.err);
 						}
 						finally
 						{
@@ -144,6 +162,20 @@ public class CBMBitmapProjectController
 		updateSourceCanvas();
 	}
 
+	public void clearTargetSize()
+	{
+		model.setTargetWidth(null);
+		model.setTargetHeight(null);
+		recalculate();
+	}
+
+	public void targetSize(Integer targetWidth, Integer targetHeight)
+	{
+		model.setTargetWidth(targetWidth);
+		model.setTargetHeight(targetHeight);
+		recalculate();
+	}
+
 	private void updateSourceCanvas()
 	{
 		view.getSourceCanvas().setImage(model.getSourceImage());
@@ -155,4 +187,11 @@ public class CBMBitmapProjectController
 		view.getTargetCanvas().setImage(model.getTargetImage());
 		view.repaint();
 	}
+
+	public void setDither(CBMBitmapDither dither)
+	{
+		model.setDither(dither);
+		recalculate();
+	}
+
 }
