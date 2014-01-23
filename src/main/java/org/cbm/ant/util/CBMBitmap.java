@@ -131,7 +131,7 @@ public class CBMBitmap
 	private CBMBitmapDither dither = CBMBitmapDither.NONE;
 	private boolean antiAlias = false;
 	private boolean yuv = true;
-	private boolean samplePalette = false;
+	private boolean samplePalette = true;
 	private int overscan = 0;
 	private float contrast = 1;
 	private Palette[] palette = Palette.values();
@@ -570,8 +570,8 @@ public class CBMBitmap
 
 //		if (contrast != 1)
 //		{
-			RescaleOp rescaleOp = new RescaleOp(1.5f, -80, null);
-			rescaleOp.filter(scaledImage, scaledImage);
+//			RescaleOp rescaleOp = new RescaleOp(1.5f, -80, null);
+//			rescaleOp.filter(scaledImage, scaledImage);
 			
 //			scaledImage = normalize(scaledImage);
 //		}
