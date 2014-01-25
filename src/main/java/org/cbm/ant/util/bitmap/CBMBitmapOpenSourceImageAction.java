@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
@@ -22,9 +21,8 @@ public class CBMBitmapOpenSourceImageAction extends AbstractCBMBitmapAction
 
     public CBMBitmapOpenSourceImageAction()
     {
-        super("Open Source Image...");
+        super("open-source-image", "Open Source Image...");
 
-        putValue(SMALL_ICON, new ImageIcon(getClass().getResource("open-source-image.png")));
         putValue(MNEMONIC_KEY, KeyEvent.VK_O);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl O"));
     }

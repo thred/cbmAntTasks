@@ -12,7 +12,7 @@ public class CBMBitmapZoomOutAction extends AbstractCBMBitmapAction
 
     public CBMBitmapZoomOutAction()
     {
-        super("Zoom Out");
+        super("zoom-out", "Zoom Out");
 
         putValue(MNEMONIC_KEY, KeyEvent.VK_O);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("MINUS"));

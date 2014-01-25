@@ -20,6 +20,13 @@ public class CBMBitmapProjectModel
 	private Integer targetWidth;
 	private Integer targetHeight;
 	private CBMBitmapDither dither = CBMBitmapDither.NONE;
+	private float ditherStrength = 1;
+	private float contrastRed = 1;
+	private float contrastGreen = 1;
+	private float contrastBlue = 1;
+	private float brightnessRed = 0;
+	private float brightnessGreen = 0;
+	private float brightnessBlue = 0;
 
 	public CBMBitmapProjectModel()
 	{
@@ -147,6 +154,125 @@ public class CBMBitmapProjectModel
 			this.dither = dither;
 
 			firePropertyChange("dither", old, dither);
+		}
+	}
+
+	public float getDitherStrength()
+	{
+		return ditherStrength;
+	}
+
+	public void setDitherStrength(float ditherStrength)
+	{
+		if (!CBMBitmapUtils.equals(this.ditherStrength, ditherStrength))
+		{
+			Object old = this.ditherStrength;
+
+			this.ditherStrength = ditherStrength;
+
+			firePropertyChange("ditherStrength", old, ditherStrength);
+		}
+	}
+
+	public float getContrastRed()
+	{
+		return contrastRed;
+	}
+
+	public void setContrastRed(float contrastRed)
+	{
+		if (!CBMBitmapUtils.equals(this.contrastRed, contrastRed))
+		{
+			Object old = this.contrastRed;
+
+			this.contrastRed = contrastRed;
+
+			firePropertyChange("contrastRed", old, contrastRed);
+		}
+	}
+
+	public float getContrastGreen()
+	{
+		return contrastGreen;
+	}
+
+	public void setContrastGreen(float contrastGreen)
+	{
+		if (!CBMBitmapUtils.equals(this.contrastGreen, contrastGreen))
+		{
+			Object old = this.contrastGreen;
+
+			this.contrastGreen = contrastGreen;
+
+			firePropertyChange("contrastGreen", old, contrastGreen);
+		}
+	}
+
+	public float getContrastBlue()
+	{
+		return contrastBlue;
+	}
+
+	public void setContrastBlue(float contrastBlue)
+	{
+		if (!CBMBitmapUtils.equals(this.contrastBlue, contrastBlue))
+		{
+			Object old = this.contrastBlue;
+
+			this.contrastBlue = contrastBlue;
+
+			firePropertyChange("contrastBlue", old, contrastBlue);
+		}
+	}
+
+	public float getBrightnessRed()
+	{
+		return brightnessRed;
+	}
+
+	public void setBrightnessRed(float brightnessRed)
+	{
+		if (!CBMBitmapUtils.equals(this.brightnessRed, brightnessRed))
+		{
+			Object old = this.brightnessRed;
+
+			this.brightnessRed = brightnessRed;
+
+			firePropertyChange("brightnessRed", old, brightnessRed);
+		}
+	}
+
+	public float getBrightnessGreen()
+	{
+		return brightnessGreen;
+	}
+
+	public void setBrightnessGreen(float brightnessGreen)
+	{
+		if (!CBMBitmapUtils.equals(this.brightnessGreen, brightnessGreen))
+		{
+			Object old = this.brightnessGreen;
+
+			this.brightnessGreen = brightnessGreen;
+
+			firePropertyChange("brightnessGreen", old, brightnessGreen);
+		}
+	}
+
+	public float getBrightnessBlue()
+	{
+		return brightnessBlue;
+	}
+
+	public void setBrightnessBlue(float brightnessBlue)
+	{
+		if (!CBMBitmapUtils.equals(this.brightnessBlue, brightnessBlue))
+		{
+			Object old = this.brightnessBlue;
+
+			this.brightnessBlue = brightnessBlue;
+
+			firePropertyChange("contrastRed", old, brightnessBlue);
 		}
 	}
 

@@ -10,7 +10,7 @@ public class CBMBitmapZoom100Action extends AbstractCBMBitmapAction
 
     public CBMBitmapZoom100Action()
     {
-        super("Zoom 100%");
+        super("zoom-100", "Zoom 100%");
 
         putValue(MNEMONIC_KEY, KeyEvent.VK_1);
     }

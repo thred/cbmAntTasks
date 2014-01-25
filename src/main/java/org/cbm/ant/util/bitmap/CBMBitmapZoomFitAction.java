@@ -10,7 +10,7 @@ public class CBMBitmapZoomFitAction extends AbstractCBMBitmapAction
 
     public CBMBitmapZoomFitAction()
     {
-        super("Zoom Fit");
+        super("zoom-fit", "Zoom Fit");
 
         putValue(MNEMONIC_KEY, KeyEvent.VK_F);
     }

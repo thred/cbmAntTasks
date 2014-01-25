@@ -11,7 +11,7 @@ public class CBMBitmapNoneDitherStrategy extends AbstractCBMBitmapDitherStrategy
 	}
 
 	@Override
-	public void execute(int x, int y, int sourceRGB, int targetRGB, BufferedImage source)
+	public void execute(int x, int y, int sourceRGB, int targetRGB, float strength, BufferedImage source)
 	{
 		// nothing to do
 	}

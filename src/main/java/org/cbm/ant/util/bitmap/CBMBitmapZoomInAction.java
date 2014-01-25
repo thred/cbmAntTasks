@@ -12,7 +12,7 @@ public class CBMBitmapZoomInAction extends AbstractCBMBitmapAction
 
     public CBMBitmapZoomInAction()
     {
-        super("Zoom In");
+        super("zoom-in", "Zoom In");
 
         putValue(MNEMONIC_KEY, KeyEvent.VK_I);
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("PLUS"));

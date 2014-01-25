@@ -1,21 +1,34 @@
 package org.cbm.ant.util.bitmap;
 
+import java.net.URL;
+
 import javax.swing.AbstractAction;
-import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 public abstract class AbstractCBMBitmapAction extends AbstractAction
 {
 
     private static final long serialVersionUID = -5354813484313503845L;
 
-    public AbstractCBMBitmapAction(String name, Icon icon)
-    {
-        super(name, icon);
-    }
+    private final String id;
 
-    public AbstractCBMBitmapAction(String name)
+    public AbstractCBMBitmapAction(String id, String name)
     {
         super(name);
+
+        this.id = id;
+
+        URL resource = getClass().getResource(id + ".png");
+
+        if (resource != null)
+        {
+            putValue(SMALL_ICON, new ImageIcon(resource));
+        }
+    }
+
+    public String getId()
+    {
+        return id;
     }
 
     public CBMBitmapProjectController getActiveController()

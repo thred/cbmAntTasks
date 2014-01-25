@@ -9,7 +9,7 @@ public class CBMBitmapExitAction extends AbstractCBMBitmapAction
 
     public CBMBitmapExitAction()
     {
-        super("Exit");
+        super("exit", "Exit");
     }
 
     @Override

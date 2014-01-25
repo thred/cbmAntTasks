@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import org.cbm.ant.util.CBMBitmap;
 import org.cbm.ant.util.CBMBitmapDither;
@@ -63,8 +64,8 @@ public class CBMBitmapProjectController
 									updateNeeded = false;
 								}
 
-								CBMBitmap bitmap = new CBMBitmap().blockSize(8, 8);
-								
+								final CBMBitmap bitmap = new CBMBitmap().blockSize(8, 8);
+
 								bitmap.setImage(model.getSourceImage());
 
 								if (model.getTargetWidth() != null)
@@ -78,12 +79,28 @@ public class CBMBitmapProjectController
 								}
 
 								bitmap.setAntiAlias(true);
+								bitmap.setYuv(false);
 								bitmap.setDither(model.getDither());
+								bitmap.setDitherStrength(model.getDitherStrength());
 								bitmap.setMode(GraphicsMode.LORES);
-								bitmap.setContrast(5);
+								bitmap.setContrast(new float[] {
+										model.getContrastRed(), model.getContrastGreen(), model.getContrastBlue()
+								});
+								bitmap.setBrightness(new float[] {
+										model.getBrightnessRed(), model.getBrightnessGreen(), model.getBrightnessBlue()
+								});
 
-								model.setTargetImage(bitmap.getSampleImage());
-								updateTargetCanvas();
+								final BufferedImage sampleImage = bitmap.getSampleImage();
+
+								SwingUtilities.invokeLater(new Runnable()
+								{
+									@Override
+									public void run()
+									{
+										model.setTargetImage(sampleImage);
+										updateTargetCanvas();
+									};
+								});
 							}
 						}
 						catch (Exception e)

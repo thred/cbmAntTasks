@@ -5,6 +5,9 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 import java.awt.image.RescaleOp;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -129,11 +132,13 @@ public class CBMBitmap
 
 	private GraphicsMode mode = GraphicsMode.LORES;
 	private CBMBitmapDither dither = CBMBitmapDither.NONE;
+	private float ditherStrength = 1;
 	private boolean antiAlias = false;
 	private boolean yuv = true;
 	private boolean samplePalette = true;
 	private int overscan = 0;
-	private float contrast = 1;
+	private float[] contrast;
+	private float[] brightness;
 	private Palette[] palette = Palette.values();
 	private Palette[] mandatoryPalette = new Palette[0];
 
@@ -345,6 +350,18 @@ public class CBMBitmap
 		return this;
 	}
 
+	public float getDitherStrength()
+	{
+		return ditherStrength;
+	}
+
+	public void setDitherStrength(float ditherStrength)
+	{
+		updated = true;
+		
+		this.ditherStrength = ditherStrength;
+	}
+
 	public boolean isAntiAlias()
 	{
 		return antiAlias;
@@ -427,21 +444,40 @@ public class CBMBitmap
 		return this;
 	}
 
-	public float getContrast()
+	public float[] getContrast()
 	{
 		return contrast;
 	}
 
-	public void setContrast(float contrast)
+	public void setContrast(float[] contrast)
 	{
-		this.contrast = contrast;
-
 		updated = true;
+
+		this.contrast = contrast;
 	}
 
-	public CBMBitmap contrast(float contrast)
+	public CBMBitmap contrast(float[] contrast)
 	{
 		setContrast(contrast);
+
+		return this;
+	}
+
+	public float[] getBrightness()
+	{
+		return brightness;
+	}
+
+	public void setBrightness(float[] brightness)
+	{
+		updated = true;
+
+		this.brightness = brightness;
+	}
+
+	public CBMBitmap brightness(float[] brightness)
+	{
+		setBrightness(brightness);
 
 		return this;
 	}
@@ -568,19 +604,66 @@ public class CBMBitmap
 		BufferedImage scaledImage = createScaledImage(image, x, y, width, height, scaledTargetWidth, targetHeight,
 				antiAlias);
 
-//		if (contrast != 1)
-//		{
-//			RescaleOp rescaleOp = new RescaleOp(1.5f, -80, null);
-//			rescaleOp.filter(scaledImage, scaledImage);
-			
-//			scaledImage = normalize(scaledImage);
-//		}
+		if ((contrast != null) || (brightness != null))
+		{
+			float[] c = {
+					1f, 1f, 1f
+			};
+			float[] b = {
+					0f, 0f, 0f
+			};
 
-		BufferedImage estimationImage = createImage(scaledImage, dither, null, scaledBlockWidth, blockHeight, mode,
-				palette);
+			if (contrast != null)
+			{
+				if (contrast.length < 3)
+				{
+					c[0] = contrast[0];
+					c[1] = contrast[0];
+					c[2] = contrast[0];
+				}
+				else
+				{
+					c[0] = contrast[0];
+					c[1] = contrast[1];
+					c[2] = contrast[2];
+				}
+			}
+
+			if (brightness != null)
+			{
+				if (brightness.length < 3)
+				{
+					b[0] = brightness[0] * 256;
+					b[1] = brightness[0] * 256;
+					b[2] = brightness[0] * 256;
+				}
+				else
+				{
+					b[0] = brightness[0] * 256;
+					b[1] = brightness[1] * 256;
+					b[2] = brightness[2] * 256;
+				}
+			}
+
+			RescaleOp rescaleOp = new RescaleOp(c, b, null);
+			rescaleOp.filter(scaledImage, scaledImage);
+		}
+
+		BufferedImage[] yuvImages = Palette.rgb2yuv(scaledImage);
+
+		Kernel kernel = new Kernel(3, 3, new float[] {
+				-1.5f, 0, 0, 0, 1, 0, 0, 0, 1.5f
+		});
+		BufferedImageOp op = new ConvolveOp(kernel);
+		yuvImages[0] = op.filter(yuvImages[0], null);
+
+		scaledImage = Palette.yuv2rgb(yuvImages);
+
+		BufferedImage estimationImage = createImage(scaledImage, dither, ditherStrength, null, scaledBlockWidth, blockHeight,
+				mode, palette);
 
 		raster = createRaster(estimationImage, Arrays.asList(mandatoryPalette), overscan);
-		targetImage = createImage(scaledImage, dither, raster, scaledBlockWidth, blockHeight, mode, palette);
+		targetImage = createImage(scaledImage, dither, ditherStrength, raster, scaledBlockWidth, blockHeight, mode, palette);
 
 		updated = false;
 	}
@@ -969,8 +1052,8 @@ public class CBMBitmap
 		return scaledImage;
 	}
 
-	private static BufferedImage createImage(BufferedImage image, CBMBitmapDither dither, Raster raster,
-			int blockWidth, int blockHeight, GraphicsMode mode, Palette... palette)
+	private static BufferedImage createImage(BufferedImage image, CBMBitmapDither dither, float ditherStrength,
+			Raster raster, int blockWidth, int blockHeight, GraphicsMode mode, Palette... palette)
 	{
 		BufferedImage source = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
 
@@ -1009,7 +1092,7 @@ public class CBMBitmap
 
 				result.setRGB(x, y, targetRGB);
 
-				dither.getStrategy().execute(x, y, sourceRGB, targetRGB, source);
+				dither.getStrategy().execute(x, y, sourceRGB, targetRGB, ditherStrength, source);
 			}
 		}
 

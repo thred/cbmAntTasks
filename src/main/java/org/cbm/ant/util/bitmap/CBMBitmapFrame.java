@@ -9,6 +9,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -64,30 +65,37 @@ public class CBMBitmapFrame extends JFrame
         viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoom100Action.class)));
 
         menuBar.add(viewMenu);
-        
+
         JMenu sourceMenu = new JMenu("Source");
 
         sourceMenu.setMnemonic(KeyEvent.VK_S);
-        
-        fileMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapOpenSourceImageAction.class)));
+
+        sourceMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapOpenSourceImageAction.class)));
+        sourceMenu.addSeparator();
+        sourceMenu.add(new JCheckBoxMenuItem(CBMBitmapUtils.get(CBMBitmapResizeSourceImageToolAction.class)));
 
         menuBar.add(sourceMenu);
-        
+
         JMenu targetMenu = new JMenu("Target");
 
         targetMenu.setMnemonic(KeyEvent.VK_T);
 
+        targetMenu.add(new JCheckBoxMenuItem(CBMBitmapUtils.get(CBMBitmapTargetSizeToolAction.class)));
+        targetMenu.add(new JCheckBoxMenuItem(CBMBitmapUtils.get(CBMBitmapDitherModeToolAction.class)));
+        targetMenu.add(new JCheckBoxMenuItem(CBMBitmapUtils.get(CBMBitmapContrastAndBrightnessToolAction.class)));
+
         menuBar.add(targetMenu);
-        
+
         toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapNewProjectAction.class));
         toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapCloseProjectAction.class));
         toolPanel.addSeparator();
         toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapOpenSourceImageAction.class));
         toolPanel.addSeparator();
-        toolPanel.addTool(new CBMBitmapResizeSourceImageTool());
+        toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapResizeSourceImageToolAction.class));
         toolPanel.addSeparator();
-        toolPanel.addTool(new CBMBitmapTargetSizeTool());
-        toolPanel.addTool(new CBMBitmapDitherModeTool());
+        toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapTargetSizeToolAction.class));
+        toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapDitherModeToolAction.class));
+        toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapContrastAndBrightnessToolAction.class));
 
         tabbedPane.setVisible(false);
         tabbedPane.addChangeListener(new ChangeListener()
@@ -106,6 +114,11 @@ public class CBMBitmapFrame extends JFrame
 
         add(toolPanel, BorderLayout.NORTH);
         add(panel, BorderLayout.CENTER);
+    }
+
+    public CBMBitmapToolPanel getToolPanel()
+    {
+        return toolPanel;
     }
 
     public CBMBitmapProjectController createController()

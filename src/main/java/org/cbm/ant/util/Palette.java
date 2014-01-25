@@ -1,5 +1,7 @@
 package org.cbm.ant.util;
 
+import java.awt.image.BufferedImage;
+
 /**
  * The VIC II Color Palette<br/>
  * <br/>
@@ -136,6 +138,59 @@ public enum Palette
 		return (range(0, (int) (l + (1.140f * v)), 255) << 16)
 				+ (range(0, (int) (l - (0.396f * u) - (0.581f * v)), 255) << 8)
 				+ (range(0, (int) (l + (2.029f * u)), 255));
+	}
+
+	public static BufferedImage[] rgb2yuv(BufferedImage image)
+	{
+		int width = image.getWidth();
+		int height = image.getHeight();
+
+		BufferedImage lImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+		BufferedImage uImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+		BufferedImage vImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+
+		for (int y = 0; y < height; y += 1)
+		{
+			for (int x = 0; x < width; x += 1)
+			{
+				int rgb = image.getRGB(x, y);
+				int yuv = rgb2yuv(rgb);
+
+				int l = (yuv >> 16) & 0xff;
+				int u = (yuv >> 8) & 0xff;
+				int v = yuv & 0xff;
+
+				lImage.setRGB(x, y, (l << 16) + (l << 8) + l);
+				uImage.setRGB(x, y, (u << 16) + (u << 8) + u);
+				vImage.setRGB(x, y, (v << 16) + (v << 8) + v);
+			}
+		}
+
+		return new BufferedImage[] {
+				lImage, uImage, vImage
+		};
+	}
+
+	public static BufferedImage yuv2rgb(BufferedImage[] yuvImages)
+	{
+		int width = yuvImages[0].getWidth();
+		int height = yuvImages[0].getHeight();
+
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+		for (int y = 0; y < height; y += 1)
+		{
+			for (int x = 0; x < width; x += 1)
+			{
+				int yuv = ((yuvImages[0].getRGB(x, y) & 0xff) << 16) + ((yuvImages[1].getRGB(x, y) & 0xff) << 8)
+						+ (yuvImages[2].getRGB(x, y) & 0xff);
+				int rgb = yuv2rgb(yuv);
+
+				image.setRGB(x, y, rgb);
+			}
+		}
+
+		return image;
 	}
 
 	public static double delta(int left, int right, double channelAMult, double channelBMult, double channelCMult)

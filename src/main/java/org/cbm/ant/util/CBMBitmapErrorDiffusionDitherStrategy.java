@@ -55,12 +55,16 @@ public class CBMBitmapErrorDiffusionDitherStrategy extends AbstractCBMBitmapDith
 	}
 
 	@Override
-	public void execute(int x, int y, int sourceRGB, int targetRGB, BufferedImage source)
+	public void execute(int x, int y, int sourceRGB, int targetRGB, float strength, BufferedImage source)
 	{
 		int[] error = {
 				((sourceRGB >> 16) & 0xff) - ((targetRGB >> 16) & 0xff),
 				((sourceRGB >> 8) & 0xff) - ((targetRGB >> 8) & 0xff), (sourceRGB & 0xff) - (targetRGB & 0xff)
 		};
+		
+		error[0] *= strength;
+		error[1] *= strength;
+		error[2] *= strength;
 
 		for (int checkY = 0; checkY < height; checkY += 1)
 		{
