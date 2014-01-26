@@ -83,25 +83,24 @@ public class CBMPalette
 		setFromRGB(cbmColor, color.getRGB());
 	}
 
-	public CBMColor estimateCBMColor(CBMColor[] allowedColors, int rgb, boolean useYUV, double channelA,
-			double channelB, double channelC)
+	public CBMColor estimateCBMColor(CBMColor[] allowedColors, int rgb, boolean useYUV)
 	{
 		if (useYUV)
 		{
-			return estimateCBMColorByYUV(allowedColors, rgb2yuv(rgb), channelA, channelB, channelC);
+			return estimateCBMColorByYUV(allowedColors, rgb2yuv(rgb));
 		}
 
-		return estimateCBMColorByRGB(allowedColors, rgb, channelA, channelB, channelC);
+		return estimateCBMColorByRGB(allowedColors, rgb);
 	}
 
-	public int estimateIndex(CBMColor[] colors, int rgb, double channelA, double channelB, double channelC)
+	public int estimateIndex(CBMColor[] colors, int rgb)
 	{
 		int result = -1;
 		double minDelta = Double.MAX_VALUE;
 
 		for (int i = 0; i < colors.length; i++)
 		{
-			double delta = delta(rgb, rgbs[colors[i].index()], channelA, channelB, channelC);
+			double delta = delta(rgb, rgbs[colors[i].index()]);
 
 			if (delta < minDelta)
 			{
@@ -113,15 +112,14 @@ public class CBMPalette
 		return result;
 	}
 
-	protected CBMColor estimateCBMColorByRGB(CBMColor[] allowedColors, int rgb, double channelA, double channelB,
-			double channelC)
+	protected CBMColor estimateCBMColorByRGB(CBMColor[] allowedColors, int rgb)
 	{
 		CBMColor color = null;
 		double minDelta = Double.MAX_VALUE;
 
 		for (CBMColor allowedColor : allowedColors)
 		{
-			double delta = delta(rgb, rgbs[allowedColor.index()], channelA, channelB, channelC);
+			double delta = delta(rgb, rgbs[allowedColor.index()]);
 
 			if (delta < minDelta)
 			{
@@ -133,15 +131,14 @@ public class CBMPalette
 		return color;
 	}
 
-	protected CBMColor estimateCBMColorByYUV(CBMColor[] allowedColors, int yuv, double channelA, double channelB,
-			double channelC)
+	protected CBMColor estimateCBMColorByYUV(CBMColor[] allowedColors, int yuv)
 	{
 		CBMColor color = null;
 		double minDelta = Double.MAX_VALUE;
 
 		for (CBMColor allowedColor : allowedColors)
 		{
-			double delta = delta(yuv, yuvs[allowedColor.index()], channelA, channelB, channelC);
+			double delta = delta(yuv, yuvs[allowedColor.index()]);
 
 			if (delta < minDelta)
 			{
@@ -239,7 +236,7 @@ public class CBMPalette
 		return image;
 	}
 
-	public static double delta(int left, int right, double channelAMult, double channelBMult, double channelCMult)
+	public static double delta(int left, int right)
 	{
 		int leftChannelA = (left >> 16) & 0xff;
 		int leftChannelB = (left >> 8) & 0xff;
@@ -248,9 +245,9 @@ public class CBMPalette
 		int rightChannelB = (right >> 8) & 0xff;
 		int rightChannelC = right & 0xff;
 
-		return (((double) Math.abs(rightChannelA - leftChannelA) / 256) * channelAMult)
-				+ (((double) Math.abs(rightChannelB - leftChannelB) / 256) * channelBMult)
-				+ (((double) Math.abs(rightChannelC - leftChannelC) / 256) * channelCMult);
+		return ((double) Math.abs(rightChannelA - leftChannelA) / 256)
+				+ ((double) Math.abs(rightChannelB - leftChannelB) / 256)
+				+ ((double) Math.abs(rightChannelC - leftChannelC) / 256);
 	}
 
 	public static int range(final int min, final int value, final int max)

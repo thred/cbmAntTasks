@@ -5,9 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.ConvolveOp;
-import java.awt.image.Kernel;
 import java.awt.image.RescaleOp;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -664,6 +661,7 @@ public class CBMBitmap
 			rescaleOp.filter(scaledImage, scaledImage);
 		}
 
+		/*
 		BufferedImage[] yuvImages = CBMPalette.rgb2yuv(scaledImage);
 
 		Kernel kernel = new Kernel(3, 3, new float[] {
@@ -673,7 +671,8 @@ public class CBMBitmap
 		yuvImages[0] = op.filter(yuvImages[0], null);
 
 		scaledImage = CBMPalette.yuv2rgb(yuvImages);
-
+		 */
+		
 		BufferedImage estimationImage = createImage(scaledImage, dither, ditherStrength, null, scaledBlockWidth,
 				blockHeight, mode, estimationPalette, allowedColors);
 
@@ -719,7 +718,7 @@ public class CBMBitmap
 			for (int x = 0; x < targetWidth; x += 1)
 			{
 				int rgb = sampleImage.getRGB(x, y);
-				CBMColor color = estimationPalette.estimateCBMColor(CBMColor.values(), rgb, false, 1, 1, 1);
+				CBMColor color = estimationPalette.estimateCBMColor(CBMColor.values(), rgb, false);
 
 				sampleImage.setRGB(x, y, samplePalette.rgb(color));
 			}
@@ -781,7 +780,7 @@ public class CBMBitmap
 					for (int innerX = x; innerX < (x + mode.getWidthPerChar()); innerX += 1)
 					{
 						int index = estimationPalette
-								.estimateIndex(colors, targetImage.getRGB(innerX, innerY), 1, 1, 1);
+								.estimateIndex(colors, targetImage.getRGB(innerX, innerY));
 
 						if (mode == GraphicsMode.LORES)
 						{
@@ -834,8 +833,7 @@ public class CBMBitmap
 					{
 						for (int byteX = innerX; byteX < (innerX + (8 / mode.getBitPerColor())); byteX += 1)
 						{
-							int index = estimationPalette.estimateIndex(colors, targetImage.getRGB(innerX, innerY), 1,
-									1, 1);
+							int index = estimationPalette.estimateIndex(colors, targetImage.getRGB(byteX, innerY));
 
 							if (mode == GraphicsMode.LORES)
 							{
@@ -1032,7 +1030,7 @@ public class CBMBitmap
 				}
 
 				CBMColor color = estimationPalette.estimateCBMColor(CBMColor.values(),
-						image.getRGB(x + i, y + j) & 0x00ffffff, false, 1, 1, 1);
+						image.getRGB(x + i, y + j) & 0x00ffffff, false);
 				Entry entry = counts.get(color);
 
 				if (entry == null)
@@ -1106,18 +1104,18 @@ public class CBMBitmap
 
 					if ((possiblePalette == null) || (possiblePalette.length < mode.getNumberOfColors()))
 					{
-						targetColor = estimationPalette.estimateCBMColor(allowedPalette, sourceRGB, true, 1, 1, 1);
+						targetColor = estimationPalette.estimateCBMColor(allowedPalette, sourceRGB, true);
 
 						raster.add(x / blockWidth, y / blockHeight, targetColor);
 					}
 					else
 					{
-						targetColor = estimationPalette.estimateCBMColor(possiblePalette, sourceRGB, true, 1, 1, 1);
+						targetColor = estimationPalette.estimateCBMColor(possiblePalette, sourceRGB, true);
 					}
 				}
 				else
 				{
-					targetColor = estimationPalette.estimateCBMColor(allowedPalette, sourceRGB, true, 1, 1, 1);
+					targetColor = estimationPalette.estimateCBMColor(allowedPalette, sourceRGB, true);
 				}
 
 				int targetRGB = estimationPalette.rgb(targetColor);
