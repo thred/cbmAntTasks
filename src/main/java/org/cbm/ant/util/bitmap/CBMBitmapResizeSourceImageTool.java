@@ -14,6 +14,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import org.cbm.ant.util.bitmap.util.CBMBitmapUtils;
+
 public class CBMBitmapResizeSourceImageTool extends AbstractCBMBitmapTool implements ActionListener
 {
 

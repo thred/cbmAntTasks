@@ -5,17 +5,17 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.KeyStroke;
 
-public class CBMBitmapZoomOutAction extends AbstractCBMBitmapAction
+public class CBMBitmapZoomInSourceAction extends AbstractCBMBitmapAction
 {
 
     private static final long serialVersionUID = 6114587570625893678L;
 
-    public CBMBitmapZoomOutAction()
+    public CBMBitmapZoomInSourceAction()
     {
-        super("zoom-out", "Zoom Out");
+        super("zoom-in", "Source Image Zoom In");
 
-        putValue(MNEMONIC_KEY, KeyEvent.VK_O);
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("MINUS"));
+        putValue(MNEMONIC_KEY, KeyEvent.VK_I);
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("PLUS"));
     }
 
     @Override
@@ -34,7 +34,7 @@ public class CBMBitmapZoomOutAction extends AbstractCBMBitmapAction
             return;
         }
 
-        controller.zoom(0.5);
+        controller.sourceZoom(2);
     }
 
 }

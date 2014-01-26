@@ -1,4 +1,4 @@
-package org.cbm.ant.util.bitmap;
+package org.cbm.ant.util.bitmap.util;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -13,6 +13,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+
+import org.cbm.ant.util.bitmap.AbstractCBMBitmapTool;
+import org.cbm.ant.util.bitmap.AbstractCBMBitmapToolAction;
+import org.cbm.ant.util.bitmap.CBMBitmapProjectController;
+import org.cbm.ant.util.bitmap.CBMBitmapProjectModel;
+import org.cbm.ant.util.bitmap.CBMBitmapUtility;
 
 public class CBMBitmapToolPanel extends JPanel
 {

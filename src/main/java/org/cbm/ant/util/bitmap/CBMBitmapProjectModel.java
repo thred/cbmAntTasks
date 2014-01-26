@@ -1,17 +1,75 @@
 package org.cbm.ant.util.bitmap;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.event.EventListenerList;
 
 import org.cbm.ant.util.CBMBitmapDither;
+import org.cbm.ant.util.CBMColor;
+import org.cbm.ant.util.CBMPalette;
+import org.cbm.ant.util.bitmap.util.CBMBitmapUtils;
 
 public class CBMBitmapProjectModel
 {
 
+	private class PaletteEntry
+	{
+		private Color color;
+		private CBMBitmapPaletteUsage usage;
+
+		public PaletteEntry(CBMColor cbmColor)
+		{
+			super();
+
+			color = CBMPalette.DEFAULT.color(cbmColor);
+			usage = CBMBitmapPaletteUsage.OPTIONAL;
+		}
+
+		public Color getColor()
+		{
+			return color;
+		}
+
+		public void setColor(Color color)
+		{
+			if (!CBMBitmapUtils.equals(this.color, color))
+			{
+				Object old = this.color;
+
+				this.color = color;
+
+				firePropertyChange("paletteEntry.color", old, color);
+			}
+		}
+
+		public CBMBitmapPaletteUsage getUsage()
+		{
+			return usage;
+		}
+
+		public void setUsage(CBMBitmapPaletteUsage usage)
+		{
+			if (!CBMBitmapUtils.equals(this.usage, usage))
+			{
+				Object old = this.usage;
+
+				this.usage = usage;
+
+				firePropertyChange("paletteEntry.usage", old, usage);
+			}
+		}
+	}
+
 	protected final EventListenerList listenerList = new EventListenerList();
+
+	private final Map<CBMColor, PaletteEntry> paletteEntries = new HashMap<CBMColor, CBMBitmapProjectModel.PaletteEntry>();
 
 	private String name;
 	private BufferedImage sourceImage;
@@ -33,6 +91,11 @@ public class CBMBitmapProjectModel
 		super();
 
 		name = "Project";
+
+		for (CBMColor palette : CBMColor.values())
+		{
+			paletteEntries.put(palette, new PaletteEntry(palette));
+		}
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener)
@@ -274,6 +337,74 @@ public class CBMBitmapProjectModel
 
 			firePropertyChange("contrastRed", old, brightnessBlue);
 		}
+	}
+
+	public Color getPaletteColor(CBMColor cbmColor)
+	{
+		return paletteEntries.get(cbmColor).getColor();
+	}
+
+	public void setPaletteColor(CBMColor cbmColor, Color color)
+	{
+		paletteEntries.get(cbmColor).setColor(color);
+	}
+
+	public CBMBitmapPaletteUsage getPaletteUsage(CBMColor cbmColor)
+	{
+		return paletteEntries.get(cbmColor).getUsage();
+	}
+
+	public void setPaletteUsage(CBMColor cbmColor, CBMBitmapPaletteUsage usage)
+	{
+		paletteEntries.get(cbmColor).setUsage(usage);
+	}
+
+	public CBMColor[] getAllowedColors()
+	{
+		List<CBMColor> result = new ArrayList<CBMColor>();
+
+		for (CBMColor cbmColor : CBMColor.values())
+		{
+			PaletteEntry paletteEntry = paletteEntries.get(cbmColor);
+
+			if (paletteEntry.getUsage() == CBMBitmapPaletteUsage.DO_NOT_USE)
+			{
+				continue;
+			}
+
+			result.add(cbmColor);
+		}
+
+		return result.toArray(new CBMColor[result.size()]);
+	}
+
+	public CBMColor[] getMandatoryColors()
+	{
+		List<CBMColor> result = new ArrayList<CBMColor>();
+
+		for (CBMColor cbmColor : CBMColor.values())
+		{
+			PaletteEntry paletteEntry = paletteEntries.get(cbmColor);
+
+			if (paletteEntry.getUsage() == CBMBitmapPaletteUsage.MANDATORY)
+			{
+				result.add(cbmColor);
+			}
+		}
+
+		return result.toArray(new CBMColor[result.size()]);
+	}
+
+	public CBMPalette createEsitmationPalette()
+	{
+		CBMPalette palette = new CBMPalette();
+
+		for (CBMColor cbmColor : CBMColor.values())
+		{
+			palette.setFromColor(cbmColor, paletteEntries.get(cbmColor).getColor());
+		}
+
+		return palette;
 	}
 
 }

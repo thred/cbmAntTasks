@@ -1,4 +1,4 @@
-package org.cbm.ant.util.bitmap;
+package org.cbm.ant.util.bitmap.util;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -11,9 +11,14 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.event.ChangeListener;
+
+import org.cbm.ant.util.bitmap.CBMBitmapUtility;
 
 public class CBMBitmapUtils
 {
@@ -153,6 +158,33 @@ public class CBMBitmapUtils
 		}
 
 		return slider;
+	}
+
+	public static JMenuItem createMenuItem(String text, ActionListener listener)
+	{
+		JMenuItem item = new JMenuItem(text);
+
+		item.addActionListener(listener);
+
+		return item;
+	}
+
+	public static JCheckBoxMenuItem createCheckBoxMenuItem(String text, ActionListener listener)
+	{
+		JCheckBoxMenuItem item = new JCheckBoxMenuItem(text);
+
+		item.addActionListener(listener);
+
+		return item;
+	}
+
+	public static JRadioButtonMenuItem createRadioButtonMenuItem(String text, ActionListener listener)
+	{
+		JRadioButtonMenuItem item = new JRadioButtonMenuItem(text);
+
+		item.addActionListener(listener);
+
+		return item;
 	}
 
 }

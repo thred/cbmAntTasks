@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.cbm.ant.util.bitmap.util.CBMBitmapSlider;
+import org.cbm.ant.util.bitmap.util.CBMBitmapUtils;
 import org.cbm.ant.util.bitmap.util.GBC;
 
 public class CBMBitmapContrastAndBrightnessTool extends AbstractCBMBitmapTool implements ActionListener, ChangeListener
@@ -31,7 +33,7 @@ public class CBMBitmapContrastAndBrightnessTool extends AbstractCBMBitmapTool im
 	private final JCheckBox birghtnessKeep = CBMBitmapUtils.createCheckBox("Keep overall brightness", true);
 
 	private final JButton resetButton = CBMBitmapUtils.createButton("Reset", this);
-	
+
 	public CBMBitmapContrastAndBrightnessTool()
 	{
 		super("contrast-and-brightness.png", "Contrast and Brightness",
@@ -78,10 +80,15 @@ public class CBMBitmapContrastAndBrightnessTool extends AbstractCBMBitmapTool im
 			return;
 		}
 
+		if (model == null)
+		{
+			return;
+		}
+		
 		int contrastRed = (int) (model.getContrastRed() * 100);
 		int contrastGreen = (int) (model.getContrastGreen() * 100);
 		int contrastBlue = (int) (model.getContrastBlue() * 100);
-	
+
 		contrastRedSlider.setValue(contrastRed);
 		contrastGreenSlider.setValue(contrastGreen);
 		contrastBlueSlider.setValue(contrastBlue);
@@ -101,7 +108,7 @@ public class CBMBitmapContrastAndBrightnessTool extends AbstractCBMBitmapTool im
 		contrastRedSlider.setValue(100);
 		contrastGreenSlider.setValue(100);
 		contrastBlueSlider.setValue(100);
-		
+
 		brightnessRedSlider.setValue(0);
 		brightnessGreenSlider.setValue(0);
 		brightnessBlueSlider.setValue(0);

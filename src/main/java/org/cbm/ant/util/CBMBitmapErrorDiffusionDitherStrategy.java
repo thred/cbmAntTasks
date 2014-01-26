@@ -61,7 +61,7 @@ public class CBMBitmapErrorDiffusionDitherStrategy extends AbstractCBMBitmapDith
 				((sourceRGB >> 16) & 0xff) - ((targetRGB >> 16) & 0xff),
 				((sourceRGB >> 8) & 0xff) - ((targetRGB >> 8) & 0xff), (sourceRGB & 0xff) - (targetRGB & 0xff)
 		};
-		
+
 		error[0] *= strength;
 		error[1] *= strength;
 		error[2] *= strength;
@@ -84,8 +84,8 @@ public class CBMBitmapErrorDiffusionDitherStrategy extends AbstractCBMBitmapDith
 					continue;
 				}
 
-				int targetX = x - centerX + checkX;
-				int targetY = y - centerY + checkY;
+				int targetX = (x - centerX) + checkX;
+				int targetY = (y - centerY) + checkY;
 
 				if ((targetX >= 0) && (targetY >= 0) && (targetX < source.getWidth()) && (targetY < source.getHeight()))
 				{
@@ -93,26 +93,6 @@ public class CBMBitmapErrorDiffusionDitherStrategy extends AbstractCBMBitmapDith
 				}
 			}
 		}
-
-		//		if (x < (source.getWidth() - 1))
-		//		{
-		//			source.setRGB(x + 1, y, apply(source.getRGB(x + 1, y), error, 7d / 16));
-		//		}
-		//
-		//		if (y < (source.getHeight() - 1))
-		//		{
-		//			if (x > 0)
-		//			{
-		//				source.setRGB(x - 1, y + 1, apply(source.getRGB(x - 1, y + 1), error, 3d / 16));
-		//			}
-		//
-		//			source.setRGB(x, y + 1, apply(source.getRGB(x, y + 1), error, 5d / 16));
-		//
-		//			if (x > (source.getWidth() - 1))
-		//			{
-		//				source.setRGB(x + 1, y + 1, apply(source.getRGB(x + 1, y + 1), error, 1d / 16));
-		//			}
-		//		}
 	}
 
 	private static int apply(int rgb, int[] error, double coefficient)
@@ -121,9 +101,9 @@ public class CBMBitmapErrorDiffusionDitherStrategy extends AbstractCBMBitmapDith
 		int g = (rgb >> 8) & 0xff;
 		int b = rgb & 0xff;
 
-		r = Palette.range(0, (int) (r + (coefficient * error[0])), 255);
-		g = Palette.range(0, (int) (g + (coefficient * error[1])), 255);
-		b = Palette.range(0, (int) (b + (coefficient * error[2])), 255);
+		r = CBMPalette.range(0, (int) (r + (coefficient * error[0])), 255);
+		g = CBMPalette.range(0, (int) (g + (coefficient * error[1])), 255);
+		b = CBMPalette.range(0, (int) (b + (coefficient * error[2])), 255);
 
 		return (r << 16) + (g << 8) + b;
 	}

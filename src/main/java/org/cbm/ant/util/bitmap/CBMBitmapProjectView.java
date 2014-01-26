@@ -3,9 +3,14 @@ package org.cbm.ant.util.bitmap;
 import java.awt.BorderLayout;
 import java.awt.Color;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JToolBar;
+
+import org.cbm.ant.util.bitmap.util.CBMBitmapCanvas;
+import org.cbm.ant.util.bitmap.util.CBMBitmapUtils;
 
 public class CBMBitmapProjectView extends JPanel
 {
@@ -26,8 +31,38 @@ public class CBMBitmapProjectView extends JPanel
 
         this.model = model;
 
-        splitPane.setLeftComponent(sourceScrollPane);
-        splitPane.setRightComponent(targetScrollPane);
+        JPanel sourcePanel = new JPanel(new BorderLayout());
+        
+        sourcePanel.add(sourceScrollPane, BorderLayout.CENTER);
+        
+        JToolBar sourceToolBar = new JToolBar();
+        
+        sourceToolBar.add(CBMBitmapUtils.get(CBMBitmapZoomInSourceAction.class));
+        sourceToolBar.add(CBMBitmapUtils.get(CBMBitmapZoomOutSourceAction.class));
+        sourceToolBar.add(CBMBitmapUtils.get(CBMBitmapZoomFitSourceAction.class));
+        sourceToolBar.add(CBMBitmapUtils.get(CBMBitmapZoom100SourceAction.class));
+        sourceToolBar.setFloatable(false);
+//        sourceToolBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
+
+        sourcePanel.add(sourceToolBar, BorderLayout.SOUTH);
+
+        JPanel targetPanel = new JPanel(new BorderLayout());
+        
+        targetPanel.add(targetScrollPane, BorderLayout.CENTER);
+        
+        JToolBar targetToolBar = new JToolBar();
+        
+        targetToolBar.add(CBMBitmapUtils.get(CBMBitmapZoomInTargetAction.class));
+        targetToolBar.add(CBMBitmapUtils.get(CBMBitmapZoomOutTargetAction.class));
+        targetToolBar.add(CBMBitmapUtils.get(CBMBitmapZoomFitTargetAction.class));
+        targetToolBar.add(CBMBitmapUtils.get(CBMBitmapZoom100TargetAction.class));
+        targetToolBar.setFloatable(false);
+//        targetToolBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
+
+        targetPanel.add(targetToolBar, BorderLayout.SOUTH);
+
+        splitPane.setLeftComponent(sourcePanel);
+        splitPane.setRightComponent(targetPanel);
         splitPane.setDividerLocation(0.5);
 
         JPanel panel = CBMBitmapUtils.createBorderPanel(splitPane);

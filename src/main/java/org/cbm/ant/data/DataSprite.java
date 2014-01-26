@@ -103,12 +103,12 @@ public class DataSprite implements DataCommand
 
 	public void setPalette(String palette)
 	{
-		bitmap.setPalette(palette);
+		bitmap.setAllowedColors(palette);
 	}
 
 	public void setMandatoryPalette(String mandatoryPalette)
 	{
-		bitmap.setMandatoryPalette(mandatoryPalette);
+		bitmap.setMandatoryColors(mandatoryPalette);
 	}
 
 	/**

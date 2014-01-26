@@ -3,19 +3,16 @@ package org.cbm.ant.util.bitmap;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import javax.swing.KeyStroke;
-
-public class CBMBitmapZoomInAction extends AbstractCBMBitmapAction
+public class CBMBitmapZoom100SourceAction extends AbstractCBMBitmapAction
 {
 
     private static final long serialVersionUID = 6114587570625893678L;
 
-    public CBMBitmapZoomInAction()
+    public CBMBitmapZoom100SourceAction()
     {
-        super("zoom-in", "Zoom In");
+        super("zoom-100", "Source Image Zoom 100%");
 
-        putValue(MNEMONIC_KEY, KeyEvent.VK_I);
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("PLUS"));
+        putValue(MNEMONIC_KEY, KeyEvent.VK_1);
     }
 
     @Override
@@ -34,7 +31,6 @@ public class CBMBitmapZoomInAction extends AbstractCBMBitmapAction
             return;
         }
 
-        controller.zoom(2);
+        controller.setSourceZoom(1);
     }
-
 }

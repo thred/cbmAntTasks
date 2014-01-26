@@ -1,5 +1,6 @@
 package org.cbm.ant.util;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 /**
@@ -11,100 +12,145 @@ import java.awt.image.BufferedImage;
  * 
  * @author Manfred HANTSCHEL
  */
-public enum Palette
+public class CBMPalette
 {
 
-	BLACK("Black", 0x00, 0.0f, 0.0f, 0.0f),
-	WHITE("White", 0x01, 255.0f, 0.0f, 0.0f),
-	RED("Red", 0x02, 79.6875f, -13.01434923670814368f, +31.41941843272073796f),
-	CYAN("Cyan", 0x03, 159.375f, +13.01434923670814368f, -31.41941843272073796f),
-	PURPLE("Purple", 0x04, 95.625f, +24.04738177749708281f, +24.04738177749708281f),
-	GREEN("Green", 0x05, 127.5f, -24.04738177749708281f, -24.04738177749708281f),
-	BLUE("Blue", 0x06, 63.75f, +34.081334493f, 0f),
-	YELLOW("Yellow", 0x07, 191.25f, -34.0081334493f, 0f),
+	public static final CBMPalette DEFAULT;
 
-	ORANGE("Orange", 0x08, 95.625f, -24.04738177749708281f, +24.04738177749708281f),
-	BROWN("Brown", 0x09, 63.75f, -31.41941843272073796f, +13.01434923670814368f),
-	LIGHT_RED("Light Red", 0x0a, 127.5f, -13.01434923670814368f, +31.41941843272073796f),
-	DARK_GRAY("Dark Gray", 0x0b, 79.6875f, 0f, 0f),
-	GRAY("Gray", 0x0c, 119.53125f, 0f, 0f),
-	LIGHT_GREEN("Light Green", 0x0d, 191.25f, -24.04738177749708281f, -24.04738177749708281f),
-	LIGHT_BLUE("Light Blue", 0x0e, 119.53125f, +34.0081334493f, 0f),
-	LIGHT_GRAY("Light Gray", 0x0f, 159.375f, 0f, 0f);
-
-	private final String name;
-	private final int index;
-	private final int yuv;
-	private final int rgb;
-
-	Palette(final String name, final int index, final float l, final float u, final float v)
+	static
 	{
-		this.name = name;
-		this.index = index;
+		DEFAULT = new CBMPalette();
 
-		rgb = yuv2rgb(l, u, v);
-		yuv = rgb2yuv(rgb);
+		DEFAULT.setFromYUV(CBMColor.BLACK, 0.0f, 0.0f, 0.0f);
+		DEFAULT.setFromYUV(CBMColor.WHITE, 255.0f, 0.0f, 0.0f);
+		DEFAULT.setFromYUV(CBMColor.RED, 79.6875f, -13.01434923670814368f, +31.41941843272073796f);
+		DEFAULT.setFromYUV(CBMColor.CYAN, 159.375f, +13.01434923670814368f, -31.41941843272073796f);
+		DEFAULT.setFromYUV(CBMColor.PURPLE, 95.625f, +24.04738177749708281f, +24.04738177749708281f);
+		DEFAULT.setFromYUV(CBMColor.GREEN, 127.5f, -24.04738177749708281f, -24.04738177749708281f);
+		DEFAULT.setFromYUV(CBMColor.BLUE, 63.75f, +34.081334493f, 0f);
+		DEFAULT.setFromYUV(CBMColor.YELLOW, 191.25f, -34.0081334493f, 0f);
+
+		DEFAULT.setFromYUV(CBMColor.ORANGE, 95.625f, -24.04738177749708281f, +24.04738177749708281f);
+		DEFAULT.setFromYUV(CBMColor.BROWN, 63.75f, -31.41941843272073796f, +13.01434923670814368f);
+		DEFAULT.setFromYUV(CBMColor.LIGHT_RED, 127.5f, -13.01434923670814368f, +31.41941843272073796f);
+		DEFAULT.setFromYUV(CBMColor.DARK_GRAY, 79.6875f, 0f, 0f);
+		DEFAULT.setFromYUV(CBMColor.GRAY, 119.53125f, 0f, 0f);
+		DEFAULT.setFromYUV(CBMColor.LIGHT_GREEN, 191.25f, -24.04738177749708281f, -24.04738177749708281f);
+		DEFAULT.setFromYUV(CBMColor.LIGHT_BLUE, 119.53125f, +34.0081334493f, 0f);
+		DEFAULT.setFromYUV(CBMColor.LIGHT_GRAY, 159.375f, 0f, 0f);
 	}
 
-	public String getName()
+	private final int[] rgbs = new int[CBMColor.LENGTH];
+	private final int[] yuvs = new int[CBMColor.LENGTH];
+	private final Color[] colors = new Color[CBMColor.LENGTH];
+
+	public CBMPalette()
 	{
-		return name + " (0x0" + Integer.toHexString(index) + ")";
+		super();
 	}
 
-	public int getIndex()
+	public int rgb(CBMColor cbmColor)
 	{
-		return index;
+		return rgbs[cbmColor.index()];
 	}
 
-	public int yuv()
+	public int yuv(CBMColor cbmColor)
 	{
-		return yuv;
+		return yuvs[cbmColor.index()];
 	}
 
-	public int rgb()
+	public Color color(CBMColor cbmColor)
 	{
-		return rgb;
+		return colors[cbmColor.index()];
 	}
 
-	public double delta(int rgb, boolean useYUV, double channelAMult, double channelBMult, double channelCMult)
+	public void setFromRGB(CBMColor cbmColor, int rgb)
+	{
+		int index = cbmColor.index();
+
+		rgbs[index] = rgb;
+		yuvs[index] = rgb2yuv(rgbs[index]);
+		colors[index] = new Color(rgbs[index], false);
+	}
+
+	public void setFromYUV(CBMColor cbmColor, float l, float u, float v)
+	{
+		setFromRGB(cbmColor, yuv2rgb(l, u, v));
+	}
+
+	public void setFromColor(CBMColor cbmColor, Color color)
+	{
+		setFromRGB(cbmColor, color.getRGB());
+	}
+
+	public CBMColor estimateCBMColor(CBMColor[] allowedColors, int rgb, boolean useYUV, double channelA,
+			double channelB, double channelC)
 	{
 		if (useYUV)
 		{
-			return delta(yuv, rgb2yuv(rgb), channelAMult, channelBMult, channelCMult);
+			return estimateCBMColorByYUV(allowedColors, rgb2yuv(rgb), channelA, channelB, channelC);
 		}
 
-		return delta(this.rgb, rgb, channelAMult, channelBMult, channelCMult);
+		return estimateCBMColorByRGB(allowedColors, rgb, channelA, channelB, channelC);
 	}
 
-	public static Palette toPalette(int rgb, boolean useYUV, double channelA, double channelB, double channelC)
+	public int estimateIndex(CBMColor[] colors, int rgb, double channelA, double channelB, double channelC)
 	{
-		return toPalette(Palette.values(), rgb, useYUV, channelA, channelB, channelC);
-	}
-
-	public static Palette toPalette(Palette[] palette, int rgb, boolean useYUV, double channelA, double channelB,
-			double channelC)
-	{
-		return palette[indexOf(palette, rgb, useYUV, channelA, channelB, channelC)];
-	}
-
-	public static int indexOf(Palette[] palette, int rgb, boolean useYUV, double channelA, double channelB,
-			double channelC)
-	{
-		int index = -1;
+		int result = -1;
 		double minDelta = Double.MAX_VALUE;
 
-		for (int i = 0; i < palette.length; i += 1)
+		for (int i = 0; i < colors.length; i++)
 		{
-			double delta = palette[i].delta(rgb, useYUV, channelA, channelB, channelC);
+			double delta = delta(rgb, rgbs[colors[i].index()], channelA, channelB, channelC);
 
 			if (delta < minDelta)
 			{
-				index = i;
+				result = i;
 				minDelta = delta;
 			}
 		}
 
-		return index;
+		return result;
+	}
+
+	protected CBMColor estimateCBMColorByRGB(CBMColor[] allowedColors, int rgb, double channelA, double channelB,
+			double channelC)
+	{
+		CBMColor color = null;
+		double minDelta = Double.MAX_VALUE;
+
+		for (CBMColor allowedColor : allowedColors)
+		{
+			double delta = delta(rgb, rgbs[allowedColor.index()], channelA, channelB, channelC);
+
+			if (delta < minDelta)
+			{
+				color = allowedColor;
+				minDelta = delta;
+			}
+		}
+
+		return color;
+	}
+
+	protected CBMColor estimateCBMColorByYUV(CBMColor[] allowedColors, int yuv, double channelA, double channelB,
+			double channelC)
+	{
+		CBMColor color = null;
+		double minDelta = Double.MAX_VALUE;
+
+		for (CBMColor allowedColor : allowedColors)
+		{
+			double delta = delta(yuv, yuvs[allowedColor.index()], channelA, channelB, channelC);
+
+			if (delta < minDelta)
+			{
+				color = allowedColor;
+				minDelta = delta;
+			}
+		}
+
+		return color;
 	}
 
 	public static int rgb2yuv(int rgb)
@@ -133,7 +179,7 @@ public enum Palette
 		return (r << 16) + (g << 8) + b;
 	}
 
-	public static int yuv2rgb(final float l, final float u, final float v)
+	public static int yuv2rgb(float l, float u, float v)
 	{
 		return (range(0, (int) (l + (1.140f * v)), 255) << 16)
 				+ (range(0, (int) (l - (0.396f * u) - (0.581f * v)), 255) << 8)

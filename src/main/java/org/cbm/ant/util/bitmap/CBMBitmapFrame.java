@@ -19,6 +19,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.cbm.ant.util.bitmap.util.CBMBitmapToolPanel;
+import org.cbm.ant.util.bitmap.util.CBMBitmapUtils;
+
 public class CBMBitmapFrame extends JFrame
 {
     private static final long serialVersionUID = 5112467837914889513L;
@@ -59,10 +62,17 @@ public class CBMBitmapFrame extends JFrame
 
         viewMenu.setMnemonic(KeyEvent.VK_V);
 
-        viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoomInAction.class)));
-        viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoomOutAction.class)));
-        viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoomFitAction.class)));
-        viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoom100Action.class)));
+        viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapToggleSplitAction.class)));
+        viewMenu.addSeparator();
+        viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoomInSourceAction.class)));
+        viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoomOutSourceAction.class)));
+        viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoomFitSourceAction.class)));
+        viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoom100SourceAction.class)));
+        viewMenu.addSeparator();
+        viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoomInTargetAction.class)));
+        viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoomOutTargetAction.class)));
+        viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoomFitTargetAction.class)));
+        viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoom100TargetAction.class)));
 
         menuBar.add(viewMenu);
 
@@ -83,6 +93,7 @@ public class CBMBitmapFrame extends JFrame
         targetMenu.add(new JCheckBoxMenuItem(CBMBitmapUtils.get(CBMBitmapTargetSizeToolAction.class)));
         targetMenu.add(new JCheckBoxMenuItem(CBMBitmapUtils.get(CBMBitmapDitherModeToolAction.class)));
         targetMenu.add(new JCheckBoxMenuItem(CBMBitmapUtils.get(CBMBitmapContrastAndBrightnessToolAction.class)));
+        targetMenu.add(new JCheckBoxMenuItem(CBMBitmapUtils.get(CBMBitmapPaletteToolAction.class)));
 
         menuBar.add(targetMenu);
 
@@ -96,6 +107,7 @@ public class CBMBitmapFrame extends JFrame
         toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapTargetSizeToolAction.class));
         toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapDitherModeToolAction.class));
         toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapContrastAndBrightnessToolAction.class));
+        toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapPaletteToolAction.class));
 
         tabbedPane.setVisible(false);
         tabbedPane.addChangeListener(new ChangeListener()

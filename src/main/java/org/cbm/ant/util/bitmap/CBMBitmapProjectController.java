@@ -6,11 +6,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
 import org.cbm.ant.util.CBMBitmap;
 import org.cbm.ant.util.CBMBitmapDither;
 import org.cbm.ant.util.GraphicsMode;
+import org.cbm.ant.util.bitmap.util.CBMBitmapCanvas;
 
 public class CBMBitmapProjectController
 {
@@ -89,6 +91,9 @@ public class CBMBitmapProjectController
 								bitmap.setBrightness(new float[] {
 										model.getBrightnessRed(), model.getBrightnessGreen(), model.getBrightnessBlue()
 								});
+								bitmap.setAllowedColors(model.getAllowedColors());
+								bitmap.setMandatoryColors(model.getMandatoryColors());
+								bitmap.setEstimationPalette(model.createEsitmationPalette());
 
 								final BufferedImage sampleImage = bitmap.getSampleImage();
 
@@ -132,25 +137,42 @@ public class CBMBitmapProjectController
 		canvas.setZoom(Math.min(
 				Math.min(viewSize.getWidth() / image.getWidth(), viewSize.getHeight() / image.getHeight()), 2));
 
+		view.getSplitPane().setDividerLocation(0.5);
 		view.invalidate();
 		view.repaint();
 
 		recalculate();
 	}
 
-	public void setZoom(double zoom)
+	public void setSourceZoom(double zoom)
 	{
 		view.getSourceCanvas().setZoom(zoom);
 	}
 
-	public void zoom(double multiplier)
+	public void sourceZoom(double multiplier)
 	{
 		view.getSourceCanvas().zoom(multiplier, null);
 	}
 
-	public void zoomFit()
+	public void sourceZoomFit()
 	{
 		CBMBitmapCanvas canvas = view.getSourceCanvas();
+		zoomFit(canvas);
+	}
+
+	public void setTargetZoom(double zoom)
+	{
+		view.getTargetCanvas().setZoom(zoom);
+	}
+
+	public void targetZoom(double multiplier)
+	{
+		view.getTargetCanvas().zoom(multiplier, null);
+	}
+
+	public void targetZoomFit()
+	{
+		CBMBitmapCanvas canvas = view.getTargetCanvas();
 		zoomFit(canvas);
 	}
 
@@ -209,6 +231,25 @@ public class CBMBitmapProjectController
 	{
 		model.setDither(dither);
 		recalculate();
+	}
+
+	public void toggleSplit()
+	{
+		JSplitPane splitPane = view.getSplitPane();
+		int orientation = splitPane.getOrientation();
+
+		if (orientation == JSplitPane.HORIZONTAL_SPLIT)
+		{
+			splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		}
+		else
+		{
+			splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+		}
+
+		splitPane.setDividerLocation(0.5);
+		splitPane.invalidate();
+		splitPane.repaint();
 	}
 
 }
