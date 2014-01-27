@@ -81,9 +81,11 @@ public class CBMBitmapProjectController
 								}
 
 								bitmap.setAntiAlias(true);
-								bitmap.setYuv(false);
+								bitmap.setYuv(true);
 								bitmap.setDither(model.getDither());
 								bitmap.setDitherStrength(model.getDitherStrength());
+								bitmap.setEmboss(model.getEmboss());
+								bitmap.setEmbossStrength(model.getEmbossStrength());
 								bitmap.setMode(GraphicsMode.LORES);
 								bitmap.setContrast(new float[] {
 										model.getContrastRed(), model.getContrastGreen(), model.getContrastBlue()

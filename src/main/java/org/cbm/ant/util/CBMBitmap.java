@@ -5,6 +5,9 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 import java.awt.image.RescaleOp;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -123,9 +126,11 @@ public class CBMBitmap
 	private GraphicsMode mode = GraphicsMode.LORES;
 	private CBMBitmapDither dither = CBMBitmapDither.NONE;
 	private float ditherStrength = 1;
+	private CBMBitmapEmboss emboss = CBMBitmapEmboss.NONE;
+	private float embossStrength = 1;
 	private boolean antiAlias = false;
 	private boolean yuv = true;
-	private boolean drawSamplePalette = false;
+	private boolean drawSamplePalette = true;
 	private int overscan = 0;
 	private float[] contrast;
 	private float[] brightness;
@@ -137,6 +142,7 @@ public class CBMBitmap
 	private boolean updated = true;
 	private Raster raster = null;
 	private BufferedImage targetImage = null;
+	private BufferedImage scaledImage = null;
 
 	public CBMBitmap()
 	{
@@ -354,6 +360,37 @@ public class CBMBitmap
 		this.ditherStrength = ditherStrength;
 	}
 
+	public CBMBitmapEmboss getEmboss()
+	{
+		return emboss;
+	}
+
+	public void setEmboss(CBMBitmapEmboss emboss)
+	{
+		updated = true;
+
+		this.emboss = emboss;
+	}
+
+	public CBMBitmap emboss(CBMBitmapEmboss emboss)
+	{
+		setEmboss(emboss);
+
+		return this;
+	}
+
+	public float getEmbossStrength()
+	{
+		return embossStrength;
+	}
+
+	public void setEmbossStrength(float embossStrength)
+	{
+		updated = true;
+
+		this.embossStrength = embossStrength;
+	}
+
 	public boolean isAntiAlias()
 	{
 		return antiAlias;
@@ -410,9 +447,9 @@ public class CBMBitmap
 		return drawSamplePalette;
 	}
 
-	public void setSamplePalette(boolean samplePalette)
+	public void setSamplePalette(boolean drawSamplePalette)
 	{
-		this.drawSamplePalette = samplePalette;
+		this.drawSamplePalette = drawSamplePalette;
 	}
 
 	public int getOverscan()
@@ -613,7 +650,7 @@ public class CBMBitmap
 		scaledTargetWidth = targetWidth / mode.getBitPerColor();
 		scaledBlockWidth = blockWidth / mode.getBitPerColor();
 
-		BufferedImage scaledImage = createScaledImage(image, x, y, width, height, scaledTargetWidth, targetHeight,
+		scaledImage = createScaledImage(image, x, y, width, height, scaledTargetWidth, targetHeight,
 				antiAlias);
 
 		if ((contrast != null) || (brightness != null))
@@ -661,17 +698,15 @@ public class CBMBitmap
 			rescaleOp.filter(scaledImage, scaledImage);
 		}
 
-		/*
-		BufferedImage[] yuvImages = CBMPalette.rgb2yuv(scaledImage);
-
-		Kernel kernel = new Kernel(3, 3, new float[] {
-				-1.5f, 0, 0, 0, 1, 0, 0, 0, 1.5f
-		});
-		BufferedImageOp op = new ConvolveOp(kernel);
-		yuvImages[0] = op.filter(yuvImages[0], null);
-
-		scaledImage = CBMPalette.yuv2rgb(yuvImages);
-		 */
+		if (emboss != CBMBitmapEmboss.NONE) {
+			BufferedImage[] yuvImages = CBMPalette.rgb2yuv(scaledImage);
+	
+			Kernel kernel = new Kernel(3, 3, emboss.getMask(embossStrength));
+			BufferedImageOp op = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
+			yuvImages[0] = op.filter(yuvImages[0], null);
+	
+			scaledImage = CBMPalette.yuv2rgb(yuvImages);
+		}
 		
 		BufferedImage estimationImage = createImage(scaledImage, dither, ditherStrength, null, scaledBlockWidth,
 				blockHeight, mode, estimationPalette, allowedColors);

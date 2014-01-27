@@ -92,6 +92,7 @@ public class CBMBitmapFrame extends JFrame
 
         targetMenu.add(new JCheckBoxMenuItem(CBMBitmapUtils.get(CBMBitmapTargetSizeToolAction.class)));
         targetMenu.add(new JCheckBoxMenuItem(CBMBitmapUtils.get(CBMBitmapDitherModeToolAction.class)));
+        targetMenu.add(new JCheckBoxMenuItem(CBMBitmapUtils.get(CBMBitmapEmbossToolAction.class)));
         targetMenu.add(new JCheckBoxMenuItem(CBMBitmapUtils.get(CBMBitmapContrastAndBrightnessToolAction.class)));
         targetMenu.add(new JCheckBoxMenuItem(CBMBitmapUtils.get(CBMBitmapPaletteToolAction.class)));
 
@@ -106,6 +107,7 @@ public class CBMBitmapFrame extends JFrame
         toolPanel.addSeparator();
         toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapTargetSizeToolAction.class));
         toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapDitherModeToolAction.class));
+        toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapEmbossToolAction.class));
         toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapContrastAndBrightnessToolAction.class));
         toolPanel.addTool(CBMBitmapUtils.get(CBMBitmapPaletteToolAction.class));
 

@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.swing.event.EventListenerList;
 
 import org.cbm.ant.util.CBMBitmapDither;
+import org.cbm.ant.util.CBMBitmapEmboss;
 import org.cbm.ant.util.CBMColor;
 import org.cbm.ant.util.CBMPalette;
 import org.cbm.ant.util.bitmap.util.CBMBitmapUtils;
@@ -79,6 +80,8 @@ public class CBMBitmapProjectModel
 	private Integer targetHeight;
 	private CBMBitmapDither dither = CBMBitmapDither.NONE;
 	private float ditherStrength = 1;
+	private CBMBitmapEmboss emboss = CBMBitmapEmboss.NONE;
+	private float embossStrength = 1;
 	private float contrastRed = 1;
 	private float contrastGreen = 1;
 	private float contrastBlue = 1;
@@ -234,6 +237,40 @@ public class CBMBitmapProjectModel
 			this.ditherStrength = ditherStrength;
 
 			firePropertyChange("ditherStrength", old, ditherStrength);
+		}
+	}
+
+	public CBMBitmapEmboss getEmboss()
+	{
+		return emboss;
+	}
+
+	public void setEmboss(CBMBitmapEmboss emboss)
+	{
+		if (!CBMBitmapUtils.equals(this.emboss, emboss))
+		{
+			Object old = this.emboss;
+
+			this.emboss = emboss;
+
+			firePropertyChange("emboss", old, emboss);
+		}
+	}
+
+	public float getEmbossStrength()
+	{
+		return embossStrength;
+	}
+
+	public void setEmbossStrength(float embossStrength)
+	{
+		if (!CBMBitmapUtils.equals(this.embossStrength, embossStrength))
+		{
+			Object old = this.embossStrength;
+
+			this.embossStrength = embossStrength;
+
+			firePropertyChange("embossStrength", old, embossStrength);
 		}
 	}
 
