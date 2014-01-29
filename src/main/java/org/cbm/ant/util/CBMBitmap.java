@@ -16,8 +16,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class CBMBitmap
 {
@@ -703,7 +705,7 @@ public class CBMBitmap
 	{
 		BufferedImage targetImage = getTargetImage();
 		int height = targetHeight;
-		int samplePaletteHeight = (targetWidth / allowedColors.length) + 1;
+		int samplePaletteHeight = Math.min(targetHeight / 8, 32);
 
 		if (drawSamplePalette)
 		{
@@ -715,6 +717,8 @@ public class CBMBitmap
 
 		g.drawImage(targetImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_FAST), 0, 0, null);
 
+		Set<CBMColor> usedColors = new HashSet<CBMColor>();
+
 		for (int y = 0; y < height; y += 1)
 		{
 			for (int x = 0; x < targetWidth; x += 1)
@@ -722,18 +726,24 @@ public class CBMBitmap
 				int value = sampleImage.getRGB(x, y);
 				CBMColor color = estimationPalette.estimateCBMColor(CBMColor.values(), colorSpace, value);
 
+				usedColors.add(color);
+				
 				sampleImage.setRGB(x, y, samplePalette.get(color, ColorSpace.RGB));
 			}
 		}
 
 		if (drawSamplePalette)
 		{
-			for (int i = 0; i < allowedColors.length; i += 1)
+			List<CBMColor> colors = new ArrayList<CBMColor>(usedColors);
+			
+			Collections.sort(colors);
+			
+			for (int i = 0; i < colors.size(); i += 1)
 			{
-				int x = (targetWidth * i) / allowedColors.length;
+				int x = (targetWidth * i) / colors.size();
 
-				g.setColor(new Color(samplePalette.get(CBMColor.toCBMColor(i), ColorSpace.RGB)));
-				g.fillRect(x, targetHeight, ((targetWidth * (i + 1)) / allowedColors.length) - x, samplePaletteHeight);
+				g.setColor(new Color(samplePalette.get(colors.get(i), ColorSpace.RGB)));
+				g.fillRect(x, targetHeight, ((targetWidth * (i + 1)) / colors.size()) - x, samplePaletteHeight);
 			}
 		}
 

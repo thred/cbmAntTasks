@@ -76,16 +76,6 @@ public class DataSprite implements DataCommand
 		bitmap.setDither(dither);
 	}
 
-	public void setAntiAlias(boolean antiAlias)
-	{
-		bitmap.setAntiAlias(antiAlias);
-	}
-
-	public void setYuv(boolean yuv)
-	{
-		bitmap.setYuv(yuv);
-	}
-
 	public void setOverscan(int overscan)
 	{
 		bitmap.setOverscan(overscan);

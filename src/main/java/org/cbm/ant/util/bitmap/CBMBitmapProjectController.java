@@ -84,7 +84,7 @@ public class CBMBitmapProjectController
 								bitmap.setDitherStrength(model.getDitherStrength());
 								bitmap.setEmboss(model.getEmboss());
 								bitmap.setEmbossStrength(model.getEmbossStrength());
-								bitmap.setMode(GraphicsMode.LORES);
+								bitmap.setMode(model.getGraphicsMode());
 								bitmap.setContrast(new float[] {
 										model.getContrastRed(), model.getContrastGreen(), model.getContrastBlue()
 								});

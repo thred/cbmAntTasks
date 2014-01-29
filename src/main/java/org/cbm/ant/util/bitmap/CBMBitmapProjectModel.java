@@ -16,6 +16,7 @@ import org.cbm.ant.util.CBMBitmapEmboss;
 import org.cbm.ant.util.CBMColor;
 import org.cbm.ant.util.CBMPalette;
 import org.cbm.ant.util.ColorSpace;
+import org.cbm.ant.util.GraphicsMode;
 import org.cbm.ant.util.bitmap.util.CBMBitmapUtils;
 
 public class CBMBitmapProjectModel
@@ -90,6 +91,7 @@ public class CBMBitmapProjectModel
 	private float brightnessGreen = 0;
 	private float brightnessBlue = 0;
 	private ColorSpace colorSpace = ColorSpace.RGB;
+	private GraphicsMode graphicsMode = GraphicsMode.LORES;
 
 	public CBMBitmapProjectModel()
 	{
@@ -460,6 +462,23 @@ public class CBMBitmapProjectModel
 			this.colorSpace = colorSpace;
 
 			firePropertyChange("colorspace", old, colorSpace);
+		}
+	}
+
+	public GraphicsMode getGraphicsMode()
+	{
+		return graphicsMode;
+	}
+
+	public void setGraphicsMode(GraphicsMode graphicsMode)
+	{
+		if (!CBMBitmapUtils.equals(this.graphicsMode, graphicsMode))
+		{
+			Object old = this.graphicsMode;
+
+			this.graphicsMode = graphicsMode;
+
+			firePropertyChange("graphicsmode", old, graphicsMode);
 		}
 	}
 
