@@ -1,4 +1,4 @@
-package org.cbm.ant.util.bitmap;
+package org.cbm.ant.util.bitmap.tool;
 
 import java.awt.FlowLayout;
 import java.beans.PropertyChangeEvent;
@@ -6,6 +6,10 @@ import java.beans.PropertyChangeEvent;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+
+import org.cbm.ant.util.bitmap.CBMBitmapProjectController;
+import org.cbm.ant.util.bitmap.CBMBitmapProjectModel;
+import org.cbm.ant.util.bitmap.CBMBitmapUtility;
 
 public abstract class AbstractCBMBitmapTool extends JPanel
 {
@@ -27,7 +31,7 @@ public abstract class AbstractCBMBitmapTool extends JPanel
 
     public Icon getToolIcon()
     {
-        return new ImageIcon(getClass().getResource(getToolIconResourceName()));
+        return new ImageIcon(CBMBitmapUtility.class.getResource(getToolIconResourceName()));
     }
 
     protected String getToolIconResourceName()

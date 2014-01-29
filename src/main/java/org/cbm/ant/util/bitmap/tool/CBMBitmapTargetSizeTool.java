@@ -1,4 +1,4 @@
-package org.cbm.ant.util.bitmap;
+package org.cbm.ant.util.bitmap.tool;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +14,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import org.cbm.ant.util.bitmap.CBMBitmapProjectController;
+import org.cbm.ant.util.bitmap.CBMBitmapProjectModel;
 import org.cbm.ant.util.bitmap.util.CBMBitmapUtils;
 
 public class CBMBitmapTargetSizeTool extends AbstractCBMBitmapTool implements ActionListener

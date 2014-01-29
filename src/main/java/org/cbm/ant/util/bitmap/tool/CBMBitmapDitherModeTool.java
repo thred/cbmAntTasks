@@ -1,4 +1,4 @@
-package org.cbm.ant.util.bitmap;
+package org.cbm.ant.util.bitmap.tool;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +9,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.cbm.ant.util.CBMBitmapDither;
+import org.cbm.ant.util.bitmap.CBMBitmapProjectController;
+import org.cbm.ant.util.bitmap.CBMBitmapProjectModel;
 import org.cbm.ant.util.bitmap.util.CBMBitmapSlider;
 import org.cbm.ant.util.bitmap.util.CBMBitmapUtils;
 

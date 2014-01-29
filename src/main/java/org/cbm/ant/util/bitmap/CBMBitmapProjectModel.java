@@ -15,6 +15,7 @@ import org.cbm.ant.util.CBMBitmapDither;
 import org.cbm.ant.util.CBMBitmapEmboss;
 import org.cbm.ant.util.CBMColor;
 import org.cbm.ant.util.CBMPalette;
+import org.cbm.ant.util.ColorSpace;
 import org.cbm.ant.util.bitmap.util.CBMBitmapUtils;
 
 public class CBMBitmapProjectModel
@@ -88,6 +89,7 @@ public class CBMBitmapProjectModel
 	private float brightnessRed = 0;
 	private float brightnessGreen = 0;
 	private float brightnessBlue = 0;
+	private ColorSpace colorSpace = ColorSpace.RGB;
 
 	public CBMBitmapProjectModel()
 	{
@@ -442,6 +444,23 @@ public class CBMBitmapProjectModel
 		}
 
 		return palette;
+	}
+
+	public ColorSpace getColorSpace()
+	{
+		return colorSpace;
+	}
+
+	public void setColorSpace(ColorSpace colorSpace)
+	{
+		if (!CBMBitmapUtils.equals(this.colorSpace, colorSpace))
+		{
+			Object old = this.colorSpace;
+
+			this.colorSpace = colorSpace;
+
+			firePropertyChange("colorspace", old, colorSpace);
+		}
 	}
 
 }

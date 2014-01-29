@@ -128,8 +128,6 @@ public class CBMBitmap
 	private float ditherStrength = 1;
 	private CBMBitmapEmboss emboss = CBMBitmapEmboss.NONE;
 	private float embossStrength = 1;
-	private boolean antiAlias = false;
-	private boolean yuv = true;
 	private boolean drawSamplePalette = true;
 	private int overscan = 0;
 	private float[] contrast;
@@ -138,6 +136,7 @@ public class CBMBitmap
 	private CBMColor[] mandatoryColors = new CBMColor[0];
 	private CBMPalette estimationPalette = CBMPalette.DEFAULT;
 	private CBMPalette samplePalette = CBMPalette.DEFAULT;
+	private ColorSpace colorSpace = ColorSpace.LUV;
 
 	private boolean updated = true;
 	private Raster raster = null;
@@ -391,57 +390,6 @@ public class CBMBitmap
 		this.embossStrength = embossStrength;
 	}
 
-	public boolean isAntiAlias()
-	{
-		return antiAlias;
-	}
-
-	public void setAntiAlias(boolean antiAlias)
-	{
-		updated = true;
-
-		this.antiAlias = antiAlias;
-	}
-
-	public CBMBitmap antiAlias()
-	{
-		antiAlias = true;
-
-		updated = true;
-
-		return this;
-	}
-
-	public boolean isYuv()
-	{
-		return yuv;
-	}
-
-	public void setYuv(boolean yuv)
-	{
-		updated = true;
-
-		this.yuv = yuv;
-	}
-
-	public CBMBitmap useYUV()
-	{
-		yuv = true;
-
-		updated = true;
-
-		return this;
-	}
-
-	public CBMBitmap useRGB()
-	{
-		yuv = false;
-
-		updated = true;
-
-		return this;
-	}
-
 	public boolean isSamplePalette()
 	{
 		return drawSamplePalette;
@@ -609,6 +557,25 @@ public class CBMBitmap
 		this.samplePalette = samplePalette;
 	}
 
+	public ColorSpace getColorSpace()
+	{
+		return colorSpace;
+	}
+
+	public void setColorSpace(ColorSpace colorSpace)
+	{
+		updated = true;
+
+		this.colorSpace = colorSpace;
+	}
+
+	public CBMBitmap colorSpace(ColorSpace colorSpace)
+	{
+		setColorSpace(colorSpace);
+
+		return this;
+	}
+
 	protected void update()
 	{
 		if (!updated)
@@ -650,8 +617,7 @@ public class CBMBitmap
 		scaledTargetWidth = targetWidth / mode.getBitPerColor();
 		scaledBlockWidth = blockWidth / mode.getBitPerColor();
 
-		scaledImage = createScaledImage(image, x, y, width, height, scaledTargetWidth, targetHeight,
-				antiAlias);
+		scaledImage = createScaledImage(image, x, y, width, height, scaledTargetWidth, targetHeight);
 
 		if ((contrast != null) || (brightness != null))
 		{
@@ -698,22 +664,23 @@ public class CBMBitmap
 			rescaleOp.filter(scaledImage, scaledImage);
 		}
 
-		if (emboss != CBMBitmapEmboss.NONE) {
+		if (emboss != CBMBitmapEmboss.NONE)
+		{
 			BufferedImage[] yuvImages = CBMPalette.rgb2yuv(scaledImage);
-	
+
 			Kernel kernel = new Kernel(3, 3, emboss.getMask(embossStrength));
 			BufferedImageOp op = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
 			yuvImages[0] = op.filter(yuvImages[0], null);
-	
+
 			scaledImage = CBMPalette.yuv2rgb(yuvImages);
 		}
-		
-		BufferedImage estimationImage = createImage(scaledImage, dither, ditherStrength, null, scaledBlockWidth,
-				blockHeight, mode, estimationPalette, allowedColors);
+
+		BufferedImage estimationImage = createImage(scaledImage, dither, ditherStrength, colorSpace, null,
+				scaledBlockWidth, blockHeight, mode, estimationPalette, allowedColors);
 
 		raster = createRaster(estimationImage, estimationPalette, Arrays.asList(mandatoryColors), overscan);
-		targetImage = createImage(scaledImage, dither, ditherStrength, raster, scaledBlockWidth, blockHeight, mode,
-				estimationPalette, allowedColors);
+		targetImage = createImage(scaledImage, dither, ditherStrength, colorSpace, raster, scaledBlockWidth,
+				blockHeight, mode, estimationPalette, allowedColors);
 
 		updated = false;
 	}
@@ -752,10 +719,10 @@ public class CBMBitmap
 		{
 			for (int x = 0; x < targetWidth; x += 1)
 			{
-				int rgb = sampleImage.getRGB(x, y);
-				CBMColor color = estimationPalette.estimateCBMColor(CBMColor.values(), rgb, false);
+				int value = sampleImage.getRGB(x, y);
+				CBMColor color = estimationPalette.estimateCBMColor(CBMColor.values(), colorSpace, value);
 
-				sampleImage.setRGB(x, y, samplePalette.rgb(color));
+				sampleImage.setRGB(x, y, samplePalette.get(color, ColorSpace.RGB));
 			}
 		}
 
@@ -765,7 +732,7 @@ public class CBMBitmap
 			{
 				int x = (targetWidth * i) / allowedColors.length;
 
-				g.setColor(new Color(samplePalette.rgb(CBMColor.toCBMColor(i))));
+				g.setColor(new Color(samplePalette.get(CBMColor.toCBMColor(i), ColorSpace.RGB)));
 				g.fillRect(x, targetHeight, ((targetWidth * (i + 1)) / allowedColors.length) - x, samplePaletteHeight);
 			}
 		}
@@ -814,8 +781,8 @@ public class CBMBitmap
 
 					for (int innerX = x; innerX < (x + mode.getWidthPerChar()); innerX += 1)
 					{
-						int index = estimationPalette
-								.estimateIndex(colors, targetImage.getRGB(innerX, innerY));
+						int index = estimationPalette.estimateIndex(colors, colorSpace,
+								targetImage.getRGB(innerX, innerY));
 
 						if (mode == GraphicsMode.LORES)
 						{
@@ -868,7 +835,8 @@ public class CBMBitmap
 					{
 						for (int byteX = innerX; byteX < (innerX + (8 / mode.getBitPerColor())); byteX += 1)
 						{
-							int index = estimationPalette.estimateIndex(colors, targetImage.getRGB(byteX, innerY));
+							int index = estimationPalette.estimateIndex(colors, colorSpace,
+									targetImage.getRGB(byteX, innerY));
 
 							if (mode == GraphicsMode.LORES)
 							{
@@ -1064,8 +1032,8 @@ public class CBMBitmap
 					continue;
 				}
 
-				CBMColor color = estimationPalette.estimateCBMColor(CBMColor.values(),
-						image.getRGB(x + i, y + j) & 0x00ffffff, false);
+				CBMColor color = estimationPalette.estimateCBMColor(CBMColor.values(), colorSpace,
+						image.getRGB(x + i, y + j) & 0x00ffffff);
 				Entry entry = counts.get(color);
 
 				if (entry == null)
@@ -1097,40 +1065,29 @@ public class CBMBitmap
 	}
 
 	private static BufferedImage createScaledImage(BufferedImage image, int x, int y, int width, int height,
-			int scaledTargetWidth, int targetHeight, boolean antiAlias)
+			int scaledTargetWidth, int targetHeight)
 	{
 		BufferedImage scaledImage = new BufferedImage(scaledTargetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = scaledImage.createGraphics();
 
-		if (antiAlias)
-		{
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		}
-		else
-		{
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		}
-
+		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		g.drawImage(image, 0, 0, scaledTargetWidth, targetHeight, x, y, x + width, y + height, null);
 
 		return scaledImage;
 	}
 
 	private static BufferedImage createImage(BufferedImage image, CBMBitmapDither dither, float ditherStrength,
-			Raster raster, int blockWidth, int blockHeight, GraphicsMode mode, CBMPalette estimationPalette,
-			CBMColor... allowedPalette)
+			ColorSpace colorSpace, Raster raster, int blockWidth, int blockHeight, GraphicsMode mode,
+			CBMPalette estimationPalette, CBMColor... allowedPalette)
 	{
-		BufferedImage source = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
-
-		source.getGraphics().drawImage(image, 0, 0, null);
-
+		BufferedImage source = colorSpace.convertTo(image);
 		BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
 
 		for (int y = 0; y < source.getHeight(); y += 1)
 		{
 			for (int x = 0; x < source.getWidth(); x += 1)
 			{
-				int sourceRGB = source.getRGB(x, y);
+				int sourceValue = source.getRGB(x, y);
 				CBMColor targetColor = null;
 
 				if (raster != null)
@@ -1139,25 +1096,25 @@ public class CBMBitmap
 
 					if ((possiblePalette == null) || (possiblePalette.length < mode.getNumberOfColors()))
 					{
-						targetColor = estimationPalette.estimateCBMColor(allowedPalette, sourceRGB, true);
+						targetColor = estimationPalette.estimateCBMColor(allowedPalette, colorSpace, sourceValue);
 
 						raster.add(x / blockWidth, y / blockHeight, targetColor);
 					}
 					else
 					{
-						targetColor = estimationPalette.estimateCBMColor(possiblePalette, sourceRGB, true);
+						targetColor = estimationPalette.estimateCBMColor(possiblePalette, colorSpace, sourceValue);
 					}
 				}
 				else
 				{
-					targetColor = estimationPalette.estimateCBMColor(allowedPalette, sourceRGB, true);
+					targetColor = estimationPalette.estimateCBMColor(allowedPalette, colorSpace, sourceValue);
 				}
 
-				int targetRGB = estimationPalette.rgb(targetColor);
+				int targetValue = estimationPalette.get(targetColor, colorSpace);
 
-				result.setRGB(x, y, targetRGB);
+				result.setRGB(x, y, targetValue);
 
-				dither.getStrategy().execute(x, y, sourceRGB, targetRGB, ditherStrength, source);
+				dither.getStrategy().execute(x, y, sourceValue, targetValue, ditherStrength, source);
 			}
 		}
 

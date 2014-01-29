@@ -80,8 +80,6 @@ public class CBMBitmapProjectController
 									bitmap.setTargetHeight(model.getTargetHeight());
 								}
 
-								bitmap.setAntiAlias(true);
-								bitmap.setYuv(true);
 								bitmap.setDither(model.getDither());
 								bitmap.setDitherStrength(model.getDitherStrength());
 								bitmap.setEmboss(model.getEmboss());
@@ -96,6 +94,7 @@ public class CBMBitmapProjectController
 								bitmap.setAllowedColors(model.getAllowedColors());
 								bitmap.setMandatoryColors(model.getMandatoryColors());
 								bitmap.setEstimationPalette(model.createEsitmationPalette());
+								bitmap.setColorSpace(model.getColorSpace());
 
 								final BufferedImage sampleImage = bitmap.getSampleImage();
 

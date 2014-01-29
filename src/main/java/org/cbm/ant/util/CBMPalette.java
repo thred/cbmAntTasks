@@ -21,27 +21,44 @@ public class CBMPalette
 	{
 		DEFAULT = new CBMPalette();
 
-		DEFAULT.setFromYUV(CBMColor.BLACK, 0.0f, 0.0f, 0.0f);
-		DEFAULT.setFromYUV(CBMColor.WHITE, 255.0f, 0.0f, 0.0f);
-		DEFAULT.setFromYUV(CBMColor.RED, 79.6875f, -13.01434923670814368f, +31.41941843272073796f);
-		DEFAULT.setFromYUV(CBMColor.CYAN, 159.375f, +13.01434923670814368f, -31.41941843272073796f);
-		DEFAULT.setFromYUV(CBMColor.PURPLE, 95.625f, +24.04738177749708281f, +24.04738177749708281f);
-		DEFAULT.setFromYUV(CBMColor.GREEN, 127.5f, -24.04738177749708281f, -24.04738177749708281f);
-		DEFAULT.setFromYUV(CBMColor.BLUE, 63.75f, +34.081334493f, 0f);
-		DEFAULT.setFromYUV(CBMColor.YELLOW, 191.25f, -34.0081334493f, 0f);
+		//		DEFAULT.setFromYUV(CBMColor.BLACK, 0.0f, 0.0f, 0.0f);
+		//		DEFAULT.setFromYUV(CBMColor.WHITE, 255.0f, 0.0f, 0.0f);
+		//		DEFAULT.setFromYUV(CBMColor.RED, 79.6875f, -13.01434923670814368f, +31.41941843272073796f);
+		//		DEFAULT.setFromYUV(CBMColor.CYAN, 159.375f, +13.01434923670814368f, -31.41941843272073796f);
+		//		DEFAULT.setFromYUV(CBMColor.PURPLE, 95.625f, +24.04738177749708281f, +24.04738177749708281f);
+		//		DEFAULT.setFromYUV(CBMColor.GREEN, 127.5f, -24.04738177749708281f, -24.04738177749708281f);
+		//		DEFAULT.setFromYUV(CBMColor.BLUE, 63.75f, +34.081334493f, 0f);
+		//		DEFAULT.setFromYUV(CBMColor.YELLOW, 191.25f, -34.0081334493f, 0f);
+		//
+		//		DEFAULT.setFromYUV(CBMColor.ORANGE, 95.625f, -24.04738177749708281f, +24.04738177749708281f);
+		//		DEFAULT.setFromYUV(CBMColor.BROWN, 63.75f, -31.41941843272073796f, +13.01434923670814368f);
+		//		DEFAULT.setFromYUV(CBMColor.LIGHT_RED, 127.5f, -13.01434923670814368f, +31.41941843272073796f);
+		//		DEFAULT.setFromYUV(CBMColor.DARK_GRAY, 79.6875f, 0f, 0f);
+		//		DEFAULT.setFromYUV(CBMColor.GRAY, 119.53125f, 0f, 0f);
+		//		DEFAULT.setFromYUV(CBMColor.LIGHT_GREEN, 191.25f, -24.04738177749708281f, -24.04738177749708281f);
+		//		DEFAULT.setFromYUV(CBMColor.LIGHT_BLUE, 119.53125f, +34.0081334493f, 0f);
+		//		DEFAULT.setFromYUV(CBMColor.LIGHT_GRAY, 159.375f, 0f, 0f);
 
-		DEFAULT.setFromYUV(CBMColor.ORANGE, 95.625f, -24.04738177749708281f, +24.04738177749708281f);
-		DEFAULT.setFromYUV(CBMColor.BROWN, 63.75f, -31.41941843272073796f, +13.01434923670814368f);
-		DEFAULT.setFromYUV(CBMColor.LIGHT_RED, 127.5f, -13.01434923670814368f, +31.41941843272073796f);
-		DEFAULT.setFromYUV(CBMColor.DARK_GRAY, 79.6875f, 0f, 0f);
-		DEFAULT.setFromYUV(CBMColor.GRAY, 119.53125f, 0f, 0f);
-		DEFAULT.setFromYUV(CBMColor.LIGHT_GREEN, 191.25f, -24.04738177749708281f, -24.04738177749708281f);
-		DEFAULT.setFromYUV(CBMColor.LIGHT_BLUE, 119.53125f, +34.0081334493f, 0f);
-		DEFAULT.setFromYUV(CBMColor.LIGHT_GRAY, 159.375f, 0f, 0f);
+		DEFAULT.setFromRGB(CBMColor.BLACK, 0x000000);
+		DEFAULT.setFromRGB(CBMColor.WHITE, 0xffffff);
+		DEFAULT.setFromRGB(CBMColor.RED, 0x68372b);
+		DEFAULT.setFromRGB(CBMColor.CYAN, 0x70a4b2);
+		DEFAULT.setFromRGB(CBMColor.PURPLE, 0x6f3d86);
+		DEFAULT.setFromRGB(CBMColor.GREEN, 0x588d43);
+		DEFAULT.setFromRGB(CBMColor.BLUE, 0x352879);
+		DEFAULT.setFromRGB(CBMColor.YELLOW, 0xb8c76f);
+
+		DEFAULT.setFromRGB(CBMColor.ORANGE, 0x6f4f25);
+		DEFAULT.setFromRGB(CBMColor.BROWN, 0x433900);
+		DEFAULT.setFromRGB(CBMColor.LIGHT_RED, 0x9a6759);
+		DEFAULT.setFromRGB(CBMColor.DARK_GRAY, 0x444444);
+		DEFAULT.setFromRGB(CBMColor.GRAY, 0x6c6c6c);
+		DEFAULT.setFromRGB(CBMColor.LIGHT_GREEN, 0x9ad284);
+		DEFAULT.setFromRGB(CBMColor.LIGHT_BLUE, 0x6c5eb5);
+		DEFAULT.setFromRGB(CBMColor.LIGHT_GRAY, 0x959595);
 	}
 
-	private final int[] rgbs = new int[CBMColor.LENGTH];
-	private final int[] yuvs = new int[CBMColor.LENGTH];
+	private final int[][] values = new int[CBMColor.LENGTH][ColorSpace.values().length];
 	private final Color[] colors = new Color[CBMColor.LENGTH];
 
 	public CBMPalette()
@@ -49,14 +66,9 @@ public class CBMPalette
 		super();
 	}
 
-	public int rgb(CBMColor cbmColor)
+	public int get(CBMColor cbmColor, ColorSpace type)
 	{
-		return rgbs[cbmColor.index()];
-	}
-
-	public int yuv(CBMColor cbmColor)
-	{
-		return yuvs[cbmColor.index()];
+		return values[cbmColor.index()][type.ordinal()];
 	}
 
 	public Color color(CBMColor cbmColor)
@@ -68,9 +80,12 @@ public class CBMPalette
 	{
 		int index = cbmColor.index();
 
-		rgbs[index] = rgb;
-		yuvs[index] = rgb2yuv(rgbs[index]);
-		colors[index] = new Color(rgbs[index], false);
+		for (ColorSpace type : ColorSpace.values())
+		{
+			values[index][type.ordinal()] = type.convertTo(rgb);
+		}
+
+		colors[index] = new Color(values[index][ColorSpace.RGB.ordinal()], false);
 	}
 
 	public void setFromYUV(CBMColor cbmColor, float l, float u, float v)
@@ -83,24 +98,14 @@ public class CBMPalette
 		setFromRGB(cbmColor, color.getRGB());
 	}
 
-	public CBMColor estimateCBMColor(CBMColor[] allowedColors, int rgb, boolean useYUV)
-	{
-		if (useYUV)
-		{
-			return estimateCBMColorByYUV(allowedColors, rgb2yuv(rgb));
-		}
-
-		return estimateCBMColorByRGB(allowedColors, rgb);
-	}
-
-	public int estimateIndex(CBMColor[] colors, int rgb)
+	public int estimateIndex(CBMColor[] colors, ColorSpace colorSpace, int value)
 	{
 		int result = -1;
 		double minDelta = Double.MAX_VALUE;
 
 		for (int i = 0; i < colors.length; i++)
 		{
-			double delta = delta(rgb, rgbs[colors[i].index()]);
+			double delta = delta(value, values[colors[i].index()][colorSpace.ordinal()]);
 
 			if (delta < minDelta)
 			{
@@ -112,33 +117,14 @@ public class CBMPalette
 		return result;
 	}
 
-	protected CBMColor estimateCBMColorByRGB(CBMColor[] allowedColors, int rgb)
+	public CBMColor estimateCBMColor(CBMColor[] allowedColors, ColorSpace colorSpace, int value)
 	{
 		CBMColor color = null;
 		double minDelta = Double.MAX_VALUE;
 
 		for (CBMColor allowedColor : allowedColors)
 		{
-			double delta = delta(rgb, rgbs[allowedColor.index()]);
-
-			if (delta < minDelta)
-			{
-				color = allowedColor;
-				minDelta = delta;
-			}
-		}
-
-		return color;
-	}
-
-	protected CBMColor estimateCBMColorByYUV(CBMColor[] allowedColors, int yuv)
-	{
-		CBMColor color = null;
-		double minDelta = Double.MAX_VALUE;
-
-		for (CBMColor allowedColor : allowedColors)
-		{
-			double delta = delta(yuv, yuvs[allowedColor.index()]);
+			double delta = delta(value, values[allowedColor.index()][colorSpace.ordinal()]);
 
 			if (delta < minDelta)
 			{
@@ -236,18 +222,13 @@ public class CBMPalette
 		return image;
 	}
 
-	public static double delta(int left, int right)
+	public static double delta(int leftRGB, int rightRGB)
 	{
-		int leftChannelA = (left >> 16) & 0xff;
-		int leftChannelB = (left >> 8) & 0xff;
-		int leftChannelC = left & 0xff;
-		int rightChannelA = (right >> 16) & 0xff;
-		int rightChannelB = (right >> 8) & 0xff;
-		int rightChannelC = right & 0xff;
+		int a = ((rightRGB >> 16) & 0xff) - ((leftRGB >> 16) & 0xff);
+		int b = ((rightRGB >> 8) & 0xff) - ((leftRGB >> 8) & 0xff);
+		int c = (rightRGB & 0xff) - (leftRGB & 0xff);
 
-		return ((double) Math.abs(rightChannelA - leftChannelA) / 256)
-				+ ((double) Math.abs(rightChannelB - leftChannelB) / 256)
-				+ ((double) Math.abs(rightChannelC - leftChannelC) / 256);
+		return Math.sqrt((a * a) + (b * b) + (c * c));
 	}
 
 	public static int range(final int min, final int value, final int max)

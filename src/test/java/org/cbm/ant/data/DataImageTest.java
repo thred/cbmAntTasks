@@ -16,7 +16,7 @@ public class DataImageTest
 		DataImage d = new DataImage();
 
 		save("testImageA.cbm.lores.dither.png", new CBMBitmap().image(load("testImageA.png")).targetSize(320, 320)
-				.antiAlias().lores());
+				.lores());
 
 		/*
 		d.setTargetWidth(320);

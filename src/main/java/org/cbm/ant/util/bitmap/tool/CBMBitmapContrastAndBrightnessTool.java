@@ -1,4 +1,4 @@
-package org.cbm.ant.util.bitmap;
+package org.cbm.ant.util.bitmap.tool;
 
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.cbm.ant.util.bitmap.CBMBitmapProjectController;
+import org.cbm.ant.util.bitmap.CBMBitmapProjectModel;
 import org.cbm.ant.util.bitmap.util.CBMBitmapSlider;
 import org.cbm.ant.util.bitmap.util.CBMBitmapUtils;
 import org.cbm.ant.util.bitmap.util.GBC;

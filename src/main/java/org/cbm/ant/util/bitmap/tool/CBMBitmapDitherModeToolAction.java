@@ -1,4 +1,4 @@
-package org.cbm.ant.util.bitmap;
+package org.cbm.ant.util.bitmap.tool;
 
 public class CBMBitmapDitherModeToolAction extends AbstractCBMBitmapToolAction
 {

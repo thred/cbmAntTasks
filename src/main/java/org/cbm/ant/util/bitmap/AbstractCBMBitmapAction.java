@@ -18,7 +18,7 @@ public abstract class AbstractCBMBitmapAction extends AbstractAction
 
         this.id = id;
 
-        URL resource = getClass().getResource(id + ".png");
+        URL resource = CBMBitmapUtility.class.getResource(id + ".png");
 
         if (resource != null)
         {

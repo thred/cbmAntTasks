@@ -14,11 +14,11 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
-import org.cbm.ant.util.bitmap.AbstractCBMBitmapTool;
-import org.cbm.ant.util.bitmap.AbstractCBMBitmapToolAction;
 import org.cbm.ant.util.bitmap.CBMBitmapProjectController;
 import org.cbm.ant.util.bitmap.CBMBitmapProjectModel;
 import org.cbm.ant.util.bitmap.CBMBitmapUtility;
+import org.cbm.ant.util.bitmap.tool.AbstractCBMBitmapTool;
+import org.cbm.ant.util.bitmap.tool.AbstractCBMBitmapToolAction;
 
 public class CBMBitmapToolPanel extends JPanel
 {

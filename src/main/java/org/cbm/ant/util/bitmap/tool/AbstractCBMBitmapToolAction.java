@@ -1,6 +1,9 @@
-package org.cbm.ant.util.bitmap;
+package org.cbm.ant.util.bitmap.tool;
 
 import java.awt.event.ActionEvent;
+
+import org.cbm.ant.util.bitmap.AbstractCBMBitmapAction;
+import org.cbm.ant.util.bitmap.CBMBitmapUtility;
 
 public abstract class AbstractCBMBitmapToolAction extends AbstractCBMBitmapAction
 {
