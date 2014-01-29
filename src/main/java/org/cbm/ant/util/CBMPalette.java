@@ -228,7 +228,7 @@ public class CBMPalette
 		int b = ((rightRGB >> 8) & 0xff) - ((leftRGB >> 8) & 0xff);
 		int c = (rightRGB & 0xff) - (leftRGB & 0xff);
 
-		return Math.sqrt((a * a) + (b * b) + (c * c));
+		return ((a * a) + (b * b) + (c * c));
 	}
 
 	public static int range(final int min, final int value, final int max)
