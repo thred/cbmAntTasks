@@ -55,11 +55,18 @@ public class CBMBitmapErrorDiffusionDitherStrategy extends AbstractCBMBitmapDith
 	}
 
 	@Override
-	public void execute(int x, int y, int sourceRGB, int targetRGB, float strength, BufferedImage source)
+	public CBMColor execute(BufferedImage image, int x, int y, CBMPalette palette, ColorSpace colorSpace,
+			CBMColor[] allowedColors, float strength)
 	{
+		int sourceValue = image.getRGB(x, y);
+		CBMColor targetColor = palette.estimateCBMColor(allowedColors, colorSpace, sourceValue);
+		int targetValue = palette.get(targetColor, colorSpace);
+
+		image.setRGB(x, y, targetValue);
+
 		int[] error = {
-				((sourceRGB >> 16) & 0xff) - ((targetRGB >> 16) & 0xff),
-				((sourceRGB >> 8) & 0xff) - ((targetRGB >> 8) & 0xff), (sourceRGB & 0xff) - (targetRGB & 0xff)
+				((sourceValue >> 16) & 0xff) - ((targetValue >> 16) & 0xff),
+				((sourceValue >> 8) & 0xff) - ((targetValue >> 8) & 0xff), (sourceValue & 0xff) - (targetValue & 0xff)
 		};
 
 		error[0] *= strength;
@@ -87,12 +94,14 @@ public class CBMBitmapErrorDiffusionDitherStrategy extends AbstractCBMBitmapDith
 				int targetX = (x - centerX) + checkX;
 				int targetY = (y - centerY) + checkY;
 
-				if ((targetX >= 0) && (targetY >= 0) && (targetX < source.getWidth()) && (targetY < source.getHeight()))
+				if ((targetX >= 0) && (targetY >= 0) && (targetX < image.getWidth()) && (targetY < image.getHeight()))
 				{
-					source.setRGB(targetX, targetY, apply(source.getRGB(targetX, targetY), error, (double) v / divisor));
+					image.setRGB(targetX, targetY, apply(image.getRGB(targetX, targetY), error, (double) v / divisor));
 				}
 			}
 		}
+		
+		return targetColor;
 	}
 
 	private static int apply(int rgb, int[] error, double coefficient)

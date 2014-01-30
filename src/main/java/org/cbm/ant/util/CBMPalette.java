@@ -2,6 +2,7 @@ package org.cbm.ant.util;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 /**
  * The VIC II Color Palette<br/>
@@ -58,17 +59,35 @@ public class CBMPalette
 		DEFAULT.setFromRGB(CBMColor.LIGHT_GRAY, 0x959595);
 	}
 
-	private final int[][] values = new int[CBMColor.LENGTH][ColorSpace.values().length];
+	private final int[][] values = new int[ColorSpace.values().length][CBMColor.LENGTH];
+	private final int[][] thresholds = new int[ColorSpace.values().length][3];
 	private final Color[] colors = new Color[CBMColor.LENGTH];
+
+	private boolean updateThresholds = true;
 
 	public CBMPalette()
 	{
 		super();
 	}
 
-	public int get(CBMColor cbmColor, ColorSpace type)
+	public int get(CBMColor cbmColor, ColorSpace colorSpace)
 	{
-		return values[cbmColor.index()][type.ordinal()];
+		return values[colorSpace.ordinal()][cbmColor.index()];
+	}
+
+	public int[] getThresholds(ColorSpace colorSpace)
+	{
+		if (updateThresholds)
+		{
+			for (ColorSpace currentColorSpace : ColorSpace.values())
+			{
+				thresholds[currentColorSpace.ordinal()] = computeThresholds(values[currentColorSpace.ordinal()]);
+			}
+			
+			updateThresholds = false;
+		}
+
+		return thresholds[colorSpace.ordinal()];
 	}
 
 	public Color color(CBMColor cbmColor)
@@ -80,12 +99,14 @@ public class CBMPalette
 	{
 		int index = cbmColor.index();
 
-		for (ColorSpace type : ColorSpace.values())
+		for (ColorSpace colorSpace : ColorSpace.values())
 		{
-			values[index][type.ordinal()] = type.convertTo(rgb);
+			values[colorSpace.ordinal()][index] = colorSpace.convertTo(rgb);
 		}
 
-		colors[index] = new Color(values[index][ColorSpace.RGB.ordinal()], false);
+		colors[index] = new Color(values[ColorSpace.RGB.ordinal()][index], false);
+
+		updateThresholds = true;
 	}
 
 	public void setFromYUV(CBMColor cbmColor, float l, float u, float v)
@@ -96,6 +117,53 @@ public class CBMPalette
 	public void setFromColor(CBMColor cbmColor, Color color)
 	{
 		setFromRGB(cbmColor, color.getRGB());
+	}
+
+	protected int[] computeThresholds(int[] values)
+	{
+		int[] result = new int[3];
+		int[] v = new int[values.length];
+
+		for (int i = 0; i < values.length; i += 1)
+		{
+			v[i] = (values[i] >> 16) & 0xff;
+		}
+
+		result[0] = computeThreshold(v);
+
+		for (int i = 0; i < values.length; i += 1)
+		{
+			v[i] = (values[i] >> 8) & 0xff;
+		}
+
+		result[1] = computeThreshold(v);
+
+		for (int i = 0; i < values.length; i += 1)
+		{
+			v[i] = values[i] & 0xff;
+		}
+
+		result[2] = computeThreshold(v);
+
+		return result;
+	}
+
+	protected int computeThreshold(int[] values)
+	{
+		Arrays.sort(values);
+		int threshold = 0;
+
+		for (int i = 1; i < values.length; i += 1)
+		{
+			int diff = values[i] - values[i - 1];
+
+			if (diff > threshold)
+			{
+				threshold = diff;
+			}
+		}
+
+		return threshold;
 	}
 
 	public int estimateIndex(CBMColor[] colors, ColorSpace colorSpace, int value)
@@ -124,7 +192,7 @@ public class CBMPalette
 
 		for (CBMColor allowedColor : allowedColors)
 		{
-			double delta = delta(value, values[allowedColor.index()][colorSpace.ordinal()]);
+			double delta = delta(value, values[colorSpace.ordinal()][allowedColor.index()]);
 
 			if (delta < minDelta)
 			{

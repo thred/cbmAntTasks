@@ -727,7 +727,7 @@ public class CBMBitmap
 				CBMColor color = estimationPalette.estimateCBMColor(CBMColor.values(), colorSpace, value);
 
 				usedColors.add(color);
-				
+
 				sampleImage.setRGB(x, y, samplePalette.get(color, ColorSpace.RGB));
 			}
 		}
@@ -735,9 +735,9 @@ public class CBMBitmap
 		if (drawSamplePalette)
 		{
 			List<CBMColor> colors = new ArrayList<CBMColor>(usedColors);
-			
+
 			Collections.sort(colors);
-			
+
 			for (int i = 0; i < colors.size(); i += 1)
 			{
 				int x = (targetWidth * i) / colors.size();
@@ -1090,41 +1090,43 @@ public class CBMBitmap
 			ColorSpace colorSpace, Raster raster, int blockWidth, int blockHeight, GraphicsMode mode,
 			CBMPalette estimationPalette, CBMColor... allowedPalette)
 	{
-		BufferedImage source = colorSpace.convertTo(image);
-		BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+		BufferedImage result = colorSpace.convertTo(image);
 
-		for (int y = 0; y < source.getHeight(); y += 1)
+		for (int y = 0; y < result.getHeight(); y += 1)
 		{
-			for (int x = 0; x < source.getWidth(); x += 1)
+			for (int x = 0; x < result.getWidth(); x += 1)
 			{
-				int sourceValue = source.getRGB(x, y);
-				CBMColor targetColor = null;
-
 				if (raster != null)
 				{
 					CBMColor[] possiblePalette = raster.get(x / blockWidth, y / blockHeight);
 
 					if ((possiblePalette == null) || (possiblePalette.length < mode.getNumberOfColors()))
 					{
-						targetColor = estimationPalette.estimateCBMColor(allowedPalette, colorSpace, sourceValue);
+						// targetColor = estimationPalette.estimateCBMColor(allowedPalette, colorSpace, sourceValue);
+						CBMColor targetColor = dither.getStrategy().execute(result, x, y, estimationPalette, colorSpace, allowedPalette, ditherStrength);
 
 						raster.add(x / blockWidth, y / blockHeight, targetColor);
+
+						// int targetValue = estimationPalette.get(targetColor, colorSpace);
+
+						// result.setRGB(x, y, targetValue);
 					}
 					else
 					{
-						targetColor = estimationPalette.estimateCBMColor(possiblePalette, colorSpace, sourceValue);
+						// targetColor = estimationPalette.estimateCBMColor(possiblePalette, colorSpace, sourceValue);
+						dither.getStrategy().execute(result, x, y, estimationPalette, colorSpace, possiblePalette, ditherStrength);
+
+						// int targetValue = estimationPalette.get(targetColor, colorSpace);
+
+						// result.setRGB(x, y, targetValue);
 					}
 				}
 				else
 				{
-					targetColor = estimationPalette.estimateCBMColor(allowedPalette, colorSpace, sourceValue);
+					dither.getStrategy().execute(result, x, y, estimationPalette, colorSpace, allowedPalette, ditherStrength);
+					// targetColor = estimationPalette.estimateCBMColor(allowedPalette, colorSpace, sourceValue);
 				}
 
-				int targetValue = estimationPalette.get(targetColor, colorSpace);
-
-				result.setRGB(x, y, targetValue);
-
-				dither.getStrategy().execute(x, y, sourceValue, targetValue, ditherStrength, source);
 			}
 		}
 
