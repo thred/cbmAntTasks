@@ -75,11 +75,17 @@ public class CBMBitmapFrame extends JFrame
 		viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoomOutSourceAction.class)));
 		viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoomFitSourceAction.class)));
 		viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoom100SourceAction.class)));
+		viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoom200SourceAction.class)));
+		viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoom300SourceAction.class)));
+		viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoom400SourceAction.class)));
 		viewMenu.addSeparator();
 		viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoomInTargetAction.class)));
 		viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoomOutTargetAction.class)));
 		viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoomFitTargetAction.class)));
 		viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoom100TargetAction.class)));
+		viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoom200TargetAction.class)));
+		viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoom300TargetAction.class)));
+		viewMenu.add(new JMenuItem(CBMBitmapUtils.get(CBMBitmapZoom400TargetAction.class)));
 
 		menuBar.add(viewMenu);
 

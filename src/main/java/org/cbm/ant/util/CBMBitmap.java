@@ -1,6 +1,5 @@
 package org.cbm.ant.util;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
@@ -138,11 +137,11 @@ public class CBMBitmap
 	private CBMColor[] mandatoryColors = new CBMColor[0];
 	private CBMPalette estimationPalette = CBMPalette.DEFAULT;
 	private CBMPalette samplePalette = CBMPalette.DEFAULT;
-	private ColorSpace colorSpace = ColorSpace.LUV;
+	private CBMColorSpace colorSpace = CBMColorSpace.RGB;
 
 	private boolean updated = true;
 	private Raster raster = null;
-	private BufferedImage targetImage = null;
+	private CBMImage targetImage = null;
 	private BufferedImage scaledImage = null;
 
 	public CBMBitmap()
@@ -559,19 +558,19 @@ public class CBMBitmap
 		this.samplePalette = samplePalette;
 	}
 
-	public ColorSpace getColorSpace()
+	public CBMColorSpace getColorSpace()
 	{
 		return colorSpace;
 	}
 
-	public void setColorSpace(ColorSpace colorSpace)
+	public void setColorSpace(CBMColorSpace colorSpace)
 	{
 		updated = true;
 
 		this.colorSpace = colorSpace;
 	}
 
-	public CBMBitmap colorSpace(ColorSpace colorSpace)
+	public CBMBitmap colorSpace(CBMColorSpace colorSpace)
 	{
 		setColorSpace(colorSpace);
 
@@ -677,12 +676,12 @@ public class CBMBitmap
 			scaledImage = CBMPalette.yuv2rgb(yuvImages);
 		}
 
-		BufferedImage estimationImage = createImage(scaledImage, dither, ditherStrength, colorSpace, null,
-				scaledBlockWidth, blockHeight, mode, estimationPalette, allowedColors);
+		CBMImage estimationImage = createImage(scaledImage, colorSpace, estimationPalette, allowedColors, mode, scaledBlockWidth,
+				blockHeight, null, dither, ditherStrength);
 
 		raster = createRaster(estimationImage, estimationPalette, Arrays.asList(mandatoryColors), overscan);
-		targetImage = createImage(scaledImage, dither, ditherStrength, colorSpace, raster, scaledBlockWidth,
-				blockHeight, mode, estimationPalette, allowedColors);
+		targetImage = createImage(scaledImage, colorSpace, estimationPalette, allowedColors, mode, scaledBlockWidth,
+				blockHeight, raster, dither, ditherStrength);
 
 		updated = false;
 	}
@@ -694,7 +693,7 @@ public class CBMBitmap
 		return raster;
 	}
 
-	public BufferedImage getTargetImage()
+	public CBMImage getTargetImage()
 	{
 		update();
 
@@ -703,8 +702,7 @@ public class CBMBitmap
 
 	public BufferedImage getSampleImage()
 	{
-		BufferedImage targetImage = getTargetImage();
-		int height = targetHeight;
+		CBMImage targetImage = getTargetImage();
 		int samplePaletteHeight = Math.min(targetHeight / 8, 32);
 
 		if (drawSamplePalette)
@@ -712,25 +710,13 @@ public class CBMBitmap
 			height += samplePaletteHeight;
 		}
 
-		BufferedImage sampleImage = new BufferedImage(targetWidth, height, BufferedImage.TYPE_INT_RGB);
-		Graphics2D g = sampleImage.createGraphics();
-
-		g.drawImage(targetImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_FAST), 0, 0, null);
-
 		Set<CBMColor> usedColors = new HashSet<CBMColor>();
+		BufferedImage resultImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g = resultImage.createGraphics();
 
-		for (int y = 0; y < height; y += 1)
-		{
-			for (int x = 0; x < targetWidth; x += 1)
-			{
-				int value = sampleImage.getRGB(x, y);
-				CBMColor color = estimationPalette.estimateCBMColor(CBMColor.values(), colorSpace, value);
-
-				usedColors.add(color);
-
-				sampleImage.setRGB(x, y, samplePalette.get(color, ColorSpace.RGB));
-			}
-		}
+		g.drawImage(
+				targetImage.toImage(estimationPalette, usedColors).getScaledInstance(targetWidth, targetHeight,
+						Image.SCALE_FAST), 0, 0, null);
 
 		if (drawSamplePalette)
 		{
@@ -742,12 +728,12 @@ public class CBMBitmap
 			{
 				int x = (targetWidth * i) / colors.size();
 
-				g.setColor(new Color(samplePalette.get(colors.get(i), ColorSpace.RGB)));
+				g.setColor(estimationPalette.color(colors.get(i)));
 				g.fillRect(x, targetHeight, ((targetWidth * (i + 1)) / colors.size()) - x, samplePaletteHeight);
 			}
 		}
 
-		return sampleImage;
+		return resultImage;
 	}
 
 	public byte[] getBitmapData()
@@ -777,7 +763,7 @@ public class CBMBitmap
 	{
 		int count = 0;
 		Raster raster = getRaster();
-		BufferedImage targetImage = getTargetImage();
+		CBMImage targetImage = getTargetImage();
 
 		for (int y = 0; y < targetHeight; y += mode.getHeightPerChar())
 		{
@@ -791,8 +777,8 @@ public class CBMBitmap
 
 					for (int innerX = x; innerX < (x + mode.getWidthPerChar()); innerX += 1)
 					{
-						int index = estimationPalette.estimateIndex(colors, colorSpace,
-								targetImage.getRGB(innerX, innerY));
+						int index = estimationPalette
+								.estimateIndex(colors, colorSpace, targetImage.get(innerX, innerY));
 
 						if (mode == GraphicsMode.LORES)
 						{
@@ -829,7 +815,7 @@ public class CBMBitmap
 	{
 		int count = 0;
 		Raster raster = getRaster();
-		BufferedImage targetImage = getTargetImage();
+		CBMImage targetImage = getTargetImage();
 
 		for (int y = 0; y < targetHeight; y += blockHeight)
 		{
@@ -846,7 +832,7 @@ public class CBMBitmap
 						for (int byteX = innerX; byteX < (innerX + (8 / mode.getBitPerColor())); byteX += 1)
 						{
 							int index = estimationPalette.estimateIndex(colors, colorSpace,
-									targetImage.getRGB(byteX, innerY));
+									targetImage.get(byteX, innerY));
 
 							if (mode == GraphicsMode.LORES)
 							{
@@ -1009,8 +995,8 @@ public class CBMBitmap
 		return image;
 	}
 
-	private Raster createRaster(BufferedImage estimationImage, CBMPalette estimationPalette,
-			List<CBMColor> mandatoryColors, int overscan)
+	private Raster createRaster(CBMImage estimationImage, CBMPalette estimationPalette, List<CBMColor> mandatoryColors,
+			int overscan)
 	{
 		Raster raster = new Raster(targetWidth / scaledBlockWidth, targetHeight / blockHeight);
 
@@ -1028,7 +1014,7 @@ public class CBMBitmap
 		return raster;
 	}
 
-	private CBMColor[] detectCBMColors(BufferedImage image, int x, int y, int w, int h, int numberOfColors,
+	private CBMColor[] detectCBMColors(CBMImage estimationImage, int x, int y, int w, int h, int numberOfColors,
 			CBMPalette estimationPalette, List<CBMColor> mandatoryColors, int xOverscan, int yOverscan)
 	{
 		Map<CBMColor, Entry> counts = new HashMap<CBMColor, Entry>();
@@ -1037,13 +1023,14 @@ public class CBMBitmap
 		{
 			for (int i = -xOverscan; i < (w + xOverscan); i += 1)
 			{
-				if (((y + j) < 0) || ((y + j) >= image.getHeight()) || ((x + i) < 0) || ((x + i) >= image.getWidth()))
+				if (((y + j) < 0) || ((y + j) >= estimationImage.getHeight()) || ((x + i) < 0)
+						|| ((x + i) >= estimationImage.getWidth()))
 				{
 					continue;
 				}
 
 				CBMColor color = estimationPalette.estimateCBMColor(CBMColor.values(), colorSpace,
-						image.getRGB(x + i, y + j) & 0x00ffffff);
+						estimationImage.get(x + i, y + j));
 				Entry entry = counts.get(color);
 
 				if (entry == null)
@@ -1086,11 +1073,11 @@ public class CBMBitmap
 		return scaledImage;
 	}
 
-	private static BufferedImage createImage(BufferedImage image, CBMBitmapDither dither, float ditherStrength,
-			ColorSpace colorSpace, Raster raster, int blockWidth, int blockHeight, GraphicsMode mode,
-			CBMPalette estimationPalette, CBMColor... allowedPalette)
+	private static CBMImage createImage(BufferedImage image, CBMColorSpace colorSpace, CBMPalette estimationPalette,
+			CBMColor[] allowedPalette, GraphicsMode mode, int blockWidth, int blockHeight, Raster raster,
+			CBMBitmapDither dither, float ditherStrength)
 	{
-		BufferedImage result = colorSpace.convertTo(image);
+		CBMImage result = new CBMImage(image, colorSpace);
 
 		for (int y = 0; y < result.getHeight(); y += 1)
 		{
@@ -1102,29 +1089,19 @@ public class CBMBitmap
 
 					if ((possiblePalette == null) || (possiblePalette.length < mode.getNumberOfColors()))
 					{
-						// targetColor = estimationPalette.estimateCBMColor(allowedPalette, colorSpace, sourceValue);
-						CBMColor targetColor = dither.getStrategy().execute(result, x, y, estimationPalette, colorSpace, allowedPalette, ditherStrength);
+						CBMColor targetColor = dither.getStrategy().execute(result, estimationPalette, allowedPalette, x,
+								y, ditherStrength);
 
 						raster.add(x / blockWidth, y / blockHeight, targetColor);
-
-						// int targetValue = estimationPalette.get(targetColor, colorSpace);
-
-						// result.setRGB(x, y, targetValue);
 					}
 					else
 					{
-						// targetColor = estimationPalette.estimateCBMColor(possiblePalette, colorSpace, sourceValue);
-						dither.getStrategy().execute(result, x, y, estimationPalette, colorSpace, possiblePalette, ditherStrength);
-
-						// int targetValue = estimationPalette.get(targetColor, colorSpace);
-
-						// result.setRGB(x, y, targetValue);
+						dither.getStrategy().execute(result, estimationPalette, possiblePalette, x, y, ditherStrength);
 					}
 				}
 				else
 				{
-					dither.getStrategy().execute(result, x, y, estimationPalette, colorSpace, allowedPalette, ditherStrength);
-					// targetColor = estimationPalette.estimateCBMColor(allowedPalette, colorSpace, sourceValue);
+					dither.getStrategy().execute(result, estimationPalette, allowedPalette, x, y, ditherStrength);
 				}
 
 			}

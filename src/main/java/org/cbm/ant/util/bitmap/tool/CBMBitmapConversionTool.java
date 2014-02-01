@@ -6,7 +6,7 @@ import java.beans.PropertyChangeEvent;
 
 import javax.swing.JComboBox;
 
-import org.cbm.ant.util.ColorSpace;
+import org.cbm.ant.util.CBMColorSpace;
 import org.cbm.ant.util.GraphicsMode;
 import org.cbm.ant.util.bitmap.CBMBitmapProjectController;
 import org.cbm.ant.util.bitmap.CBMBitmapProjectModel;
@@ -17,7 +17,7 @@ public class CBMBitmapConversionTool extends AbstractCBMBitmapTool implements Ac
 
 	private static final long serialVersionUID = -3018765182933957393L;
 
-	private final JComboBox colorSpaceBox = new JComboBox(ColorSpace.values());
+	private final JComboBox colorSpaceBox = new JComboBox(CBMColorSpace.values());
 	private final JComboBox graphicsModeBox = new JComboBox(GraphicsMode.values());
 
 	public CBMBitmapConversionTool()
@@ -44,7 +44,7 @@ public class CBMBitmapConversionTool extends AbstractCBMBitmapTool implements Ac
 
 		if (controller != null)
 		{
-			controller.getModel().setColorSpace((ColorSpace) colorSpaceBox.getSelectedItem());
+			controller.getModel().setColorSpace((CBMColorSpace) colorSpaceBox.getSelectedItem());
 			controller.getModel().setGraphicsMode((GraphicsMode) graphicsModeBox.getSelectedItem());
 			controller.recalculate();
 		}

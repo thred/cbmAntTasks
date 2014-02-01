@@ -1,7 +1,5 @@
 package org.cbm.ant.util;
 
-import java.awt.image.BufferedImage;
-
 public class CBMBitmapErrorDiffusionDitherStrategy extends AbstractCBMBitmapDitherStrategy
 {
 
@@ -55,18 +53,14 @@ public class CBMBitmapErrorDiffusionDitherStrategy extends AbstractCBMBitmapDith
 	}
 
 	@Override
-	public CBMColor execute(BufferedImage image, int x, int y, CBMPalette palette, ColorSpace colorSpace,
-			CBMColor[] allowedColors, float strength)
+	public CBMColor execute(CBMImage image, CBMPalette palette, CBMColor[] allowedColors, int x, int y, float strength)
 	{
-		int sourceValue = image.getRGB(x, y);
-		CBMColor targetColor = palette.estimateCBMColor(allowedColors, colorSpace, sourceValue);
-		int targetValue = palette.get(targetColor, colorSpace);
+		float[] sourceValue = image.get(x, y);
+		CBMColor targetColor = palette.estimateCBMColor(allowedColors, image.getColorSpace(), sourceValue);
+		float[] targetValue = palette.get(targetColor, image.getColorSpace());
 
-		image.setRGB(x, y, targetValue);
-
-		int[] error = {
-				((sourceValue >> 16) & 0xff) - ((targetValue >> 16) & 0xff),
-				((sourceValue >> 8) & 0xff) - ((targetValue >> 8) & 0xff), (sourceValue & 0xff) - (targetValue & 0xff)
+		float[] error = {
+				sourceValue[0] - targetValue[0], sourceValue[1] - targetValue[1], sourceValue[2] - targetValue[2]
 		};
 
 		error[0] *= strength;
@@ -85,36 +79,31 @@ public class CBMBitmapErrorDiffusionDitherStrategy extends AbstractCBMBitmapDith
 				}
 
 				int v = value.intValue();
-
-				if (v == Integer.MAX_VALUE)
-				{
-					continue;
-				}
-
 				int targetX = (x - centerX) + checkX;
 				int targetY = (y - centerY) + checkY;
 
+				if (v == Integer.MAX_VALUE)
+				{
+					image.set(targetX, targetY, targetValue);
+				
+					continue;
+				}
+
 				if ((targetX >= 0) && (targetY >= 0) && (targetX < image.getWidth()) && (targetY < image.getHeight()))
 				{
-					image.setRGB(targetX, targetY, apply(image.getRGB(targetX, targetY), error, (double) v / divisor));
+					apply(image.get(targetX, targetY), error, (float) v / divisor);
 				}
 			}
 		}
-		
+
 		return targetColor;
 	}
 
-	private static int apply(int rgb, int[] error, double coefficient)
+	private static void apply(float[] value, float[] error, float coefficient)
 	{
-		int r = (rgb >> 16) & 0xff;
-		int g = (rgb >> 8) & 0xff;
-		int b = rgb & 0xff;
-
-		r = CBMPalette.range(0, (int) (r + (coefficient * error[0])), 255);
-		g = CBMPalette.range(0, (int) (g + (coefficient * error[1])), 255);
-		b = CBMPalette.range(0, (int) (b + (coefficient * error[2])), 255);
-
-		return (r << 16) + (g << 8) + b;
+		value[0] += coefficient * error[0];
+		value[1] += coefficient * error[1];
+		value[2] += coefficient * error[2];
 	}
 
-}
+};

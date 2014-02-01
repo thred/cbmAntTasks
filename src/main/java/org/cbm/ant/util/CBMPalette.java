@@ -59,31 +59,79 @@ public class CBMPalette
 		DEFAULT.setFromRGB(CBMColor.LIGHT_GRAY, 0x959595);
 	}
 
-	private final int[][] values = new int[ColorSpace.values().length][CBMColor.LENGTH];
-	private final int[][] thresholds = new int[ColorSpace.values().length][3];
-	private final Color[] colors = new Color[CBMColor.LENGTH];
+	private final int[] rgbs;
+	private final float[][][] values;
+	private final float[][] thresholds;
+	private final Color[] colors;
 
 	private boolean updateThresholds = true;
 
-	public CBMPalette()
+	private CBMPalette()
 	{
-		super();
+		this(new int[CBMColor.LENGTH], new float[CBMColorSpace.values().length][CBMColor.LENGTH][3], new float[CBMColorSpace
+				.values().length][3], new Color[CBMColor.LENGTH]);
 	}
 
-	public int get(CBMColor cbmColor, ColorSpace colorSpace)
+	private CBMPalette(int[] rgbs, float[][][] values, float[][] thresholds, Color[] colors)
+	{
+		super();
+
+		this.rgbs = rgbs;
+		this.values = values;
+		this.thresholds = thresholds;
+		this.colors = colors;
+	}
+
+	public CBMPalette copy()
+	{
+		int[] rgbs = Arrays.copyOf(this.rgbs, CBMColor.LENGTH);
+		float[][][] values = new float[CBMColorSpace.values().length][CBMColor.LENGTH][3];
+		float[][] thresholds = new float[CBMColorSpace.values().length][3];
+
+		for (CBMColorSpace colorSpace : CBMColorSpace.values())
+		{
+			for (CBMColor color : CBMColor.values())
+			{
+				values[colorSpace.ordinal()][color.index()] = Arrays.copyOf(
+						this.values[colorSpace.ordinal()][color.index()], 3);
+			}
+
+			thresholds[colorSpace.ordinal()] = Arrays.copyOf(this.thresholds[colorSpace.ordinal()], 3);
+		}
+
+		Color[] colors = Arrays.copyOf(this.colors, CBMColor.LENGTH);
+
+		return new CBMPalette(rgbs, values, thresholds, colors);
+	}
+
+	public int getRGB(CBMColor cbmColor)
+	{
+		return rgbs[cbmColor.index()];
+	}
+
+	public float[] get(CBMColor cbmColor, CBMColorSpace colorSpace)
 	{
 		return values[colorSpace.ordinal()][cbmColor.index()];
 	}
 
-	public int[] getThresholds(ColorSpace colorSpace)
+	public void put(CBMColor cbmColor, CBMColorSpace colorSpace, float[] to)
+	{
+		float[] value = values[colorSpace.ordinal()][cbmColor.index()];
+
+		to[0] = value[0];
+		to[1] = value[1];
+		to[2] = value[2];
+	}
+
+	public float[] getThresholds(CBMColorSpace colorSpace)
 	{
 		if (updateThresholds)
 		{
-			for (ColorSpace currentColorSpace : ColorSpace.values())
+			for (CBMColorSpace currentColorSpace : CBMColorSpace.values())
 			{
 				thresholds[currentColorSpace.ordinal()] = computeThresholds(values[currentColorSpace.ordinal()]);
 			}
-			
+
 			updateThresholds = false;
 		}
 
@@ -99,12 +147,16 @@ public class CBMPalette
 	{
 		int index = cbmColor.index();
 
-		for (ColorSpace colorSpace : ColorSpace.values())
+		rgbs[index] = rgb;
+
+		for (CBMColorSpace colorSpace : CBMColorSpace.values())
 		{
-			values[colorSpace.ordinal()][index] = colorSpace.convertTo(rgb);
+			float[] value = colorSpace.convertTo(rgb, null);
+
+			values[colorSpace.ordinal()][index] = value;
 		}
 
-		colors[index] = new Color(values[ColorSpace.RGB.ordinal()][index], false);
+		colors[index] = new Color(rgb, false);
 
 		updateThresholds = true;
 	}
@@ -119,28 +171,28 @@ public class CBMPalette
 		setFromRGB(cbmColor, color.getRGB());
 	}
 
-	protected int[] computeThresholds(int[] values)
+	protected float[] computeThresholds(float[][] values)
 	{
-		int[] result = new int[3];
-		int[] v = new int[values.length];
+		float[] result = new float[3];
+		float[] v = new float[values.length];
 
 		for (int i = 0; i < values.length; i += 1)
 		{
-			v[i] = (values[i] >> 16) & 0xff;
+			v[i] = values[i][0];
 		}
 
 		result[0] = computeThreshold(v);
 
 		for (int i = 0; i < values.length; i += 1)
 		{
-			v[i] = (values[i] >> 8) & 0xff;
+			v[i] = values[i][1];
 		}
 
 		result[1] = computeThreshold(v);
 
 		for (int i = 0; i < values.length; i += 1)
 		{
-			v[i] = values[i] & 0xff;
+			v[i] = values[i][2];
 		}
 
 		result[2] = computeThreshold(v);
@@ -148,14 +200,14 @@ public class CBMPalette
 		return result;
 	}
 
-	protected int computeThreshold(int[] values)
+	protected float computeThreshold(float[] values)
 	{
 		Arrays.sort(values);
-		int threshold = 0;
+		float threshold = 0;
 
 		for (int i = 1; i < values.length; i += 1)
 		{
-			int diff = values[i] - values[i - 1];
+			float diff = values[i] - values[i - 1];
 
 			if (diff > threshold)
 			{
@@ -166,14 +218,14 @@ public class CBMPalette
 		return threshold;
 	}
 
-	public int estimateIndex(CBMColor[] colors, ColorSpace colorSpace, int value)
+	public int estimateIndex(CBMColor[] colors, CBMColorSpace colorSpace, float[] value)
 	{
 		int result = -1;
 		double minDelta = Double.MAX_VALUE;
 
 		for (int i = 0; i < colors.length; i++)
 		{
-			double delta = delta(value, values[colors[i].index()][colorSpace.ordinal()]);
+			double delta = delta(value, values[colorSpace.ordinal()][colors[i].index()]);
 
 			if (delta < minDelta)
 			{
@@ -185,16 +237,16 @@ public class CBMPalette
 		return result;
 	}
 
-	public CBMColor estimateCBMColor(CBMColor[] allowedColors, ColorSpace colorSpace, int value)
+	public CBMColor estimateCBMColor(CBMColor[] allowedColors, CBMColorSpace colorSpace, float[] value)
 	{
 		CBMColor color = null;
-		double minDelta = Double.MAX_VALUE;
+		float minDelta = Float.NaN;
 
 		for (CBMColor allowedColor : allowedColors)
 		{
-			double delta = delta(value, values[colorSpace.ordinal()][allowedColor.index()]);
+			float delta = delta(value, values[colorSpace.ordinal()][allowedColor.index()]);
 
-			if (delta < minDelta)
+			if ((Float.isNaN(minDelta)) || (delta < minDelta))
 			{
 				color = allowedColor;
 				minDelta = delta;
@@ -290,11 +342,11 @@ public class CBMPalette
 		return image;
 	}
 
-	public static double delta(int leftRGB, int rightRGB)
+	public static float delta(float[] left, float[] right)
 	{
-		int a = ((rightRGB >> 16) & 0xff) - ((leftRGB >> 16) & 0xff);
-		int b = ((rightRGB >> 8) & 0xff) - ((leftRGB >> 8) & 0xff);
-		int c = (rightRGB & 0xff) - (leftRGB & 0xff);
+		float a = right[0] - left[0];
+		float b = right[1] - left[1];
+		float c = right[2] - left[2];
 
 		return ((a * a) + (b * b) + (c * c));
 	}

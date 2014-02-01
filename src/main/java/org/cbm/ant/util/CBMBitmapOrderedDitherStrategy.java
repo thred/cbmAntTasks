@@ -1,7 +1,5 @@
 package org.cbm.ant.util;
 
-import java.awt.image.BufferedImage;
-
 /**
  * Thanks to http://bisqwit.iki.fi/story/howto/dither/jy/
  * 
@@ -28,24 +26,19 @@ public class CBMBitmapOrderedDitherStrategy extends AbstractCBMBitmapDitherStrat
 	}
 
 	@Override
-	public CBMColor execute(BufferedImage image, int x, int y, CBMPalette palette, ColorSpace colorSpace,
-			CBMColor[] allowedColors, float strength)
+	public CBMColor execute(CBMImage image, CBMPalette palette, CBMColor[] allowedColors, int x, int y, float strength)
 	{
-		int sourceValue = image.getRGB(x, y);
+		float[] value = image.get(x, y);
 		float m = matrix[(x % size) + ((y % size) * size)];
-		int[] thresholds = palette.getThresholds(colorSpace);
+		float[] thresholds = palette.getThresholds(image.getColorSpace());
 
-		int a = CBMPalette.range(0, (int) (((sourceValue >> 16) & 0xff) + (m * thresholds[0])) - (thresholds[0] / 2),
-				255);
-		int b = CBMPalette.range(0, (int) (((sourceValue >> 8) & 0xff) + (m * thresholds[1])) - (thresholds[1] / 2),
-				255);
-		int c = CBMPalette.range(0, (int) ((sourceValue & 0xff) + (m * thresholds[2])) - (thresholds[2] / 2), 255);
-		int abc = (a << 16) | (b << 8) | c;
+		value[0] += (m * thresholds[0]) - (thresholds[0] * (1-strength));
+		value[1] += (m * thresholds[1]) - (thresholds[1] * (1-strength));
+		value[2] += (m * thresholds[2]) - (thresholds[2] * (1-strength));
 
-		CBMColor targetColor = palette.estimateCBMColor(allowedColors, colorSpace, abc);
-		int targetValue = palette.get(targetColor, colorSpace);
+		CBMColor targetColor = palette.estimateCBMColor(allowedColors, image.getColorSpace(), value);
 
-		image.setRGB(x, y, targetValue);
+		palette.put(targetColor, image.getColorSpace(), value);
 
 		return targetColor;
 	}

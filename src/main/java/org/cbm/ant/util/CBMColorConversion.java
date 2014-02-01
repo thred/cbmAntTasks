@@ -1,71 +1,93 @@
 package org.cbm.ant.util;
 
-import java.awt.image.BufferedImage;
-
 /**
  * The Java Color Space is incredibly slow! Great thanks to
  * http://www.f4.fhtw-berlin.de/~barthel/ImageJ/ColorInspector//HTMLHelp/farbraumJava.htm
  * 
  * @author thred
  */
-public abstract class ColorConversion
+public abstract class CBMColorConversion
 {
 
-	public static final ColorConversion RGB2RGB = new ColorConversion()
+	public static final CBMColorConversion RGB2RGB = new CBMColorConversion()
 	{
 		@Override
-		public int convert(int from)
+		public float[] convert(int from, float[] to)
 		{
-			return from;
+			if (to == null)
+			{
+				to = new float[3];
+			}
+
+			to[0] = ((from >> 16) & 0xff) / 255f;
+			to[1] = ((from >> 8) & 0xff) / 255f;
+			to[2] = (from & 0xff) / 255f;
+
+			return to;
 		}
 	};
 
-	public static final ColorConversion RGB2YCbCr = new ColorConversion()
+	public static final CBMColorConversion RGB2YCbCr = new CBMColorConversion()
 	{
 		@Override
-		public int convert(int from)
+		public float[] convert(int from, float[] to)
 		{
+			if (to == null)
+			{
+				to = new float[3];
+			}
+
 			int R = (from >> 16) & 0xff;
 			int G = (from >> 8) & 0xff;
 			int B = from & 0xff;
 
-			int y = (int) ((0.299 * R) + (0.587 * G) + (0.114 * B));
-			int cb = (int) (((-0.16874 * R) - (0.33126 * G)) + (0.50000 * B));
-			int cr = (int) ((0.50000 * R) - (0.41869 * G) - (0.08131 * B));
+			to[0] = ((0.299f * R) + (0.587f * G) + (0.114f * B)) / 255f;
+			to[1] = (((-0.16874f * R) - (0.33126f * G)) + (0.50000f * B)) / 255f;
+			to[2] = ((0.50000f * R) - (0.41869f * G) - (0.08131f * B)) / 255f;
 
-			return to(y, cb, cr);
+			return to;
 		}
 	};
 
-	public static final ColorConversion RGB2YUV = new ColorConversion()
+	public static final CBMColorConversion RGB2YUV = new CBMColorConversion()
 	{
 		@Override
-		public int convert(int from)
+		public float[] convert(int from, float[] to)
 		{
+			if (to == null)
+			{
+				to = new float[3];
+			}
+
 			int R = (from >> 16) & 0xff;
 			int G = (from >> 8) & 0xff;
 			int B = from & 0xff;
 
-			int y = (int) ((0.299 * R) + (0.587 * G) + (0.114 * B));
-			int u = (int) ((B - y) * 0.492f);
-			int v = (int) ((R - y) * 0.877f);
+			float y = ((0.299f * R) + (0.587f * G) + (0.114f * B));
+			float u = ((B - y) * 0.492f);
+			float v = ((R - y) * 0.877f);
 
-			return to(y, u, v);
+			to[0] = y / 255f;
+			to[1] = u / 255f;
+			to[2] = v / 255f;
+
+			return to;
 		}
 	};
 
-	public static final ColorConversion RGB2HSL = new ColorConversion()
+	public static final CBMColorConversion RGB2HSL = new CBMColorConversion()
 	{
 		@Override
-		public int convert(int from)
+		public float[] convert(int from, float[] to)
 		{
-			int R = (from >> 16) & 0xff;
-			int G = (from >> 8) & 0xff;
-			int B = from & 0xff;
+			if (to == null)
+			{
+				to = new float[3];
+			}
 
-			float var_R = (R / 255f);
-			float var_G = (G / 255f);
-			float var_B = (B / 255f);
+			float var_R = (((from >> 16) & 0xff) / 255f);
+			float var_G = (((from >> 8) & 0xff) / 255f);
+			float var_B = ((from & 0xff) / 255f);
 
 			float var_Min; //Min. value of RGB
 			float var_Max; //Max. value of RGB
@@ -138,15 +160,24 @@ public abstract class ColorConversion
 				}
 			}
 
-			return to((int) (360 * H), (int) (S * 100), (int) (L * 100));
+			to[0] = (360 * H) / 255f;
+			to[1] = (S * 100) / 255f;
+			to[2] = (L * 100) / 255f;
+
+			return to;
 		}
 	};
 
-	public static final ColorConversion RGB2HSV = new ColorConversion()
+	public static final CBMColorConversion RGB2HSV = new CBMColorConversion()
 	{
 		@Override
-		public int convert(int from)
+		public float[] convert(int from, float[] to)
 		{
+			if (to == null)
+			{
+				to = new float[3];
+			}
+
 			int r = (from >> 16) & 0xff;
 			int g = (from >> 8) & 0xff;
 			int b = from & 0xff;
@@ -201,27 +232,32 @@ public abstract class ColorConversion
 				}
 			}
 
-			return to((int) H, (int) (S * 100), (int) (V * 100));
+			to[0] = H / 255f;
+			to[1] = (S * 100) / 255f;
+			to[2] = (V * 100) / 255f;
+
+			return to;
 		}
 	};
 
-	public static final ColorConversion RGB2xyY = new ColorConversion()
+	public static final CBMColorConversion RGB2xyY = new CBMColorConversion()
 	{
 		@Override
-		public int convert(int from)
+		public float[] convert(int from, float[] to)
 		{
-			int R = (from >> 16) & 0xff;
-			int G = (from >> 8) & 0xff;
-			int B = from & 0xff;
+			if (to == null)
+			{
+				to = new float[3];
+			}
 
 			//http://www.brucelindbloom.com
 
 			float r, g, b, X, Y, Z;
 
 			// RGB to XYZ
-			r = R / 255.f; //R 0..1
-			g = G / 255.f; //G 0..1
-			b = B / 255.f; //B 0..1
+			r = ((from >> 16) & 0xff) / 255.f; //R 0..1
+			g = ((from >> 8) & 0xff) / 255.f; //G 0..1
+			b = (from & 0xff) / 255.f; //B 0..1
 
 			if (r <= 0.04045)
 			{
@@ -273,24 +309,29 @@ public abstract class ColorConversion
 				y = Yr / (Xr + Yr + Zr);
 			}
 
-			return to((int) ((255 * x) + .5), (int) ((255 * y) + .5), (int) ((255 * Y) + .5));
+			to[0] = x;
+			to[1] = y;
+			to[2] = Y;
+
+			return to;
 		}
 	};
 
-	public static final ColorConversion RGB2XYZ = new ColorConversion()
+	public static final CBMColorConversion RGB2XYZ = new CBMColorConversion()
 	{
 		@Override
-		public int convert(int from)
+		public float[] convert(int from, float[] to)
 		{
-			int R = (from >> 16) & 0xff;
-			int G = (from >> 8) & 0xff;
-			int B = from & 0xff;
+			if (to == null)
+			{
+				to = new float[3];
+			}
 
 			float r, g, b, X, Y, Z;
 
-			r = R / 255.f; //R 0..1
-			g = G / 255.f; //G 0..1
-			b = B / 255.f; //B 0..1
+			r = ((from >> 16) & 0xff) / 255.f; //R 0..1
+			g = ((from >> 8) & 0xff) / 255.f; //G 0..1
+			b = (from & 0xff) / 255.f; //B 0..1
 
 			if (r <= 0.04045)
 			{
@@ -323,18 +364,23 @@ public abstract class ColorConversion
 			Y = (0.222491598f * r) + (0.71688606f * g) + (0.060621486f * b);
 			Z = (0.013929122f * r) + (0.097097002f * g) + (0.71418547f * b);
 
-			return to((int) ((255 * Y) + .5), (int) ((255 * X) + .5), (int) ((255 * Z) + .5));
+			to[0] = Y;
+			to[1] = X;
+			to[2] = Z;
+
+			return to;
 		}
 	};
 
-	public static final ColorConversion RGB2LAB = new ColorConversion()
+	public static final CBMColorConversion RGB2LAB = new CBMColorConversion()
 	{
 		@Override
-		public int convert(int from)
+		public float[] convert(int from, float[] to)
 		{
-			int R = (from >> 16) & 0xff;
-			int G = (from >> 8) & 0xff;
-			int B = from & 0xff;
+			if (to == null)
+			{
+				to = new float[3];
+			}
 
 			//http://www.brucelindbloom.com
 
@@ -348,9 +394,9 @@ public abstract class ColorConversion
 			float Zr = 0.825211f;
 
 			// RGB to XYZ
-			r = R / 255.f; //R 0..1
-			g = G / 255.f; //G 0..1
-			b = B / 255.f; //B 0..1
+			r = ((from >> 16) & 0xff) / 255.f; //R 0..1
+			g = ((from >> 8) & 0xff) / 255.f; //G 0..1
+			b = (from & 0xff) / 255.f; //B 0..1
 
 			// assuming sRGB (D65)
 			if (r <= 0.04045)
@@ -420,18 +466,23 @@ public abstract class ColorConversion
 			as = 500 * (fx - fy);
 			bs = 200 * (fy - fz);
 
-			return to((int) ((2.55 * Ls) + .5), (int) (as + .5), (int) (bs + .5));
+			to[0] = (int) ((2.55 * Ls) + .5) / 255f;
+			to[1] = (int) (as + .5) / 255f;
+			to[2] = (int) (bs + .5) / 255f;
+
+			return to;
 		}
 	};
 
-	public static final ColorConversion RGB2LUV = new ColorConversion()
+	public static final CBMColorConversion RGB2LUV = new CBMColorConversion()
 	{
 		@Override
-		public int convert(int from)
+		public float[] convert(int from, float[] to)
 		{
-			int R = (from >> 16) & 0xff;
-			int G = (from >> 8) & 0xff;
-			int B = from & 0xff;
+			if (to == null)
+			{
+				to = new float[3];
+			}
 
 			//http://www.brucelindbloom.com
 
@@ -446,9 +497,9 @@ public abstract class ColorConversion
 
 			// RGB to XYZ
 
-			r = R / 255.f; //R 0..1
-			g = G / 255.f; //G 0..1
-			b = B / 255.f; //B 0..1
+			r = ((from >> 16) & 0xff) / 255.f; //R 0..1
+			g = ((from >> 8) & 0xff) / 255.f; //G 0..1
+			b = (from & 0xff) / 255.f; //B 0..1
 
 			// assuming sRGB (D65)
 			if (r <= 0.04045)
@@ -506,26 +557,15 @@ public abstract class ColorConversion
 			u = 13 * L * (u_ - ur_);
 			v = 13 * L * (v_ - vr_);
 
-			return to((int) ((2.55 * L) + .5), (int) (u + .5), (int) (v + .5));
+			to[0] = (int) ((2.55 * L) + .5) / 255f;
+			to[1] = (int) (u + .5) / 255f;
+			to[2] = (int) (v + .5) / 255f;
+
+			return to;
 		}
 	};
 
-	public abstract int convert(int from);
-
-	public BufferedImage convert(BufferedImage from)
-	{
-		BufferedImage to = new BufferedImage(from.getWidth(), from.getHeight(), BufferedImage.TYPE_INT_RGB);
-
-		for (int y = 0; y < from.getHeight(); y += 1)
-		{
-			for (int x = 0; x < from.getWidth(); x += 1)
-			{
-				to.setRGB(x, y, convert(from.getRGB(x, y)));
-			}
-		}
-
-		return to;
-	}
+	public abstract float[] convert(int from, float[] to);
 
 	protected static int to(int a, int b, int c)
 	{
@@ -534,16 +574,16 @@ public abstract class ColorConversion
 
 	protected static int range(int value)
 	{
-		if (value < 0)
-		{
-			return 0;
-		}
-
-		if (value > 255)
-		{
-			return 255;
-		}
-
+		//		if (value < 0)
+		//		{
+		//			return 0;
+		//		}
+		//
+		//		if (value > 255)
+		//		{
+		//			return 255;
+		//		}
+		//
 		return value;
 	}
 

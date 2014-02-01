@@ -1,7 +1,5 @@
 package org.cbm.ant.util;
 
-import java.awt.image.BufferedImage;
-
 public class CBMBitmapNoneDitherStrategy extends AbstractCBMBitmapDitherStrategy
 {
 
@@ -13,20 +11,19 @@ public class CBMBitmapNoneDitherStrategy extends AbstractCBMBitmapDitherStrategy
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.cbm.ant.util.CBMBitmapDitherStrategy#execute(java.awt.image.BufferedImage, int, int, org.cbm.ant.util.CBMPalette,
-	 *      org.cbm.ant.util.ColorSpace, org.cbm.ant.util.CBMColor[], float)
+	 * @see org.cbm.ant.util.CBMBitmapDitherStrategy#execute(CBMImage, org.cbm.ant.util.CBMPalette, org.cbm.ant.util.CBMColor[], int,
+	 *      int, float)
 	 */
 	@Override
-	public CBMColor execute(BufferedImage image, int x, int y, CBMPalette palette, ColorSpace colorSpace,
-			CBMColor[] allowedColors, float strength)
+	public CBMColor execute(CBMImage image, CBMPalette palette, CBMColor[] allowedColors, int x, int y,
+			float strength)
 	{
-		int sourceValue = image.getRGB(x, y);
-		CBMColor targetColor = palette.estimateCBMColor(allowedColors, colorSpace, sourceValue);
-		int targetValue = palette.get(targetColor, colorSpace);
-
-		image.setRGB(x, y, targetValue);
+		float[] sample = image.get(x, y);
+		CBMColor color = palette.estimateCBMColor(allowedColors, image.getColorSpace(), sample);
 		
-		return targetColor;
+		palette.put(color, image.getColorSpace(), sample);
+		
+		return color;
 	}
 
 }
