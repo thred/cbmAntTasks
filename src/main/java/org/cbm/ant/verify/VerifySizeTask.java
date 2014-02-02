@@ -3,6 +3,7 @@ package org.cbm.ant.verify;
 import java.io.File;
 
 import org.apache.tools.ant.BuildException;
+import org.cbm.ant.util.PersistentProperties;
 
 public class VerifySizeTask implements VerifyTask
 {
@@ -43,16 +44,32 @@ public class VerifySizeTask implements VerifyTask
 			throw new BuildException(String.format("\"%s\" is missing", file));
 		}
 
+		String lastLength = PersistentProperties.INSTANCE.get(file.getAbsolutePath() + "#length");
+
 		long length = file.length();
 		int size = Integer.decode(this.size);
 		double percent = (double) length / size;
+		String info = "";
 
-		task.log(String.format("\t%-20s %8d bytes (%4.1f %%)", file.getName(), length, percent * 100));
+		if (lastLength != null)
+		{
+			long diff = length - Long.parseLong(lastLength);
+
+			if (diff != 0)
+			{
+				info = String.format(" [%+d bytes]", diff);
+			}
+		}
+
+		task.log(String.format("\t%-20s %8d bytes (%4.1f %%) %s", file.getName(), length, percent * 100, info));
 
 		if (percent > 1)
 		{
 			throw new BuildException(String.format("\"%s\" exceeds specified size by %d bytes", file, length - size));
 		}
+
+		PersistentProperties.INSTANCE.set(file.getAbsolutePath() + "#length", String.valueOf(length));
+		PersistentProperties.INSTANCE.save();
 	}
 
 }
