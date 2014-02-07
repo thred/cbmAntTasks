@@ -61,7 +61,7 @@ public class VerifySizeTask implements VerifyTask
 			}
 		}
 
-		task.log(String.format("\t%-20s %8d bytes (%4.1f %%) %s", file.getName(), length, percent * 100, info));
+		task.log(String.format("\t%-20s %8d bytes (%4.1f %%, %8d bytes free) %s", file.getName(), length, percent * 100, size - length, info));
 
 		if (percent > 1)
 		{
