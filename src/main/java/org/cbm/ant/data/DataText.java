@@ -37,6 +37,28 @@ public class DataText implements DataCommand
 	{
 		this.convert = convert;
 	}
+	
+	protected char convert(char ch) {
+		if (convert)
+		{
+			if (ch == '\n') {
+				ch = '\r';
+			}
+			else if (ch == '\\') {
+				ch = 0xbf;
+			}
+			else if ((ch >= 0x40) && (ch < 0x60))
+			{
+				ch += 0x80;
+			}
+			else if ((ch >= 0x60) && (ch < 0x80))
+			{
+				ch -= 0x20;
+			}
+		}
+		
+		return ch;
+	}
 
 	public void addText(String text)
 	{
@@ -84,23 +106,28 @@ public class DataText implements DataCommand
 
 				switch (ch)
 				{
+					case '\\':
+						out.write(convert('\\'));
+						count += 1;
+						continue;
+						
 					case '0':
-						out.write(0);
+						out.write(convert('\0'));
 						count += 1;
 						continue;
 
 					case 'n':
-						out.write('\n');
+						out.write(convert('\n'));
 						count += 1;
 						continue;
 
 					case 'r':
-						out.write('\r');
+						out.write(convert('\r'));
 						count += 1;
 						continue;
 
 					case 't':
-						out.write('\t');
+						out.write(convert('\t'));
 						count += 1;
 						continue;
 
@@ -133,7 +160,7 @@ public class DataText implements DataCommand
 
 						value <<= 4;
 						value += ((ch >= '0') && (ch <= '9')) ? (ch - '0') : ((ch - 'a') + 10);
-						out.write(value);
+						out.write(convert((char)value));
 						count += 1;
 						continue;
 				}
@@ -171,25 +198,13 @@ public class DataText implements DataCommand
 					break;
 			}
 			
-			if (convert)
-			{
-				if ((ch >= 0x40) && (ch < 0x60))
-				{
-					ch += 0x80;
-				}
-				else if ((ch >= 0x60) && (ch < 0x80))
-				{
-					ch -= 0x20;
-				}
-			}
-
-			out.write(ch);
+			out.write(convert(ch));
 			count += 1;
 		}
 
 		while (count < length)
 		{
-			out.write(0);
+			out.write(convert('\0'));
 			count += 1;
 		}
 	}
