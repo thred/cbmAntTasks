@@ -34,6 +34,7 @@ public class CC65 extends AbstractCC65Task implements ProcessConsumer
 	private boolean inlining = false;
 	private boolean registerVariables = false;
 	private boolean staticLocals = false;
+	private boolean checkStack = false;
 
 	public CC65()
 	{
@@ -142,6 +143,16 @@ public class CC65 extends AbstractCC65Task implements ProcessConsumer
 		this.staticLocals = staticLocals;
 	}
 
+	public boolean isCheckStack()
+	{
+		return checkStack;
+	}
+
+	public void setCheckStack(boolean checkStack)
+	{
+		this.checkStack = checkStack;
+	}
+
 	/**
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
@@ -202,6 +213,10 @@ public class CC65 extends AbstractCC65Task implements ProcessConsumer
 				if (isStaticLocals())
 				{
 					handler.parameter("-Cl");
+				}
+				
+				if (isCheckStack()) {
+					handler.parameter("--check-stack");
 				}
 
 				handler.parameter("--create-dep").parameter(outputFile.withExtension("d").ensureDirectory());
