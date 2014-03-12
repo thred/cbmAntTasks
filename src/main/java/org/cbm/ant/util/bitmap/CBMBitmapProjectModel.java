@@ -11,12 +11,12 @@ import java.util.Map;
 
 import javax.swing.event.EventListenerList;
 
-import org.cbm.ant.util.CBMBitmapDither;
-import org.cbm.ant.util.CBMBitmapEmboss;
-import org.cbm.ant.util.CBMColor;
-import org.cbm.ant.util.CBMPalette;
-import org.cbm.ant.util.CBMColorSpace;
-import org.cbm.ant.util.GraphicsMode;
+import org.cbm.ant.cbm.bitmap.CBMBitmapDither;
+import org.cbm.ant.cbm.bitmap.CBMBitmapEmboss;
+import org.cbm.ant.cbm.bitmap.CBMColor;
+import org.cbm.ant.cbm.bitmap.CBMColorSpace;
+import org.cbm.ant.cbm.bitmap.CBMPalette;
+import org.cbm.ant.cbm.bitmap.GraphicsMode;
 import org.cbm.ant.util.bitmap.util.CBMBitmapUtils;
 
 public class CBMBitmapProjectModel

@@ -1,4 +1,4 @@
-package org.cbm.ant.util;
+package org.cbm.ant.cbm.bitmap;
 
 /**
  * The Java Color Space is incredibly slow! Great thanks to

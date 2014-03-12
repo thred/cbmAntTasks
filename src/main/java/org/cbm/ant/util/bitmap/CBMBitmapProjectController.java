@@ -9,9 +9,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
-import org.cbm.ant.util.CBMBitmap;
-import org.cbm.ant.util.CBMBitmapDither;
-import org.cbm.ant.util.GraphicsMode;
+import org.cbm.ant.cbm.bitmap.CBMBitmap;
+import org.cbm.ant.cbm.bitmap.CBMBitmapDither;
+import org.cbm.ant.cbm.bitmap.GraphicsMode;
 import org.cbm.ant.util.bitmap.util.CBMBitmapCanvas;
 
 public class CBMBitmapProjectController

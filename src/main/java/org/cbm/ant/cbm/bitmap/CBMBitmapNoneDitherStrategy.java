@@ -1,4 +1,4 @@
-package org.cbm.ant.util;
+package org.cbm.ant.cbm.bitmap;
 
 public class CBMBitmapNoneDitherStrategy extends AbstractCBMBitmapDitherStrategy
 {
@@ -11,7 +11,7 @@ public class CBMBitmapNoneDitherStrategy extends AbstractCBMBitmapDitherStrategy
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.cbm.ant.util.CBMBitmapDitherStrategy#execute(CBMImage, org.cbm.ant.util.CBMPalette, org.cbm.ant.util.CBMColor[], int,
+	 * @see org.cbm.ant.cbm.bitmap.CBMBitmapDitherStrategy#execute(CBMImage, org.cbm.ant.cbm.bitmap.CBMPalette, org.cbm.ant.cbm.bitmap.CBMColor[], int,
 	 *      int, float)
 	 */
 	@Override

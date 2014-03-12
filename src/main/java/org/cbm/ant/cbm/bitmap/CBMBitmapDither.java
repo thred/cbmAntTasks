@@ -1,4 +1,4 @@
-package org.cbm.ant.util;
+package org.cbm.ant.cbm.bitmap;
 
 /**
  * Thanks to: http://www.tannerhelland.com/4660/dithering-eleven-algorithms-source-code/

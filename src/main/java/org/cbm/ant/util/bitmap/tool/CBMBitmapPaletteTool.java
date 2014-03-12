@@ -12,8 +12,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import org.cbm.ant.util.CBMColor;
-import org.cbm.ant.util.CBMPalette;
+import org.cbm.ant.cbm.bitmap.CBMColor;
+import org.cbm.ant.cbm.bitmap.CBMPalette;
 import org.cbm.ant.util.bitmap.CBMBitmapPaletteUsage;
 import org.cbm.ant.util.bitmap.CBMBitmapProjectController;
 import org.cbm.ant.util.bitmap.CBMBitmapProjectModel;

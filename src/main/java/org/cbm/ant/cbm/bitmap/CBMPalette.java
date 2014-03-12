@@ -1,4 +1,4 @@
-package org.cbm.ant.util;
+package org.cbm.ant.cbm.bitmap;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;

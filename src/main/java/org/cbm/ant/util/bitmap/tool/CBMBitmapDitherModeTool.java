@@ -8,7 +8,7 @@ import javax.swing.JComboBox;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.cbm.ant.util.CBMBitmapDither;
+import org.cbm.ant.cbm.bitmap.CBMBitmapDither;
 import org.cbm.ant.util.bitmap.CBMBitmapProjectController;
 import org.cbm.ant.util.bitmap.CBMBitmapProjectModel;
 import org.cbm.ant.util.bitmap.util.CBMBitmapSlider;

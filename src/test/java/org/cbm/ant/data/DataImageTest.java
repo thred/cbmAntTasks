@@ -7,7 +7,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.apache.tools.ant.BuildException;
-import org.cbm.ant.util.CBMBitmap;
+import org.cbm.ant.cbm.bitmap.CBMBitmap;
 
 public class DataImageTest
 {

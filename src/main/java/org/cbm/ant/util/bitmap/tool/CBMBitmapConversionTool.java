@@ -6,8 +6,8 @@ import java.beans.PropertyChangeEvent;
 
 import javax.swing.JComboBox;
 
-import org.cbm.ant.util.CBMColorSpace;
-import org.cbm.ant.util.GraphicsMode;
+import org.cbm.ant.cbm.bitmap.CBMColorSpace;
+import org.cbm.ant.cbm.bitmap.GraphicsMode;
 import org.cbm.ant.util.bitmap.CBMBitmapProjectController;
 import org.cbm.ant.util.bitmap.CBMBitmapProjectModel;
 import org.cbm.ant.util.bitmap.util.CBMBitmapUtils;

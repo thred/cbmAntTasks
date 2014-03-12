@@ -1,4 +1,4 @@
-package org.cbm.ant.util;
+package org.cbm.ant.cbm.bitmap;
 
 /**
  * Thanks to http://bisqwit.iki.fi/story/howto/dither/jy/
