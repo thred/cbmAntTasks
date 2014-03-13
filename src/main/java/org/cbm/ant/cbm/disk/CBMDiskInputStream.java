@@ -6,17 +6,17 @@ import java.io.InputStream;
 public class CBMDiskInputStream extends InputStream
 {
 
-    private final CBMDisk disk;
+    private final CBMDiskOperator operator;
 
     private CBMDiskSector sector;
     private int position;
     private int end;
 
-    public CBMDiskInputStream(CBMDisk disk, int trackNr, int sectorNr)
+    public CBMDiskInputStream(CBMDiskOperator operator, int trackNr, int sectorNr)
     {
         super();
 
-        this.disk = disk;
+        this.operator = operator;
 
         initSector(trackNr, sectorNr);
     }
@@ -38,7 +38,7 @@ public class CBMDiskInputStream extends InputStream
 
     private void initSector(int trackNr, int sectorNr)
     {
-        sector = disk.getSector(trackNr, sectorNr);
+        sector = operator.getDisk().getSector(trackNr, sectorNr);
         position = 2;
 
         if (!hasNextSector())
@@ -86,7 +86,7 @@ public class CBMDiskInputStream extends InputStream
             nextSector();
         }
 
-        int available = Math.min(end + 1 - position, length);
+        int available = Math.min((end + 1) - position, length);
 
         System.arraycopy(sector.getData(), position, b, offset, available);
 

@@ -86,7 +86,7 @@ public class CBMDiskLocation
 	@Override
 	public String toString()
 	{
-		return "CBMDiskLocation [trackNr=" + trackNr + ", sectorNr=" + sectorNr + "]";
+		return String.format("%02d/%02d", trackNr, sectorNr);
 	}
 
 }

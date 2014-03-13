@@ -197,6 +197,11 @@ public class CBMDisk
 		}
 	}
 
+	public CBMDiskSector getSector(CBMDiskLocation location)
+	{
+		return getSector(location.getTrackNr(), location.getSectorNr());
+	}
+
 	public CBMDiskSector getSector(int trackNr, int sectorNr)
 	{
 		return getTrack(trackNr).getSector(sectorNr);

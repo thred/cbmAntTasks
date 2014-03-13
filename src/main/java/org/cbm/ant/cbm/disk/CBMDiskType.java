@@ -62,15 +62,15 @@ public enum CBMDiskType
 		return numberOfSectors;
 	}
 
-	public int getNumberOfSectors(int track)
+	public int getNumberOfSectors(int trackNr)
 	{
-		if ((track == 0) || (track > numberOfTracks))
+		if ((trackNr == 0) || (trackNr > numberOfTracks))
 		{
-			throw new IllegalArgumentException(String.format("Invalid track: %d (must be between 1 and %d)", track,
+			throw new IllegalArgumentException(String.format("Invalid track: %d (must be between 1 and %d)", trackNr,
 					numberOfTracks));
 		}
 
-		return numberOfSectors[track - 1];
+		return numberOfSectors[trackNr - 1];
 	}
 
 	public boolean isErrorInformationAvailable()

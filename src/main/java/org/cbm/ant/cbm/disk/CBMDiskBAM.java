@@ -62,6 +62,74 @@ public class CBMDiskBAM
 		bam.fill(0xa7, 9, 0xa0);
 	}
 
+	public CBMDiskLocation findFreeSector()
+	{
+		if (isFull())
+		{
+			throw new IllegalStateException("Disk is full");
+		}
+
+		int offset = 1;
+		int dirTrackNr = operator.getDisk().getDirTrackNr();
+
+		while (offset < 256)
+		{
+			if (((dirTrackNr - offset) > 0) && (getFreeSectorsOfTrack(dirTrackNr - offset) > 0))
+			{
+				return findFreeSector(dirTrackNr - offset, 0, 0);
+			}
+
+			if (((dirTrackNr + offset) <= operator.getDisk().getType().getNumberOfTracks())
+					&& (getFreeSectorsOfTrack(dirTrackNr + offset) > 0))
+			{
+				return findFreeSector(dirTrackNr + offset, 0, 0);
+			}
+			
+			offset += 1;
+		}
+
+		throw new IllegalStateException("Did not find the free sector");
+	}
+
+	public CBMDiskLocation findNextFreeSector(CBMDiskLocation location)
+	{
+		int trackNr = location.getTrackNr();
+		int sectorNr = (location.getSectorNr() + getDisk().getSectorNrInterleave())
+				% operator.getDisk().getType().getNumberOfSectors(trackNr);
+		int trackNrIncrement = (trackNr < getDisk().getDirTrackNr()) ? -1 : 1;
+
+		return findFreeSector(trackNr, sectorNr, trackNrIncrement);
+	}
+
+	protected CBMDiskLocation findFreeSector(int trackNr, int sectorNr, int trackNrIncrement)
+	{
+		if (isFull())
+		{
+			throw new IllegalStateException("Disk is full");
+		}
+
+		int numberOfTracks = operator.getDisk().getType().getNumberOfTracks();
+
+		while ((getDisk().getDirTrackNr() == trackNr) || (getFreeSectorsOfTrack(trackNr) <= 0))
+		{
+			if (trackNrIncrement == 0)
+			{
+				throw new IllegalArgumentException("No track number increment specified");
+			}
+
+			trackNr = ((((trackNr + trackNrIncrement) - 1) + numberOfTracks) % numberOfTracks) + 1;
+		}
+
+		int numberOfSectors = operator.getDisk().getType().getNumberOfSectors(trackNr);
+
+		while (isSectorUsed(trackNr, sectorNr))
+		{
+			sectorNr = (((sectorNr + 1) - 1) % numberOfSectors) + 1;
+		}
+
+		return new CBMDiskLocation(trackNr, sectorNr);
+	}
+
 	public int getDirTrackNr()
 	{
 		return getBAMSector().getByte(0x00);
@@ -92,6 +160,11 @@ public class CBMDiskBAM
 		getBAMSector().setByte(0x02, dosVersion);
 	}
 
+	public boolean isSectorUsed(CBMDiskLocation location)
+	{
+		return isSectorUsed(location.getTrackNr(), location.getSectorNr());
+	}
+
 	public boolean isSectorUsed(int trackNr, int sectorNr)
 	{
 		int position = getBAMSectorPosition(trackNr) + 1 + (sectorNr / 8);
@@ -107,7 +180,7 @@ public class CBMDiskBAM
 		return getBAMSector().getByte(position);
 	}
 
-	public Object getFreeSectors()
+	public int getFreeSectors()
 	{
 		int result = 0;
 		CBMDisk disk = getDisk();
@@ -123,6 +196,16 @@ public class CBMDiskBAM
 		}
 
 		return result;
+	}
+
+	public boolean isFull()
+	{
+		return getFreeSectors() == 0;
+	}
+
+	public void setSectorUsed(CBMDiskLocation location, boolean used)
+	{
+		setSectorUsed(location.getTrackNr(), location.getSectorNr(), used);
 	}
 
 	public void setSectorUsed(int trackNr, int sectorNr, boolean used)

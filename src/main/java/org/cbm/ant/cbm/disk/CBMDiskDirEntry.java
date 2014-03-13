@@ -76,6 +76,11 @@ public class CBMDiskDirEntry
 		return WildcardUtils.match(currentFileName, fileName);
 	}
 
+	public boolean isFree()
+	{
+		return (getFileType() == CBMFileType.DEL);
+	}
+
 	public int getIndex()
 	{
 		return index;
@@ -166,6 +171,17 @@ public class CBMDiskDirEntry
 		getSector().setByte(getPosition(0x04), nextDirectorySectorNr);
 	}
 
+	public CBMDiskLocation getFileLocation()
+	{
+		return new CBMDiskLocation(getFileTrackNr(), getFileSectorNr());
+	}
+
+	public void setFileLocation(CBMDiskLocation location)
+	{
+		setFileTrackNr(location.getTrackNr());
+		setFileSectorNr(location.getSectorNr());
+	}
+
 	public String getFileName()
 	{
 		return CBMDiskUtil.fromCBMDOSName(getSector().getBytes(getPosition(0x05), 16));
@@ -194,6 +210,17 @@ public class CBMDiskDirEntry
 	public void setRELFileSectorNr(int nextDirectorySectorNr)
 	{
 		getSector().setByte(getPosition(0x16), nextDirectorySectorNr);
+	}
+
+	public CBMDiskLocation getRELFileLocation()
+	{
+		return new CBMDiskLocation(getRELFileTrackNr(), getRELFileSectorNr());
+	}
+
+	public void setRELFileLocation(CBMDiskLocation location)
+	{
+		setRELFileTrackNr(location.getTrackNr());
+		setRELFileSectorNr(location.getSectorNr());
 	}
 
 	public int getFileSize()

@@ -36,7 +36,7 @@ public class CBMDiskOperator
 		return dir;
 	}
 
-	public InputStream getInputStream(String fileName) throws IOException
+	public InputStream open(String fileName) throws IOException
 	{
 		CBMDiskDirEntry entry = getDir().find(fileName);
 
@@ -45,8 +45,50 @@ public class CBMDiskOperator
 			throw new FileNotFoundException(String.format("File not found: %s", fileName));
 		}
 
-		return new CBMDiskInputStream(disk, entry.getFileTrackNr(), entry.getFileSectorNr());
+		return new CBMDiskInputStream(this, entry.getFileTrackNr(), entry.getFileSectorNr());
 	}
-	
-	
+
+	public CBMDiskOutputStream create(String fileName, CBMFileType fileType) throws IOException
+	{
+		return create(null, fileName, fileType);
+	}
+
+	public CBMDiskOutputStream create(CBMDiskLocation location, String fileName, CBMFileType fileType)
+			throws IOException
+	{
+		CBMDiskDirEntry dirEntry = getDir().allocate();
+
+		dirEntry.setFileTrackNr(0);
+		dirEntry.setFileSectorNr(0);
+		dirEntry.setFileType(fileType);
+		dirEntry.setFileTypeLocked(false);
+		dirEntry.setFileTypeClosed(true);
+		dirEntry.setFileName(fileName);
+		dirEntry.setRELFileTrackNr(0);
+		dirEntry.setRELFileSectorNr(0);
+		dirEntry.setFileSize(0);
+
+		return create(location, dirEntry);
+	}
+
+	public CBMDiskOutputStream create(CBMDiskDirEntry dirEntry)
+	{
+		return null;
+	}
+
+	public CBMDiskOutputStream create()
+	{
+		return create((CBMDiskLocation) null, (CBMDiskDirEntry) null);
+	}
+
+	public CBMDiskOutputStream create(CBMDiskLocation location)
+	{
+		return create(location, null);
+	}
+
+	public CBMDiskOutputStream create(CBMDiskLocation location, CBMDiskDirEntry dirEntry)
+	{
+		return new CBMDiskOutputStream(this, dirEntry, location);
+	}
+
 }

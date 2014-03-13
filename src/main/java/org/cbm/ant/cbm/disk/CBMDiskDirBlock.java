@@ -99,6 +99,24 @@ public class CBMDiskDirBlock
 		return null;
 	}
 
+	public CBMDiskDirEntry allocate()
+	{
+		for (CBMDiskDirEntry entry : entries)
+		{
+			if (entry.isFree())
+			{
+				return entry;
+			}
+		}
+
+		if (nextBlock == null)
+		{
+			// TODO puh!
+		}
+
+		return nextBlock.allocate();
+	}
+
 	public CBMDiskDir getDir()
 	{
 		return dir;

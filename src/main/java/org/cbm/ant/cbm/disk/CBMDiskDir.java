@@ -81,5 +81,11 @@ public class CBMDiskDir
 
 		return firstBlock.find(fileName);
 	}
+	
+	public CBMDiskDirEntry allocate() {
+		scan();
+		
+		return firstBlock.allocate();
+	}
 
 }
