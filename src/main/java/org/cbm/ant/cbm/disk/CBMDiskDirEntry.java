@@ -7,6 +7,9 @@ import org.cbm.ant.util.WildcardUtils;
 public class CBMDiskDirEntry
 {
 
+	private static final String LIST_ENTRY_WITH_KEY = "%-3d  %-18s %s (%c)\n";
+	private static final String LIST_ENTRY_WITHOUT_KEY = "%-3d  %-18s %s\n";
+
 	private final CBMDiskDirSector block;
 	private final int index;
 	private final int id;
@@ -31,8 +34,13 @@ public class CBMDiskDirEntry
 		getSector().fill(getPosition(0x15), 0x0b, 0x00);
 	}
 
-	public void list(PrintStream out)
+	public void list(PrintStream out, boolean listKeys, boolean listDeleted)
 	{
+		if ((isFree()) && (!listDeleted))
+		{
+			return;
+		}
+
 		String type = getFileType().getName();
 
 		if (isFileTypeLocked())
@@ -45,8 +53,8 @@ public class CBMDiskDirEntry
 			type = "*" + type;
 		}
 
-		out.printf("%-3d  %-18s %s (%c)\n", getFileSize(), CBMDiskUtil.apostrophes(getFileName()), type,
-				CBMDiskUtil.id2Key(id));
+		out.printf((listKeys) ? LIST_ENTRY_WITH_KEY : LIST_ENTRY_WITHOUT_KEY, getFileSize(),
+				CBMDiskUtil.apostrophes(getFileName()), type, CBMDiskUtil.id2Key(id));
 	}
 
 	public void mark()

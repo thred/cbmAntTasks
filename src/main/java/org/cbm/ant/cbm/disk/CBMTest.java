@@ -7,7 +7,7 @@ import org.cbm.ant.util.IOUtils;
 
 public class CBMTest
 {
-	public static void main(String[] args) throws IOException
+	public static void main(String[] args) throws IOException, CBMDiskException
 	{
 		CBMDisk disk = new CBMDisk();
 		CBMDiskOperator operator = new CBMDiskOperator(disk);
@@ -17,7 +17,7 @@ public class CBMTest
 
 		System.out.println(operator.getBAM().toString());
 
-		operator.getDir().list(System.out);
+		operator.getDir().list(System.out, true, true);
 
 		IOUtils.write(new File("C:/home/dev/c64/projects/LocatorsSynd/bin/locators synd(2).prg"),
 				operator.open("locators synd"));
@@ -33,11 +33,11 @@ public class CBMTest
 		{
 			out.close();
 		}
-		
+
 		disk.save(new File("test.d64"));
 
 		System.out.println(operator.getBAM().toString());
 
-		operator.getDir().list(System.out);
+		operator.getDir().list(System.out, true, true);
 	}
 }

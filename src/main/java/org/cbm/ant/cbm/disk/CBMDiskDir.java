@@ -2,101 +2,145 @@ package org.cbm.ant.cbm.disk;
 
 import java.io.PrintStream;
 
+/**
+ * Service for accessing the directory of a CBM disk image
+ * 
+ * @author thred
+ */
 public class CBMDiskDir
 {
 
-    private final CBMDiskOperator operator;
+	private final CBMDiskOperator operator;
 
-    private CBMDiskDirSector firstDirSector;
+	private CBMDiskDirSector firstDirSector;
 
-    public CBMDiskDir(CBMDiskOperator operator)
-    {
-        super();
+	/**
+	 * Creates the service for accessing the directory of a CBM disk image
+	 * 
+	 * @param operator the operator
+	 */
+	public CBMDiskDir(CBMDiskOperator operator)
+	{
+		super();
 
-        this.operator = operator;
-    }
+		this.operator = operator;
+	}
 
-    public CBMDiskOperator getOperator()
-    {
-        return operator;
-    }
+	public CBMDiskOperator getOperator()
+	{
+		return operator;
+	}
 
-    public CBMDisk getDisk()
-    {
-        return operator.getDisk();
-    }
+	public CBMDisk getDisk()
+	{
+		return operator.getDisk();
+	}
 
-    public void scan()
-    {
-        CBMDiskBAM bam = operator.getBAM();
-        CBMDiskLocation location = bam.getDirLocation();
+	/**
+	 * (Re)scans the directory to create a internal representation. This should be done after disk changes.
+	 */
+	public void scan()
+	{
+		CBMDiskBAM bam = operator.getBAM();
+		CBMDiskLocation location = bam.getDirLocation();
 
-        firstDirSector = new CBMDiskDirSector(this, location, 0);
+		firstDirSector = new CBMDiskDirSector(this, location, 0);
 
-        firstDirSector.scan();
-    }
+		firstDirSector.scan();
+	}
 
-    public void format()
-    {
-        CBMDiskBAM bam = operator.getBAM();
-        CBMDiskLocation location = bam.getDirLocation();
+	/**
+	 * Formats the directory. Expects that the BAM already has been initialized.
+	 */
+	public void format()
+	{
+		CBMDiskBAM bam = operator.getBAM();
+		CBMDiskLocation location = bam.getDirLocation();
 
-        firstDirSector = new CBMDiskDirSector(this, location, 0);
-        bam.setSectorUsed(location, true);
+		firstDirSector = new CBMDiskDirSector(this, location, 0);
 
-        firstDirSector.format();
+		bam.setSectorUsed(location, true);
 
-        scan();
-    }
+		firstDirSector.format();
 
-    public void list(PrintStream out)
-    {
-        CBMDiskBAM bam = operator.getBAM();
+		scan();
+	}
 
-        scan();
+	/**
+	 * Lists the directory to the specified stream
+	 * 
+	 * @param out the stream
+	 * @param listKeys if true adds a key to the listing that matches the key of the BAM listing
+	 * @param listDeleted if true even lists deleted files
+	 */
+	public void list(PrintStream out, boolean listKeys, boolean listDeleted)
+	{
+		CBMDiskBAM bam = operator.getBAM();
 
-        out.printf("%d \"%-16s\" %-2s %-2s\n", 0, bam.getDiskName(), bam.getDiskID(), bam.getDOSType());
-        firstDirSector.list(out);
-        out.printf("%d blocks free.\n", bam.getFreeSectors());
-    }
+		scan();
 
-    public void mark()
-    {
-        scan();
+		out.printf("%d \"%-16s\" %-2s %-2s\n", 0, bam.getDiskName(), bam.getDiskID(), bam.getDOSType());
+		firstDirSector.list(out, listKeys, listDeleted);
+		out.printf("%d blocks free.\n", bam.getFreeSectors());
+	}
 
-        CBMDisk disk = getDisk();
+	/**
+	 * Marks the sectors of the disk, that belong to a directory entry.
+	 */
+	public void mark()
+	{
+		scan();
 
-        disk.clearMarks();
+		CBMDisk disk = getDisk();
 
-        CBMDiskBAM bam = operator.getBAM();
+		disk.clearMarks();
 
-        bam.getBAMSector().setMark(CBMDiskUtil.MARK_BAM);
+		CBMDiskBAM bam = operator.getBAM();
 
-        int track = bam.getDirTrackNr();
-        int sector = bam.getDirSectorNr();
+		bam.getBAMSector().setMark(CBMDiskUtil.MARK_BAM);
 
-        disk.mark(track, sector, CBMDiskUtil.MARK_DIR);
+		int track = bam.getDirTrackNr();
+		int sector = bam.getDirSectorNr();
 
-        firstDirSector.mark();
-    }
+		disk.mark(track, sector, CBMDiskUtil.MARK_DIR);
 
-    public CBMDiskDirEntry find(String fileName)
-    {
-        scan();
+		firstDirSector.mark();
+	}
 
-        return firstDirSector.find(fileName);
-    }
+	/**
+	 * Searches for a file name. The file name supports wildcards.
+	 * 
+	 * @param fileName the file name
+	 * @return the entry
+	 */
+	public CBMDiskDirEntry find(String fileName)
+	{
+		scan();
 
-    public CBMDiskDirEntry allocate()
-    {
-        scan();
+		return firstDirSector.find(fileName);
+	}
 
-        return firstDirSector.allocate();
-    }
+	/**
+	 * Allocates a free directory entry.
+	 * 
+	 * @return a free directory entry
+	 * @throws CBMDiskException on occasion
+	 */
+	public CBMDiskDirEntry allocate() throws CBMDiskException
+	{
+		scan();
 
-    public CBMDiskDirSector getFirstDirSector()
-    {
-        return firstDirSector;
-    }
+		return firstDirSector.allocate();
+	}
+
+	/**
+	 * Returns the first directory sector
+	 * 
+	 * @return the first directory sector
+	 */
+	public CBMDiskDirSector getFirstDirSector()
+	{
+		return firstDirSector;
+	}
 
 }

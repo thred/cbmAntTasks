@@ -2,7 +2,7 @@ package org.cbm.ant.cbm.disk;
 
 import java.io.File;
 
-public enum CBMDiskType
+public enum CBMDiskFormat
 {
 
 	CBM_154x(new int[] { //
@@ -11,7 +11,7 @@ public enum CBMDiskType
 			18, 18, 18, 18, 18, 18, // Track 25-30
 			17, 17, 17, 17, 17
 	// Track 31-35
-	}, false, 18, 3, -1, 10),
+	}, false, 18, 3, 10),
 
 	CBM_154x_EXTENDED(new int[] { //
 			21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, // Track 1-17 
@@ -20,19 +20,18 @@ public enum CBMDiskType
 			17, 17, 17, 17, 17, // Track 31-35
 			17, 17, 17, 17, 17
 	// Track 36-40
-	}, false, 18, 3, -1, 10);
+	}, false, 18, 3, 10);
 
 	private final int numberOfTracks;
 	private final int[] numberOfSectors;
 	private final boolean errorInformationAvailable;
 	private final int fileSize;
-	private final int dirTrackNr;
+	private final int bamTrackNr;
 	private final int dirSectorNrInterleave;
-	private final int trackNrInterleave;
 	private final int sectorNrInterleave;
 
-	private CBMDiskType(int[] numberOfSectors, boolean errorInformationAvailable, int dirTrackNr,
-			int dirSectorNrInterleave, int trackNrInterleave, int sectorNrInterleave)
+	private CBMDiskFormat(int[] numberOfSectors, boolean errorInformationAvailable, int bamTrackNr,
+			int dirSectorNrInterleave, int sectorNrInterleave)
 	{
 		numberOfTracks = numberOfSectors.length;
 		this.numberOfSectors = numberOfSectors;
@@ -46,9 +45,8 @@ public enum CBMDiskType
 		}
 
 		this.fileSize = fileSize;
-		this.dirTrackNr = dirTrackNr;
+		this.bamTrackNr = bamTrackNr;
 		this.dirSectorNrInterleave = dirSectorNrInterleave;
-		this.trackNrInterleave = trackNrInterleave;
 		this.sectorNrInterleave = sectorNrInterleave;
 	}
 
@@ -83,9 +81,9 @@ public enum CBMDiskType
 		return fileSize;
 	}
 
-	public int getDirTrackNr()
+	public int getBAMTrackNr()
 	{
-		return dirTrackNr;
+		return bamTrackNr;
 	}
 
 	public int getDirSectorNrInterleave()
@@ -93,25 +91,20 @@ public enum CBMDiskType
 		return dirSectorNrInterleave;
 	}
 
-	public int getTrackNrInterleave()
-	{
-		return trackNrInterleave;
-	}
-
 	public int getSectorNrInterleave()
 	{
 		return sectorNrInterleave;
 	}
 
-	public static CBMDiskType determineDiskType(File file)
+	public static CBMDiskFormat determineDiskType(File file)
 	{
 		long size = file.length();
 
-		for (CBMDiskType type : values())
+		for (CBMDiskFormat format : values())
 		{
-			if (type.getFileSize() == size)
+			if (format.getFileSize() == size)
 			{
-				return type;
+				return format;
 			}
 		}
 

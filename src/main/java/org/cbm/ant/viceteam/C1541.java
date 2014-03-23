@@ -154,6 +154,11 @@ public class C1541 extends AbstractViceTask implements ProcessConsumer
 		long lastModified = -1;
 		boolean exists = image.exists();
 
+		if (!exists)
+		{
+			return true;
+		}
+
 		if (exists)
 		{
 			lastModified = image.lastModified();
