@@ -5,87 +5,98 @@ import java.io.PrintStream;
 public class CBMDiskDir
 {
 
-	private final CBMDiskOperator operator;
+    private final CBMDiskOperator operator;
 
-	private CBMDiskDirBlock firstBlock;
+    private CBMDiskDirSector firstDirSector;
 
-	public CBMDiskDir(CBMDiskOperator operator)
-	{
-		super();
+    public CBMDiskDir(CBMDiskOperator operator)
+    {
+        super();
 
-		this.operator = operator;
-	}
+        this.operator = operator;
+    }
 
-	public CBMDiskOperator getOperator()
-	{
-		return operator;
-	}
+    public CBMDiskOperator getOperator()
+    {
+        return operator;
+    }
 
-	public CBMDisk getDisk()
-	{
-		return operator.getDisk();
-	}
+    public CBMDisk getDisk()
+    {
+        return operator.getDisk();
+    }
 
-	public void scan()
-	{
-		CBMDiskBAM bam = operator.getBAM();
-		int track = bam.getDirTrackNr();
-		int sector = bam.getDirSectorNr();
+    public void scan()
+    {
+        CBMDiskBAM bam = operator.getBAM();
+        CBMDiskLocation location = bam.getDirLocation();
 
-		firstBlock = new CBMDiskDirBlock(this, track, sector, 0);
+        firstDirSector = new CBMDiskDirSector(this, location, 0);
 
-		firstBlock.scan();
-	}
+        firstDirSector.scan();
+    }
 
-	public void format()
-	{
-		scan();
+    public void format()
+    {
+        CBMDiskBAM bam = operator.getBAM();
+        CBMDiskLocation location = bam.getDirLocation();
 
-		firstBlock.format();
-	}
+        firstDirSector = new CBMDiskDirSector(this, location, 0);
+        bam.setSectorUsed(location, true);
 
-	public void list(PrintStream out)
-	{
-		CBMDiskBAM bam = operator.getBAM();
+        firstDirSector.format();
 
-		scan();
+        scan();
+    }
 
-		out.printf("%d \"%-16s\" %-2s %-2s\n", 0, bam.getDiskName(), bam.getDiskID(), bam.getDOSType());
-		firstBlock.list(out);
-		out.printf("%d blocks free.\n", bam.getFreeSectors());
-	}
+    public void list(PrintStream out)
+    {
+        CBMDiskBAM bam = operator.getBAM();
 
-	public void mark()
-	{
-		scan();
+        scan();
 
-		CBMDisk disk = getDisk();
+        out.printf("%d \"%-16s\" %-2s %-2s\n", 0, bam.getDiskName(), bam.getDiskID(), bam.getDOSType());
+        firstDirSector.list(out);
+        out.printf("%d blocks free.\n", bam.getFreeSectors());
+    }
 
-		disk.clearMarks();
+    public void mark()
+    {
+        scan();
 
-		CBMDiskBAM bam = operator.getBAM();
+        CBMDisk disk = getDisk();
 
-		bam.getBAMSector().setMark(CBMDiskUtil.MARK_BAM);
+        disk.clearMarks();
 
-		int track = bam.getDirTrackNr();
-		int sector = bam.getDirSectorNr();
+        CBMDiskBAM bam = operator.getBAM();
 
-		disk.mark(track, sector, CBMDiskUtil.MARK_DIR);
+        bam.getBAMSector().setMark(CBMDiskUtil.MARK_BAM);
 
-		firstBlock.mark();
-	}
+        int track = bam.getDirTrackNr();
+        int sector = bam.getDirSectorNr();
 
-	public CBMDiskDirEntry find(String fileName)
-	{
-		scan();
+        disk.mark(track, sector, CBMDiskUtil.MARK_DIR);
 
-		return firstBlock.find(fileName);
-	}
-	
-	public CBMDiskDirEntry allocate() {
-		scan();
-		
-		return firstBlock.allocate();
-	}
+        firstDirSector.mark();
+    }
+
+    public CBMDiskDirEntry find(String fileName)
+    {
+        scan();
+
+        return firstDirSector.find(fileName);
+    }
+
+    public CBMDiskDirEntry allocate()
+    {
+        scan();
+
+        return firstDirSector.allocate();
+    }
+
+    public CBMDiskDirSector getFirstDirSector()
+    {
+        return firstDirSector;
+    }
 
 }

@@ -1,13 +1,15 @@
 package org.cbm.ant.cbm.disk;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CBMDiskUtil
 {
 
     public static final int MARK_BAM = 0xfe;
     public static final int MARK_DIR = 0xff;
-    
+
     private static final char PETSCII_MAPPING[] = {'?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?',
         '?', '?', '?', //
         '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', //
@@ -25,26 +27,26 @@ public class CBMDiskUtil
         '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', //
     };
 
+    private static final Map<Character, Byte> ASCII_MAPPING = new HashMap<Character, Byte>();
+
+    static
+    {
+        for (int i = 0; i < PETSCII_MAPPING.length; i += 1)
+        {
+            ASCII_MAPPING.put(PETSCII_MAPPING[i], Byte.valueOf((byte) (i & 0xff)));
+        }
+    }
+
     public static byte ascii2petscii(char ch)
     {
-        if (ch == '\n')
-        {
-            ch = '\r';
-        }
-        else if (ch == '\\')
-        {
-            ch = 0xbf;
-        }
-        else if ((ch >= 0x40) && (ch < 0x60))
-        {
-            ch += 0x80;
-        }
-        else if ((ch >= 0x60) && (ch < 0x80))
-        {
-            ch -= 0x20;
-        }
+        Byte result = ASCII_MAPPING.get(ch);
 
-        return (byte) ch;
+        if (result == null)
+        {
+            throw new IllegalArgumentException(String.format("Unmapable character %c (%04x)", ch, (int) ch));
+        }
+        
+        return result.byteValue();
     }
 
     public static char petscii2ascii(byte b)
@@ -71,39 +73,42 @@ public class CBMDiskUtil
 
     public static char id2Key(int id)
     {
-        if (id == MARK_BAM) {
+        if (id == MARK_BAM)
+        {
             return '#';
         }
-        
-        if (id == MARK_DIR) {
+
+        if (id == MARK_DIR)
+        {
             return '$';
         }
-        
+
         if (id < 0)
         {
             return '?';
         }
 
-        if (id == 0) {
+        if (id == 0)
+        {
             return '*';
         }
-        
+
         id -= 1;
-        
+
         if (id < 10)
         {
             return (char) ('0' + id);
         }
 
         id -= 10;
-        
+
         if (id < 26)
         {
             return (char) ('a' + id);
         }
 
         id -= 26;
-        
+
         if (id < 26)
         {
             return (char) ('A' + id);

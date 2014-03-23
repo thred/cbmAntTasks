@@ -6,111 +6,118 @@ import java.io.OutputStream;
 public class CBMDiskOutputStream extends OutputStream
 {
 
-	private final CBMDiskOperator operator;
-	private final CBMDiskDirEntry dirEntry;
+    private final CBMDiskOperator operator;
+    private final CBMDiskDirEntry dirEntry;
 
-	private CBMDiskLocation location = null;
-	private CBMDiskSector sector = null;
-	private int position;
-	private int size = 0;
+    private CBMDiskLocation location = null;
+    private CBMDiskSector sector = null;
+    private int position;
+    private int size = 0;
 
-	public CBMDiskOutputStream(CBMDiskOperator operator, CBMDiskDirEntry dirEntry, CBMDiskLocation location)
-	{
-		super();
+    public CBMDiskOutputStream(CBMDiskOperator operator, CBMDiskDirEntry dirEntry, CBMDiskLocation location)
+    {
+        super();
 
-		this.operator = operator;
-		this.dirEntry = dirEntry;
+        this.operator = operator;
+        this.dirEntry = dirEntry;
 
-		this.location = location;
-	}
+        this.location = location;
+    }
 
-	public CBMDiskOperator getOperator()
-	{
-		return operator;
-	}
+    public CBMDiskOperator getOperator()
+    {
+        return operator;
+    }
 
-	public CBMDiskDirEntry getDirEntry()
-	{
-		return dirEntry;
-	}
+    public CBMDiskDirEntry getDirEntry()
+    {
+        return dirEntry;
+    }
 
-	public CBMDiskLocation getLocation()
-	{
-		return location;
-	}
+    public CBMDiskLocation getLocation()
+    {
+        return location;
+    }
 
-	public int getSize()
-	{
-		return size;
-	}
+    public int getSize()
+    {
+        return size;
+    }
 
-	protected void ensure() throws IOException
-	{
-		if (location == null)
-		{
-			location = operator.getBAM().findFreeSector();
+    protected void ensure() throws IOException
+    {
+        if (location == null)
+        {
+            location = operator.getBAM().findFreeSector();
 
-			grab(location);
-		}
-		else if (position > 255)
-		{
-			grab(operator.getBAM().findNextFreeSector(location));
-		}
-	}
+            grab(location);
+        }
+        else if (position > 255)
+        {
+            CBMDiskLocation currentLocation = location;
 
-	protected void grab(CBMDiskLocation location) throws IOException
-	{
-		if (sector != null)
-		{
-			sector.setNextLocation(location);
-		}
-		else if (dirEntry != null)
-		{
-			dirEntry.setFileLocation(location);
-			dirEntry.setFileTypeClosed(false);
-		}
+            if (sector != null)
+            {
+                currentLocation = sector.getLocation();
+            }
 
-		if (operator.getBAM().isSectorUsed(location))
-		{
-			throw new IOException(String.format("Track/sector %s already used", location));
-		}
+            grab(operator.getBAM().findNextFreeSector(currentLocation));
+        }
+    }
 
-		operator.getBAM().setSectorUsed(location, true);
-		sector = operator.getDisk().getSector(location);
-		position = 2;
-		size += 1;
-	}
+    protected void grab(CBMDiskLocation nextLocation) throws IOException
+    {
+        if (sector != null)
+        {
+            sector.setNextLocation(nextLocation);
+        }
+        else if (dirEntry != null)
+        {
+            dirEntry.setFileLocation(nextLocation);
+            dirEntry.setFileTypeClosed(false);
+        }
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see java.io.OutputStream#write(int)
-	 */
-	@Override
-	public void write(int b) throws IOException
-	{
-		ensure();
+        if (operator.getBAM().isSectorUsed(nextLocation))
+        {
+            throw new IOException(String.format("Track/sector %s already used", nextLocation));
+        }
 
-		sector.setByte(position, b);
-		position += 1;
-	}
+        operator.getBAM().setSectorUsed(nextLocation, true);
+        sector = operator.getDisk().getSector(nextLocation);
+        position = 2;
+        size += 1;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see java.io.OutputStream#close()
-	 */
-	@Override
-	public void close() throws IOException
-	{
-		sector.setNextTrackNr(0);
-		sector.setNextSectorNr(position - 1);
+    /**
+     * {@inheritDoc}
+     * 
+     * @see java.io.OutputStream#write(int)
+     */
+    @Override
+    public void write(int b) throws IOException
+    {
+        ensure();
 
-		if (dirEntry != null)
-		{
-			dirEntry.setFileSize(size);
-			dirEntry.setFileTypeClosed(true);
-		}
-	}
+        sector.setByte(position, b);
+        position += 1;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see java.io.OutputStream#close()
+     */
+    @Override
+    public void close() throws IOException
+    {
+        sector.setNextTrackNr(0);
+        sector.setNextSectorNr(position - 1);
+
+        if (dirEntry != null)
+        {
+            dirEntry.setFileSize(size);
+            dirEntry.setFileTypeClosed(true);
+        }
+    }
 
 }

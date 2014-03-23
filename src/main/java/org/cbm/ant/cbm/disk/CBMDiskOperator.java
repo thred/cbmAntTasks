@@ -7,88 +7,99 @@ import java.io.InputStream;
 public class CBMDiskOperator
 {
 
-	private final CBMDisk disk;
-	private final CBMDiskBAM bam;
-	private final CBMDiskDir dir;
+    private final CBMDisk disk;
+    private final CBMDiskBAM bam;
+    private final CBMDiskDir dir;
 
-	public CBMDiskOperator(CBMDisk disk)
-	{
-		super();
+    public CBMDiskOperator(CBMDisk disk)
+    {
+        super();
 
-		this.disk = disk;
+        this.disk = disk;
 
-		bam = new CBMDiskBAM(this);
-		dir = new CBMDiskDir(this);
-	}
+        bam = new CBMDiskBAM(this);
+        dir = new CBMDiskDir(this);
+    }
 
-	public CBMDisk getDisk()
-	{
-		return disk;
-	}
+    public CBMDisk getDisk()
+    {
+        return disk;
+    }
 
-	public CBMDiskBAM getBAM()
-	{
-		return bam;
-	}
+    public CBMDiskBAM getBAM()
+    {
+        return bam;
+    }
 
-	public CBMDiskDir getDir()
-	{
-		return dir;
-	}
+    public CBMDiskDir getDir()
+    {
+        return dir;
+    }
 
-	public InputStream open(String fileName) throws IOException
-	{
-		CBMDiskDirEntry entry = getDir().find(fileName);
+    /**
+     * Formats the disk. Reinitialized the bam and the directory structure. Does not touch any other sectors.
+     * 
+     * @param diskName the name of the disk
+     */
+    public void format(String diskName)
+    {
+        getBAM().format(diskName);
+        getDir().format();
+    }
 
-		if (entry == null)
-		{
-			throw new FileNotFoundException(String.format("File not found: %s", fileName));
-		}
+    public InputStream open(String fileName) throws IOException
+    {
+        CBMDiskDirEntry entry = getDir().find(fileName);
 
-		return new CBMDiskInputStream(this, entry.getFileTrackNr(), entry.getFileSectorNr());
-	}
+        if (entry == null)
+        {
+            throw new FileNotFoundException(String.format("File not found: %s", fileName));
+        }
 
-	public CBMDiskOutputStream create(String fileName, CBMFileType fileType) throws IOException
-	{
-		return create(null, fileName, fileType);
-	}
+        return new CBMDiskInputStream(this, entry.getFileTrackNr(), entry.getFileSectorNr());
+    }
 
-	public CBMDiskOutputStream create(CBMDiskLocation location, String fileName, CBMFileType fileType)
-			throws IOException
-	{
-		CBMDiskDirEntry dirEntry = getDir().allocate();
+    public CBMDiskOutputStream create(String fileName, CBMFileType fileType) throws IOException
+    {
+        return create(null, fileName, fileType);
+    }
 
-		dirEntry.setFileTrackNr(0);
-		dirEntry.setFileSectorNr(0);
-		dirEntry.setFileType(fileType);
-		dirEntry.setFileTypeLocked(false);
-		dirEntry.setFileTypeClosed(true);
-		dirEntry.setFileName(fileName);
-		dirEntry.setRELFileTrackNr(0);
-		dirEntry.setRELFileSectorNr(0);
-		dirEntry.setFileSize(0);
+    public CBMDiskOutputStream create(CBMDiskLocation location, String fileName, CBMFileType fileType)
+        throws IOException
+    {
+        CBMDiskDirEntry dirEntry = getDir().allocate();
 
-		return create(location, dirEntry);
-	}
+        dirEntry.setFileTrackNr(0);
+        dirEntry.setFileSectorNr(0);
+        dirEntry.setFileType(fileType);
+        dirEntry.setFileTypeLocked(false);
+        dirEntry.setFileTypeClosed(true);
+        dirEntry.setFileName(fileName);
+        dirEntry.setRELFileTrackNr(0);
+        dirEntry.setRELFileSectorNr(0);
+        dirEntry.setFileSize(0);
 
-	public CBMDiskOutputStream create(CBMDiskDirEntry dirEntry)
-	{
-		return null;
-	}
+        return create(location, dirEntry);
+    }
 
-	public CBMDiskOutputStream create()
-	{
-		return create((CBMDiskLocation) null, (CBMDiskDirEntry) null);
-	}
+    public CBMDiskOutputStream create(CBMDiskDirEntry dirEntry)
+    {
+        return null;
+    }
 
-	public CBMDiskOutputStream create(CBMDiskLocation location)
-	{
-		return create(location, null);
-	}
+    public CBMDiskOutputStream create()
+    {
+        return create((CBMDiskLocation) null, (CBMDiskDirEntry) null);
+    }
 
-	public CBMDiskOutputStream create(CBMDiskLocation location, CBMDiskDirEntry dirEntry)
-	{
-		return new CBMDiskOutputStream(this, dirEntry, location);
-	}
+    public CBMDiskOutputStream create(CBMDiskLocation location)
+    {
+        return create(location, null);
+    }
+
+    public CBMDiskOutputStream create(CBMDiskLocation location, CBMDiskDirEntry dirEntry)
+    {
+        return new CBMDiskOutputStream(this, dirEntry, location);
+    }
 
 }

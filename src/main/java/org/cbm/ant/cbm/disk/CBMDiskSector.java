@@ -8,173 +8,181 @@ import java.util.Arrays;
 public class CBMDiskSector
 {
 
-	private final byte[] data = new byte[256];
+    private final byte[] data = new byte[256];
 
-	private final int trackNr;
-	private final int sectorNr;
+    private final CBMDiskLocation location;
 
-	private int mark;
+    private int mark;
 
-	public CBMDiskSector(int trackNr, int sectorNr)
-	{
-		super();
+    public CBMDiskSector(int trackNr, int sectorNr)
+    {
+        this(new CBMDiskLocation(trackNr, sectorNr));
+    }
 
-		this.trackNr = trackNr;
-		this.sectorNr = sectorNr;
-	}
+    public CBMDiskSector(CBMDiskLocation location)
+    {
+        super();
 
-	public byte[] getData()
-	{
-		return data;
-	}
+        this.location = location;
+    }
 
-	public int getTrackNr()
-	{
-		return trackNr;
-	}
+    public byte[] getData()
+    {
+        return data;
+    }
 
-	public int getSectorNr()
-	{
-		return sectorNr;
-	}
+    public int getTrackNr()
+    {
+        return location.getTrackNr();
+    }
 
-	public int getNextTrackNr()
-	{
-		return getByte(0x00);
-	}
+    public int getSectorNr()
+    {
+        return location.getSectorNr();
+    }
 
-	public void setNextTrackNr(int trackNr)
-	{
-		setByte(0x00, trackNr);
-	}
+    public CBMDiskLocation getLocation()
+    {
+        return location;
+    }
 
-	public int getNextSectorNr()
-	{
-		return getByte(0x01);
-	}
+    public int getNextTrackNr()
+    {
+        return getByte(0x00);
+    }
 
-	public void setNextSectorNr(int sectorNr)
-	{
-		setByte(0x01, sectorNr);
-	}
+    public void setNextTrackNr(int trackNr)
+    {
+        setByte(0x00, trackNr);
+    }
 
-	public CBMDiskLocation getNextLocation()
-	{
-		return new CBMDiskLocation(getNextTrackNr(), getNextSectorNr());
-	}
+    public int getNextSectorNr()
+    {
+        return getByte(0x01);
+    }
 
-	public void setNextLocation(CBMDiskLocation location)
-	{
-		setNextTrackNr(location.getTrackNr());
-		setNextSectorNr(location.getSectorNr());
-	}
+    public void setNextSectorNr(int sectorNr)
+    {
+        setByte(0x01, sectorNr);
+    }
 
-	public void read(InputStream in) throws IOException
-	{
-		int remaining = 256;
+    public CBMDiskLocation getNextLocation()
+    {
+        return new CBMDiskLocation(getNextTrackNr(), getNextSectorNr());
+    }
 
-		while (remaining > 0)
-		{
-			int length = in.read(data, 256 - remaining, remaining);
+    public void setNextLocation(CBMDiskLocation location)
+    {
+        setNextTrackNr(location.getTrackNr());
+        setNextSectorNr(location.getSectorNr());
+    }
 
-			if (length < 0)
-			{
-				return;
-			}
+    public void read(InputStream in) throws IOException
+    {
+        int remaining = 256;
 
-			remaining -= length;
-		}
-	}
+        while (remaining > 0)
+        {
+            int length = in.read(data, 256 - remaining, remaining);
 
-	public void write(OutputStream out) throws IOException
-	{
-		out.write(data);
-	}
+            if (length < 0)
+            {
+                return;
+            }
 
-	public void clear()
-	{
-		Arrays.fill(data, (byte) 0x00);
-	}
+            remaining -= length;
+        }
+    }
 
-	public boolean isBit(int position, int bit)
-	{
-		int b = 1 << bit;
+    public void write(OutputStream out) throws IOException
+    {
+        out.write(data);
+    }
 
-		return (getByte(position) & b) == b;
-	}
+    public void clear()
+    {
+        Arrays.fill(data, (byte) 0x00);
+    }
 
-	public int getByte(int position)
-	{
-		return (data[position] & 0xff);
-	}
+    public boolean isBit(int position, int bit)
+    {
+        int b = 1 << bit;
 
-	public byte[] getBytes(int position, int length)
-	{
-		byte[] result = new byte[length];
+        return (getByte(position) & b) == b;
+    }
 
-		System.arraycopy(data, position, result, 0, length);
+    public int getByte(int position)
+    {
+        return (data[position] & 0xff);
+    }
 
-		return result;
-	}
+    public byte[] getBytes(int position, int length)
+    {
+        byte[] result = new byte[length];
 
-	public int getWord(int position)
-	{
-		return getByte(position) + (getByte(position + 1) * 256);
-	}
+        System.arraycopy(data, position, result, 0, length);
 
-	public String getString(int position, int length)
-	{
-		return CBMDiskUtil.fromCBMDOSName(getBytes(position, length));
-	}
+        return result;
+    }
 
-	public void setBit(int position, int bit, boolean value)
-	{
-		int b = 1 << bit;
+    public int getWord(int position)
+    {
+        return getByte(position) + (getByte(position + 1) * 256);
+    }
 
-		if (value)
-		{
-			data[position] |= b;
-		}
-		else
-		{
-			data[position] &= ~b;
-		}
-	}
+    public String getString(int position, int length)
+    {
+        return CBMDiskUtil.fromCBMDOSName(getBytes(position, length));
+    }
 
-	public void setByte(int position, int value)
-	{
-		data[position] = (byte) (0xff & value);
-	}
+    public void setBit(int position, int bit, boolean value)
+    {
+        int b = 1 << bit;
 
-	public void setBytes(int position, byte[] values)
-	{
-		System.arraycopy(values, 0, data, position, values.length);
-	}
+        if (value)
+        {
+            data[position] |= b;
+        }
+        else
+        {
+            data[position] &= ~b;
+        }
+    }
 
-	public void setWord(int position, int value)
-	{
-		setByte(position, value % 256);
-		setByte(position + 1, value / 256);
-	}
+    public void setByte(int position, int value)
+    {
+        data[position] = (byte) (0xff & value);
+    }
 
-	public void setString(int position, int length, String value)
-	{
-		setBytes(position, CBMDiskUtil.toCBMDOSName(value, length));
-	}
+    public void setBytes(int position, byte[] values)
+    {
+        System.arraycopy(values, 0, data, position, values.length);
+    }
 
-	public void fill(int position, int length, int value)
-	{
-		Arrays.fill(data, position, position + length, (byte) (0xff & value));
-	}
+    public void setWord(int position, int value)
+    {
+        setByte(position, value % 256);
+        setByte(position + 1, value / 256);
+    }
 
-	public int getMark()
-	{
-		return mark;
-	}
+    public void setString(int position, int length, String value)
+    {
+        setBytes(position, CBMDiskUtil.toCBMDOSName(value, length));
+    }
 
-	public void setMark(int mark)
-	{
-		this.mark = mark;
-	}
+    public void fill(int position, int length, int value)
+    {
+        Arrays.fill(data, position, position + length, (byte) (0xff & value));
+    }
+
+    public int getMark()
+    {
+        return mark;
+    }
+
+    public void setMark(int mark)
+    {
+        this.mark = mark;
+    }
 
 }

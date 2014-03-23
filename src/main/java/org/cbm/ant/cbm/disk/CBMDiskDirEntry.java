@@ -7,11 +7,11 @@ import org.cbm.ant.util.WildcardUtils;
 public class CBMDiskDirEntry
 {
 
-	private final CBMDiskDirBlock block;
+	private final CBMDiskDirSector block;
 	private final int index;
 	private final int id;
 
-	public CBMDiskDirEntry(CBMDiskDirBlock block, int index, int id)
+	public CBMDiskDirEntry(CBMDiskDirSector block, int index, int id)
 	{
 		super();
 
@@ -45,7 +45,7 @@ public class CBMDiskDirEntry
 			type = "*" + type;
 		}
 
-		out.printf("%-3d   %-18s %s (%c)\n", getFileSize(), CBMDiskUtil.apostrophes(getFileName()), type,
+		out.printf("%-3d  %-18s %s (%c)\n", getFileSize(), CBMDiskUtil.apostrophes(getFileName()), type,
 				CBMDiskUtil.id2Key(id));
 	}
 
