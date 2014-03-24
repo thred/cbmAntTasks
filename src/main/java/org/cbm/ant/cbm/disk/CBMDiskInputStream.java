@@ -53,6 +53,14 @@ public class CBMDiskInputStream extends InputStream
 	 */
 	private void initSector(int trackNr, int sectorNr) throws IllegalArgumentException
 	{
+		if (trackNr == 0) {
+			// empty file
+			position = 2;
+			end = 2;
+			
+			return;
+		}
+		
 		sector = operator.getDisk().getSector(trackNr, sectorNr);
 		position = 2;
 

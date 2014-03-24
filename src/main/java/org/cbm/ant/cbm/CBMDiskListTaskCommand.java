@@ -52,10 +52,10 @@ public class CBMDiskListTaskCommand extends AbstractCBMDiskTaskCommand
 	 *      org.cbm.ant.cbm.disk.CBMDiskOperator)
 	 */
 	@Override
-	public int execute(CBMDiskTask task, CBMDiskOperator operator) throws BuildException
+	public Long execute(CBMDiskTask task, CBMDiskOperator operator) throws BuildException
 	{
 		operator.getDir().list(System.out, listKeys, listDeleted);
 
-		return 0;
+		return null;
 	}
 }

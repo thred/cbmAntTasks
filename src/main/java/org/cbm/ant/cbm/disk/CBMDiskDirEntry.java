@@ -7,8 +7,8 @@ import org.cbm.ant.util.WildcardUtils;
 public class CBMDiskDirEntry
 {
 
-	private static final String LIST_ENTRY_WITH_KEY = "%-3d  %-18s %s (%c)\n";
-	private static final String LIST_ENTRY_WITHOUT_KEY = "%-3d  %-18s %s\n";
+	private static final String LIST_ENTRY_WITH_KEY = "%-3d  %-18s %s [%s] (%c)\n";
+	private static final String LIST_ENTRY_WITHOUT_KEY = "%-3d  %-18s %s [%s]\n";
 
 	private final CBMDiskDirSector block;
 	private final int index;
@@ -41,6 +41,12 @@ public class CBMDiskDirEntry
 			return;
 		}
 
+		out.printf((listKeys) ? LIST_ENTRY_WITH_KEY : LIST_ENTRY_WITHOUT_KEY, getFileSize(),
+				CBMDiskUtil.apostrophes(getFileName()), getFileTypeDescription(), getFileLocation(), CBMDiskUtil.id2Key(id));
+	}
+
+	private String getFileTypeDescription()
+	{
 		String type = getFileType().getName();
 
 		if (isFileTypeLocked())
@@ -52,9 +58,7 @@ public class CBMDiskDirEntry
 		{
 			type = "*" + type;
 		}
-
-		out.printf((listKeys) ? LIST_ENTRY_WITH_KEY : LIST_ENTRY_WITHOUT_KEY, getFileSize(),
-				CBMDiskUtil.apostrophes(getFileName()), type, CBMDiskUtil.id2Key(id));
+		return type;
 	}
 
 	public void mark()
@@ -239,6 +243,25 @@ public class CBMDiskDirEntry
 	public void setFileSize(int fileSize)
 	{
 		getSector().setWord(getPosition(0x1e), fileSize);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		StringBuilder builder = new StringBuilder(getClass().getSimpleName() + " {\n");
+
+		builder.append(String.format("\tname: %s\n", getFileName()));
+		builder.append(String.format("\ttype: %s\n", getFileTypeDescription()));
+		builder.append(String.format("\tsize: %d blocks\n", getFileSize()));
+		builder.append(String.format("\tlocation: %s\n", getFileLocation()));
+		builder.append("}");
+
+		return builder.toString();
 	}
 
 }

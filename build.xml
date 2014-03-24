@@ -1,22 +1,24 @@
 <project name="cbmAntTasks" default="dist" basedir=".">
-	
-	<property name="src.path" location="src/main"/>
-	
+
+	<property name="src.path" location="src/main" />
+
 	<property name="java.src.path" location="${src.path}/java" />
-	<property name="resources.src.path" location="${src.path}/resources"/>
-	
+	<property name="resources.src.path" location="${src.path}/resources" />
+
 	<property name="target.path" location="target" />
 	<property name="classes.target.path" location="${target.path}/classes" />
 
 	<target name="init">
-		<tstamp />
-		
+		<tstamp>
+			<format property="TODAY" pattern="yyyy-MM-dd" locale="en_US" />
+		</tstamp>
+
 		<mkdir dir="${classes.target.path}" />
 	</target>
 
 	<target name="compile" depends="init" description="compile the source ">
 		<javac srcdir="${java.src.path}" destdir="${classes.target.path}" />
-		
+
 		<copy todir="${classes.target.path}">
 			<fileset dir="${resources.src.path}">
 				<include name="**/*" />
@@ -25,11 +27,15 @@
 	</target>
 
 	<target name="dist" depends="compile" description="generate the distribution">
-		<jar jarfile="${target.path}/cbmAntTasks.jar" basedir="${classes.target.path}" />
+		<jar jarfile="${target.path}/cbmAntTasks-${TODAY}.jar" basedir="${classes.target.path}">
+			<manifest>
+				<attribute name="Main-Class" value="org.cbm.ant.util.bitmap.CBMBitmapUtility" />
+			</manifest>
+		</jar>
 	</target>
 
 	<target name="clean" description="clean up">
 		<delete dir="${target.path}" />
 	</target>
-	
+
 </project>

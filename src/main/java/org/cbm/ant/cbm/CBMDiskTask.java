@@ -17,6 +17,7 @@ public class CBMDiskTask extends AbstractDiskTask
 
 	private File image;
 	private boolean failOnError = true;
+	private boolean ignoreIfNotExists = false;
 
 	public CBMDiskTask()
 	{
@@ -90,6 +91,16 @@ public class CBMDiskTask extends AbstractDiskTask
 		this.failOnError = failOnError;
 	}
 
+	public boolean isIgnoreIfNotExists()
+	{
+		return ignoreIfNotExists;
+	}
+
+	public void setIgnoreIfNotExists(boolean ignoreIfNotExists)
+	{
+		this.ignoreIfNotExists = ignoreIfNotExists;
+	}
+
 	/**
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
@@ -98,6 +109,11 @@ public class CBMDiskTask extends AbstractDiskTask
 	{
 		File image = getImage();
 
+		if ((ignoreIfNotExists) && (!image.exists()))
+		{
+			return;
+		}
+		
 		if (!isExecutionNecessary(image))
 		{
 			return;
@@ -128,11 +144,18 @@ public class CBMDiskTask extends AbstractDiskTask
 			}
 		}
 
+		Long modification = null;
+
 		for (CBMDiskTaskCommand command : commands)
 		{
 			try
 			{
-				command.execute(this, operator);
+				Long result = command.execute(this, operator);
+
+				if ((result != null) && ((modification == null) || (result.longValue() > modification.longValue())))
+				{
+					modification = result;
+				}
 			}
 			catch (BuildException e)
 			{
@@ -153,24 +176,30 @@ public class CBMDiskTask extends AbstractDiskTask
 				}
 				else
 				{
-					throw new BuildException("Unhandled Exception", e);
+					throw new BuildException("Unhandled Exception: " + e, e);
 				}
 			}
 		}
 
-		try
+		if (modification != null)
 		{
-			operator.getDisk().save(image);
-		}
-		catch (IOException e)
-		{
-			if (!isFailOnError())
+			try
 			{
-				log(String.format("Failed to save image \"%s\" due to %s. Ignoring...", image, e), e, Project.MSG_INFO);
+				operator.getDisk().save(image);
+
+				image.setLastModified(modification.longValue());
 			}
-			else
+			catch (IOException e)
 			{
-				throw new BuildException(String.format("Failed to save image \"%s\"", image), e);
+				if (!isFailOnError())
+				{
+					log(String.format("Failed to save image \"%s\" due to %s. Ignoring...", image, e), e,
+							Project.MSG_INFO);
+				}
+				else
+				{
+					throw new BuildException(String.format("Failed to save image \"%s\"", image), e);
+				}
 			}
 		}
 	}

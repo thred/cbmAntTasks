@@ -21,6 +21,8 @@ public class CBMDiskOutputStream extends OutputStream
 		this.operator = operator;
 		this.dirEntry = dirEntry;
 
+		dirEntry.setFileTypeClosed(false);
+		
 		this.location = location;
 	}
 
@@ -124,8 +126,11 @@ public class CBMDiskOutputStream extends OutputStream
 	@Override
 	public void close() throws IOException
 	{
-		sector.setNextTrackNr(0);
-		sector.setNextSectorNr(position - 1);
+		if (sector != null)
+		{
+			sector.setNextTrackNr(0);
+			sector.setNextSectorNr(position - 1);
+		}
 
 		if (dirEntry != null)
 		{

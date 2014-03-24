@@ -78,13 +78,13 @@ public class CBMDiskFormatTaskCommand extends AbstractCBMDiskTaskCommand
 	 *      org.cbm.ant.cbm.disk.CBMDiskOperator)
 	 */
 	@Override
-	public int execute(CBMDiskTask task, CBMDiskOperator operator) throws BuildException
+	public Long execute(CBMDiskTask task, CBMDiskOperator operator) throws BuildException
 	{
 		task.log(String.format("Formatting disk image..."));
-		
+
 		operator.format(getType().getFormat(), getDiskName(), getId());
-		
-		return 0;
+
+		return Long.valueOf(System.currentTimeMillis());
 	}
 
 }

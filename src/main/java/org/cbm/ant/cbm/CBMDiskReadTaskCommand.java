@@ -75,7 +75,7 @@ public class CBMDiskReadTaskCommand extends AbstractCBMDiskTaskCommand
 	 *      org.cbm.ant.cbm.disk.CBMDiskOperator)
 	 */
 	@Override
-	public int execute(CBMDiskTask task, CBMDiskOperator operator) throws BuildException
+	public Long execute(CBMDiskTask task, CBMDiskOperator operator) throws BuildException
 	{
 		task.log(String.format("Reading \"%s\" from disk image...", source));
 
@@ -144,6 +144,6 @@ public class CBMDiskReadTaskCommand extends AbstractCBMDiskTaskCommand
 			task.getImage().setLastModified(millis);
 		}
 
-		return 0;
+		return null;
 	}
 }

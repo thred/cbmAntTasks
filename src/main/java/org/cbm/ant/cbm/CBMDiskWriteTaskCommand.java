@@ -131,7 +131,7 @@ public class CBMDiskWriteTaskCommand extends AbstractCBMDiskTaskCommand
 	 *      org.cbm.ant.cbm.disk.CBMDiskOperator)
 	 */
 	@Override
-	public int execute(CBMDiskTask task, CBMDiskOperator operator) throws BuildException
+	public Long execute(CBMDiskTask task, CBMDiskOperator operator) throws BuildException
 	{
 		task.log(String.format("Writing \"%s\" to disk image...", source));
 
@@ -215,6 +215,6 @@ public class CBMDiskWriteTaskCommand extends AbstractCBMDiskTaskCommand
 			operator.getDisk().setSectorNrInterleave(sectorInterleaveBackup);
 		}
 		
-		return 0;
+		return Long.valueOf(getSource().lastModified());
 	}
 }
