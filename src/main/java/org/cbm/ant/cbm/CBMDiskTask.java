@@ -232,7 +232,7 @@ public class CBMDiskTask extends AbstractDiskTask
             {
                 if (!command.isFailOnError())
                 {
-                    log("Ignoring error: " + e.getMessage());
+                    log("Ignoring error: " + e.getMessage(), Project.MSG_WARN);
                 }
                 else
                 {

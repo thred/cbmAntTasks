@@ -1,5 +1,6 @@
 package org.cbm.ant.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -46,6 +47,16 @@ public class IOUtils
         while ((length = in.read(buffer)) >= 0)
         {
             out.write(buffer, 0, length);
+        }
+    }
+
+    public static byte[] readFully(InputStream in) throws IOException
+    {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream())
+        {
+            copy(in, out);
+
+            return out.toByteArray();
         }
     }
 }

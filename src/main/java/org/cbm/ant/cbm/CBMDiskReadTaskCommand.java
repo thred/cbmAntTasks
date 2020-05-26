@@ -12,65 +12,65 @@ import org.cbm.ant.util.IOUtils;
 public class CBMDiskReadTaskCommand extends AbstractCBMDiskTaskCommand
 {
 
-	private String source;
-	private File destination;
+    private String source;
+    private File destination;
 
-	public CBMDiskReadTaskCommand()
-	{
-		super();
-	}
+    public CBMDiskReadTaskCommand()
+    {
+        super();
+    }
 
-	public String getSource() throws BuildException
-	{
-		if ((source == null) || (source.trim().length() == 0))
-		{
-			throw new BuildException("Destination missing");
-		}
+    public String getSource() throws BuildException
+    {
+        if (source == null || source.trim().length() == 0)
+        {
+            throw new BuildException("Destination missing");
+        }
 
-		return source;
-	}
+        return source;
+    }
 
-	public void setSource(String source)
-	{
-		this.source = source;
-	}
+    public void setSource(String source)
+    {
+        this.source = source;
+    }
 
-	public File getDestination()
-	{
-		if (destination.isDirectory())
-		{
-			return new File(destination, getSource());
-		}
+    public File getDestination()
+    {
+        if (destination.isDirectory())
+        {
+            return new File(destination, getSource());
+        }
 
-		return destination;
-	}
+        return destination;
+    }
 
-	public void setDestination(File destination)
-	{
-		this.destination = destination;
-	}
+    public void setDestination(File destination)
+    {
+        this.destination = destination;
+    }
 
-	/**
+    /**
+     * {@inheritDoc}
+     * 
+     * @see org.cbm.ant.cbm.CBMDiskTaskCommand#isExecutionNecessary(long, boolean)
+     */
+    @Override
+    public boolean isExecutionNecessary(long lastModified, boolean exists)
+    {
+        File destination = getDestination();
+
+        if (exists && destination.exists())
+        {
+            return lastModified > destination.lastModified();
+        }
+
+        return true;
+    }
+
+    /**
 	 * {@inheritDoc}
-	 * 
-	 * @see org.cbm.ant.cbm.CBMDiskTaskCommand#isExecutionNecessary(long, boolean)
-	 */
-	@Override
-	public boolean isExecutionNecessary(long lastModified, boolean exists)
-	{
-		File destination = getDestination();
-
-		if ((exists) && (destination.exists()))
-		{
-			return lastModified > destination.lastModified();
-		}
-
-		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
+	 *
 	 * @see org.cbm.ant.cbm.CBMDiskTaskCommand#execute(org.cbm.ant.cbm.CBMDiskTask,
 	 *      org.cbm.ant.cbm.disk.CBMDiskOperator)
 	 */
@@ -79,61 +79,22 @@ public class CBMDiskReadTaskCommand extends AbstractCBMDiskTaskCommand
 	{
 		task.log(String.format("Reading \"%s\" from disk image...", source));
 
-		FileOutputStream out;
+		byte[] bytes;
+		
+		try (InputStream in = operator.open(getSource())) {
+		    bytes = IOUtils.readFully(in);
+        }
+        catch (IOException e)
+        {
+            throw new BuildException(String.format("Failed to read file \"%s\"", getSource()), e);
+        }
 
-		try
-		{
-			out = new FileOutputStream(getDestination());
+		try (FileOutputStream out = new FileOutputStream(getDestination())) {
+		    out.write(bytes);
 		}
 		catch (IOException e)
 		{
 			throw new BuildException(String.format("Failed to create file \"%s\"", getDestination()), e);
-		}
-
-		try
-		{
-			InputStream in;
-
-			try
-			{
-				in = operator.open(getSource());
-			}
-			catch (IOException e)
-			{
-				throw new BuildException(String.format("Failed to read file \"%s\"", getSource()), e);
-			}
-
-			try
-			{
-				IOUtils.copy(in, out);
-			}
-			catch (IOException e)
-			{
-				throw new BuildException(String.format("Failed to copy data from file \"%s\" to file \"%s\"",
-						getSource(), getDestination()), e);
-			}
-			finally
-			{
-				try
-				{
-					in.close();
-				}
-				catch (IOException e)
-				{
-					//intentionally left blank
-				}
-			}
-		}
-		finally
-		{
-			try
-			{
-				out.close();
-			}
-			catch (IOException e)
-			{
-				//intentionally left blank
-			}
 		}
 
 		long lastModified = getDestination().lastModified();
