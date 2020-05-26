@@ -78,7 +78,7 @@ public class CBMBitmapTargetSizeTool extends AbstractCBMBitmapTool implements Ac
     public void onCBMBitmapProjectUpdate(CBMBitmapProjectController controller, CBMBitmapProjectModel model,
         PropertyChangeEvent event)
     {
-        BufferedImage sourceImage = (model != null) ? model.getSourceImage() : null;
+        BufferedImage sourceImage = model != null ? model.getSourceImage() : null;
 
         if (sourceImage == null)
         {
@@ -88,7 +88,7 @@ public class CBMBitmapTargetSizeTool extends AbstractCBMBitmapTool implements Ac
             return;
         }
 
-        if ((event != null) && ("targetWidth".equals(event.getPropertyName())))
+        if (event != null && "targetWidth".equals(event.getPropertyName()))
         {
             Integer targetWidth = model.getTargetWidth();
 
@@ -99,7 +99,7 @@ public class CBMBitmapTargetSizeTool extends AbstractCBMBitmapTool implements Ac
 
             widthField.setText(String.valueOf(targetWidth));
         }
-        else if ((event != null) && ("targetHeight".equals(event.getPropertyName())))
+        else if (event != null && "targetHeight".equals(event.getPropertyName()))
         {
             Integer targetHeight = model.getTargetHeight();
 
@@ -178,18 +178,11 @@ public class CBMBitmapTargetSizeTool extends AbstractCBMBitmapTool implements Ac
         final int width = getWidthValue();
         int height = getHeightValue();
 
-        setButton.setEnabled((width > 0) && (height > 0));
+        setButton.setEnabled(width > 0 && height > 0);
 
-        if ((width > 0) && (respectAspectRatioBox.isSelected()))
+        if (width > 0 && respectAspectRatioBox.isSelected())
         {
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    heightField.setText(String.valueOf((int) (width / getAspectRatio())));
-                }
-            });
+            SwingUtilities.invokeLater(() -> heightField.setText(String.valueOf((int) (width / getAspectRatio()))));
         }
     }
 
@@ -198,18 +191,11 @@ public class CBMBitmapTargetSizeTool extends AbstractCBMBitmapTool implements Ac
         int width = getWidthValue();
         final int height = getHeightValue();
 
-        setButton.setEnabled((width > 0) && (height > 0));
+        setButton.setEnabled(width > 0 && height > 0);
 
-        if ((height > 0) && (respectAspectRatioBox.isSelected()))
+        if (height > 0 && respectAspectRatioBox.isSelected())
         {
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    widthField.setText(String.valueOf((int) (getAspectRatio() * height)));
-                }
-            });
+            SwingUtilities.invokeLater(() -> widthField.setText(String.valueOf((int) (getAspectRatio() * height))));
         }
     }
 

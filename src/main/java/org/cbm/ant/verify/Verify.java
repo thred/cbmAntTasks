@@ -9,27 +9,27 @@ import org.apache.tools.ant.Task;
 public class Verify extends Task
 {
 
-	private final List<VerifyTask> tasks = new ArrayList<VerifyTask>();
+    private final List<VerifyTask> tasks = new ArrayList<>();
 
-	public Verify()
-	{
-		super();
-	}
+    public Verify()
+    {
+        super();
+    }
 
-	public void addSize(VerifySizeTask task)
-	{
-		tasks.add(task);
-	}
+    public void addSize(VerifySizeTask task)
+    {
+        tasks.add(task);
+    }
 
-	@Override
-	public void execute() throws BuildException
-	{
-		log("Verifying:");
+    @Override
+    public void execute() throws BuildException
+    {
+        log("Verifying:");
 
-		for (VerifyTask task : tasks)
-		{
-			task.execute(this);
-		}
-	}
+        for (VerifyTask task : tasks)
+        {
+            task.execute(this);
+        }
+    }
 
 }

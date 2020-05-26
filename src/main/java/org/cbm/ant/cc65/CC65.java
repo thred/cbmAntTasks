@@ -15,268 +15,272 @@ import org.cbm.ant.util.ProcessHandler;
 public class CC65 extends AbstractCC65Task implements ProcessConsumer
 {
 
-	private static final Map<String, String> EXECUTABLES = new HashMap<String, String>();
+    private static final Map<String, String> EXECUTABLES = new HashMap<>();
 
-	static
-	{
-		EXECUTABLES.put("Linux.*", "bin/cc65");
-		EXECUTABLES.put("Windows.*", "bin/cc65.exe");
-	}
+    static
+    {
+        EXECUTABLES.put("Linux.*", "bin/cc65");
+        EXECUTABLES.put("Windows.*", "bin/cc65.exe");
+    }
 
-	private final List<FileSet> files;
-	private final List<FileSet> includes;
+    private final List<FileSet> files;
+    private final List<FileSet> includes;
 
-	private File file;
-	private File outputDir;
-	private boolean annotate = false;
-	private boolean debug = false;
-	private boolean optimize = false;
-	private boolean inlining = false;
-	private boolean registerVariables = false;
-	private boolean staticLocals = false;
-	private boolean checkStack = false;
+    private File file;
+    private File outputDir;
+    private boolean annotate = false;
+    private boolean debug = false;
+    private boolean optimize = false;
+    private boolean inlining = false;
+    private boolean registerVariables = false;
+    private boolean staticLocals = false;
+    private boolean checkStack = false;
 
-	public CC65()
-	{
-		super();
+    public CC65()
+    {
+        super();
 
-		files = new ArrayList<FileSet>();
-		includes = new ArrayList<FileSet>();
-	}
+        files = new ArrayList<>();
+        includes = new ArrayList<>();
+    }
 
-	/**
-	 * @see org.cbm.ant.cc65.AbstractCC65Task#getExecutables()
-	 */
-	@Override
-	public Map<String, String> getExecutables()
-	{
-		return EXECUTABLES;
-	}
+    /**
+     * @see org.cbm.ant.cc65.AbstractCC65Task#getExecutables()
+     */
+    @Override
+    public Map<String, String> getExecutables()
+    {
+        return EXECUTABLES;
+    }
 
-	public File getFile()
-	{
-		return file;
-	}
+    public File getFile()
+    {
+        return file;
+    }
 
-	public void setFile(File file)
-	{
-		this.file = file;
-	}
+    public void setFile(File file)
+    {
+        this.file = file;
+    }
 
-	public File getOutputDir()
-	{
-		return outputDir;
-	}
+    public File getOutputDir()
+    {
+        return outputDir;
+    }
 
-	public void setOutputDir(File outputDir)
-	{
-		this.outputDir = outputDir;
-	}
+    public void setOutputDir(File outputDir)
+    {
+        this.outputDir = outputDir;
+    }
 
-	public void addFiles(FileSet files)
-	{
-		this.files.add(files);
-	}
+    public void addFiles(FileSet files)
+    {
+        this.files.add(files);
+    }
 
-	public void addIncludes(FileSet includes)
-	{
-		this.includes.add(includes);
-	}
+    public void addIncludes(FileSet includes)
+    {
+        this.includes.add(includes);
+    }
 
-	public boolean isAnnotate()
-	{
-		return annotate;
-	}
+    public boolean isAnnotate()
+    {
+        return annotate;
+    }
 
-	public void setAnnotate(boolean annotate)
-	{
-		this.annotate = annotate;
-	}
+    public void setAnnotate(boolean annotate)
+    {
+        this.annotate = annotate;
+    }
 
-	public boolean isDebug()
-	{
-		return debug;
-	}
+    public boolean isDebug()
+    {
+        return debug;
+    }
 
-	public void setDebug(boolean debug)
-	{
-		this.debug = debug;
-	}
+    public void setDebug(boolean debug)
+    {
+        this.debug = debug;
+    }
 
-	public boolean isOptimize()
-	{
-		return optimize;
-	}
+    public boolean isOptimize()
+    {
+        return optimize;
+    }
 
-	public void setOptimize(boolean optimize)
-	{
-		this.optimize = optimize;
-	}
+    public void setOptimize(boolean optimize)
+    {
+        this.optimize = optimize;
+    }
 
-	public boolean isInlining()
-	{
-		return inlining;
-	}
+    public boolean isInlining()
+    {
+        return inlining;
+    }
 
-	public void setInlining(boolean inlining)
-	{
-		this.inlining = inlining;
-	}
+    public void setInlining(boolean inlining)
+    {
+        this.inlining = inlining;
+    }
 
-	public boolean isRegisterVariables()
-	{
-		return registerVariables;
-	}
+    public boolean isRegisterVariables()
+    {
+        return registerVariables;
+    }
 
-	public void setRegisterVariables(boolean registerVariables)
-	{
-		this.registerVariables = registerVariables;
-	}
+    public void setRegisterVariables(boolean registerVariables)
+    {
+        this.registerVariables = registerVariables;
+    }
 
-	public boolean isStaticLocals()
-	{
-		return staticLocals;
-	}
+    public boolean isStaticLocals()
+    {
+        return staticLocals;
+    }
 
-	public void setStaticLocals(boolean staticLocals)
-	{
-		this.staticLocals = staticLocals;
-	}
+    public void setStaticLocals(boolean staticLocals)
+    {
+        this.staticLocals = staticLocals;
+    }
 
-	public boolean isCheckStack()
-	{
-		return checkStack;
-	}
+    public boolean isCheckStack()
+    {
+        return checkStack;
+    }
 
-	public void setCheckStack(boolean checkStack)
-	{
-		this.checkStack = checkStack;
-	}
+    public void setCheckStack(boolean checkStack)
+    {
+        this.checkStack = checkStack;
+    }
 
-	/**
-	 * @see org.apache.tools.ant.Task#execute()
-	 */
-	@Override
-	public void execute() throws BuildException
-	{
-		for (AntFile inputFile : collect(files, getFile()))
-		{
-			AntFile outputFile = null;
+    /**
+     * @see org.apache.tools.ant.Task#execute()
+     */
+    @Override
+    public void execute() throws BuildException
+    {
+        for (AntFile inputFile : collect(files, getFile()))
+        {
+            AntFile outputFile = null;
 
-			if (outputDir != null)
-			{
-				outputFile = AntFile.create(getProject().getBaseDir(), outputDir, inputFile.getFilename())
-						.withExtension("s");
-			}
-			else
-			{
-				outputFile = inputFile.withExtension("s");
-			}
+            if (outputDir != null)
+            {
+                outputFile =
+                    AntFile.create(getProject().getBaseDir(), outputDir, inputFile.getFilename()).withExtension("s");
+            }
+            else
+            {
+                outputFile = inputFile.withExtension("s");
+            }
 
-			AntFile dependencyFile = outputFile.withExtension("d");
+            AntFile dependencyFile = outputFile.withExtension("d");
 
-			if (isExecutionNecessary(inputFile, outputFile, dependencyFile))
-			{
-				ProcessHandler handler = new ProcessHandler(this, getExecutable());
+            if (isExecutionNecessary(inputFile, outputFile, dependencyFile))
+            {
+                ProcessHandler handler = new ProcessHandler(this, getExecutable());
 
-				handler.directory(getProject().getBaseDir());
+                handler.directory(getProject().getBaseDir());
 
-				if (getTarget() != null)
-				{
-					handler.parameter("-t").parameter(getTarget().getName());
-				}
+                if (getTarget() != null)
+                {
+                    handler.parameter("-t").parameter(getTarget().getName());
+                }
 
-				if (isAnnotate())
-				{
-					handler.parameter("--add-source");
-				}
+                if (isAnnotate())
+                {
+                    handler.parameter("--add-source");
+                }
 
-				if (isDebug())
-				{
-					handler.parameter("-g");
-				}
+                if (isDebug())
+                {
+                    handler.parameter("-g");
+                }
 
-				if ((isOptimize()) || (isInlining()) || (isRegisterVariables())) {
-					StringBuilder builder = new StringBuilder("-O");
-					
-					if (isInlining()) {
-						builder.append("i");
-					}
-					
-					if (isRegisterVariables()) {
-						builder.append("r");
-					}
-					
-					handler.parameter(builder.toString());
-				}
-				
-				if (isStaticLocals())
-				{
-					handler.parameter("-Cl");
-				}
-				
-				if (isCheckStack()) {
-					handler.parameter("--check-stack");
-				}
+                if (isOptimize() || isInlining() || isRegisterVariables())
+                {
+                    StringBuilder builder = new StringBuilder("-O");
 
-				handler.parameter("--create-dep").parameter(outputFile.withExtension("d").ensureDirectory());
+                    if (isInlining())
+                    {
+                        builder.append("i");
+                    }
 
-				handler.parameter("-o").parameter(outputFile.ensureDirectory());
-				handler.parameter(inputFile);
+                    if (isRegisterVariables())
+                    {
+                        builder.append("r");
+                    }
 
-				log("Executing: " + handler);
-				log("");
+                    handler.parameter(builder.toString());
+                }
 
-				int exitValue = handler.consume();
+                if (isStaticLocals())
+                {
+                    handler.parameter("-Cl");
+                }
 
-				log("");
+                if (isCheckStack())
+                {
+                    handler.parameter("--check-stack");
+                }
 
-				if (exitValue != 0)
-				{
-					outputFile.delete();
+                handler.parameter("--create-dep").parameter(outputFile.withExtension("d").ensureDirectory());
 
-					throw new BuildException("Failed with exit value " + exitValue);
-				}
+                handler.parameter("-o").parameter(outputFile.ensureDirectory());
+                handler.parameter(inputFile);
 
-				outputFile.setLastModified(Dependencies.load(getProject().getBaseDir(), dependencyFile)
-						.getLastModified(outputFile));
-			}
-		}
-	}
+                log("Executing: " + handler);
+                log("");
 
-	private boolean isExecutionNecessary(File inputFile, File outputFile, File dependencyFile)
-	{
-		if (!outputFile.exists())
-		{
-			return true;
-		}
+                int exitValue = handler.consume();
 
-		if (!dependencyFile.exists())
-		{
-			return true;
-		}
+                log("");
 
-		long lastModified = Dependencies.load(getProject().getBaseDir(), dependencyFile).getLastModified(outputFile);
+                if (exitValue != 0)
+                {
+                    outputFile.delete();
 
-		if (outputFile.lastModified() > lastModified)
-		{
-			log("\"" + outputFile.getAbsolutePath() + "\" got modified in the future");
-		}
-		else
-		{
-			return outputFile.lastModified() < lastModified;
-		}
+                    throw new BuildException("Failed with exit value " + exitValue);
+                }
 
-		return false;
-	}
+                outputFile.setLastModified(
+                    Dependencies.load(getProject().getBaseDir(), dependencyFile).getLastModified(outputFile));
+            }
+        }
+    }
 
-	/**
-	 * @see org.cbm.ant.util.ProcessConsumer#processOutput(java.lang.String, boolean)
-	 */
-	@Override
-	public void processOutput(String output, boolean isError)
-	{
-		log(output);
-	}
+    private boolean isExecutionNecessary(File inputFile, File outputFile, File dependencyFile)
+    {
+        if (!outputFile.exists())
+        {
+            return true;
+        }
+
+        if (!dependencyFile.exists())
+        {
+            return true;
+        }
+
+        long lastModified = Dependencies.load(getProject().getBaseDir(), dependencyFile).getLastModified(outputFile);
+
+        if (outputFile.lastModified() > lastModified)
+        {
+            log("\"" + outputFile.getAbsolutePath() + "\" got modified in the future");
+        }
+        else
+        {
+            return outputFile.lastModified() < lastModified;
+        }
+
+        return false;
+    }
+
+    /**
+     * @see org.cbm.ant.util.ProcessConsumer#processOutput(java.lang.String, boolean)
+     */
+    @Override
+    public void processOutput(String output, boolean isError)
+    {
+        log(output);
+    }
 
 }

@@ -12,24 +12,24 @@ import org.cbm.ant.util.Util;
 public abstract class AbstractCBMTask extends Task
 {
 
-	public Collection<AntFile> collect(Collection<FileSet> fileSets, File... additionalFiles)
-	{
-		return Util.collect(getProject(), fileSets, additionalFiles);
-	}
+    public Collection<AntFile> collect(Collection<FileSet> fileSets, File... additionalFiles)
+    {
+        return Util.collect(getProject(), fileSets, additionalFiles);
+    }
 
-	public Iterator<AntFile> iterate(Collection<FileSet> fileSets, File... additionalFiles)
-	{
-		return Util.iterate(getProject(), fileSets, additionalFiles);
-	}
+    public Iterator<AntFile> iterate(Collection<FileSet> fileSets, File... additionalFiles)
+    {
+        return Util.iterate(getProject(), fileSets, additionalFiles);
+    }
 
-	public boolean anyExsits(Collection<FileSet> fileSets, File... additionalFiles)
-	{
-		return Util.anyExists(getProject(), fileSets, additionalFiles);
-	}
+    public boolean anyExsits(Collection<FileSet> fileSets, File... additionalFiles)
+    {
+        return Util.anyExists(getProject(), fileSets, additionalFiles);
+    }
 
-	public long lastModified(Collection<FileSet> fileSets, File... additionalFiles)
-	{
-		return Util.lastModified(getProject(), fileSets, additionalFiles);
-	}
+    public long lastModified(Collection<FileSet> fileSets, File... additionalFiles)
+    {
+        return Util.lastModified(getProject(), fileSets, additionalFiles);
+    }
 
 }

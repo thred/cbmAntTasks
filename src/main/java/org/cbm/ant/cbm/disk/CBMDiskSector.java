@@ -113,7 +113,7 @@ public class CBMDiskSector
 
     public int getByte(int position)
     {
-        return (data[position] & 0xff);
+        return data[position] & 0xff;
     }
 
     public byte[] getBytes(int position, int length)
@@ -127,7 +127,7 @@ public class CBMDiskSector
 
     public int getWord(int position)
     {
-        return getByte(position) + (getByte(position + 1) * 256);
+        return getByte(position) + getByte(position + 1) * 256;
     }
 
     public String getString(int position, int length)

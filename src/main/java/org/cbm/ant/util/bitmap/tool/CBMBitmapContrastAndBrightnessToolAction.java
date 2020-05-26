@@ -1,6 +1,5 @@
 package org.cbm.ant.util.bitmap.tool;
 
-
 public class CBMBitmapContrastAndBrightnessToolAction extends AbstractCBMBitmapToolAction
 {
 

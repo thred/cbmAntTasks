@@ -76,7 +76,7 @@ public class CBMBitmapResizeSourceImageTool extends AbstractCBMBitmapTool implem
     public void onCBMBitmapProjectUpdate(CBMBitmapProjectController controller, CBMBitmapProjectModel model,
         PropertyChangeEvent event)
     {
-        BufferedImage sourceImage = (model != null) ? model.getSourceImage() : null;
+        BufferedImage sourceImage = model != null ? model.getSourceImage() : null;
 
         if (sourceImage == null)
         {
@@ -84,7 +84,7 @@ public class CBMBitmapResizeSourceImageTool extends AbstractCBMBitmapTool implem
             heightField.setText("");
         }
 
-        if ((event != null) && ("sourceImage".equals(event.getPropertyName())))
+        if (event != null && "sourceImage".equals(event.getPropertyName()))
         {
             int width = sourceImage.getWidth();
             int height = sourceImage.getHeight();
@@ -153,18 +153,11 @@ public class CBMBitmapResizeSourceImageTool extends AbstractCBMBitmapTool implem
         final int width = getWidthValue();
         int height = getHeightValue();
 
-        executeButton.setEnabled((width > 0) && (height > 0));
+        executeButton.setEnabled(width > 0 && height > 0);
 
-        if ((width > 0) && (respectAspectRatioBox.isSelected()))
+        if (width > 0 && respectAspectRatioBox.isSelected())
         {
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    heightField.setText(String.valueOf((int) (width / getAspectRatio())));
-                }
-            });
+            SwingUtilities.invokeLater(() -> heightField.setText(String.valueOf((int) (width / getAspectRatio()))));
         }
     }
 
@@ -173,18 +166,11 @@ public class CBMBitmapResizeSourceImageTool extends AbstractCBMBitmapTool implem
         int width = getWidthValue();
         final int height = getHeightValue();
 
-        executeButton.setEnabled((width > 0) && (height > 0));
+        executeButton.setEnabled(width > 0 && height > 0);
 
-        if ((height > 0) && (respectAspectRatioBox.isSelected()))
+        if (height > 0 && respectAspectRatioBox.isSelected())
         {
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    widthField.setText(String.valueOf((int) (getAspectRatio() * height)));
-                }
-            });
+            SwingUtilities.invokeLater(() -> widthField.setText(String.valueOf((int) (getAspectRatio() * height))));
         }
     }
 

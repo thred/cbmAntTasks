@@ -26,7 +26,7 @@ public class CBMBitmapToolPanel extends JPanel
     private static final long serialVersionUID = 220399334599462582L;
 
     private final Map<String, AbstractCBMBitmapToolAction> toolActions =
-        new HashMap<String, AbstractCBMBitmapToolAction>();
+        new HashMap<>();
 
     private final JToolBar toolBar = new JToolBar(JToolBar.HORIZONTAL);
     private final JPanel toolPanel = new JPanel(new BorderLayout(8, 4));
@@ -44,8 +44,8 @@ public class CBMBitmapToolPanel extends JPanel
         toolPanel.setVisible(false);
         toolPanel.setBorder(BorderFactory.createEmptyBorder(4, 8, 0, 8));
 
-        toolLabel.setFont(toolLabel.getFont().deriveFont(Font.BOLD | Font.ITALIC,
-            toolLabel.getFont().getSize2D() * 1.2f));
+        toolLabel
+            .setFont(toolLabel.getFont().deriveFont(Font.BOLD | Font.ITALIC, toolLabel.getFont().getSize2D() * 1.2f));
         toolLabel.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
 
         toolPanel.add(toolLabel, BorderLayout.NORTH);

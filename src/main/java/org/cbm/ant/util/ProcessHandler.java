@@ -11,125 +11,125 @@ import org.apache.tools.ant.BuildException;
 public class ProcessHandler
 {
 
-	private final ProcessConsumer consumer;
-	private final List<String> parameters;
+    private final ProcessConsumer consumer;
+    private final List<String> parameters;
 
-	private File directory;
+    private File directory;
 
-	private ProcessHandler(ProcessConsumer consumer)
-	{
-		super();
+    private ProcessHandler(ProcessConsumer consumer)
+    {
+        super();
 
-		this.consumer = consumer;
+        this.consumer = consumer;
 
-		parameters = new ArrayList<String>();
-	}
+        parameters = new ArrayList<>();
+    }
 
-	public ProcessHandler(ProcessConsumer consumer, String command)
-	{
-		this(consumer);
+    public ProcessHandler(ProcessConsumer consumer, String command)
+    {
+        this(consumer);
 
-		parameter(command);
-	}
+        parameter(command);
+    }
 
-	public ProcessHandler(ProcessConsumer consumer, File command)
-	{
-		this(consumer);
+    public ProcessHandler(ProcessConsumer consumer, File command)
+    {
+        this(consumer);
 
-		parameter(command);
-	}
+        parameter(command);
+    }
 
-	public ProcessHandler directory(File directory)
-	{
-		this.directory = directory;
+    public ProcessHandler directory(File directory)
+    {
+        this.directory = directory;
 
-		return this;
-	}
+        return this;
+    }
 
-	public ProcessHandler parameter(String parameter)
-	{
-		parameters.add(parameter);
+    public ProcessHandler parameter(String parameter)
+    {
+        parameters.add(parameter);
 
-		return this;
-	}
+        return this;
+    }
 
-	public ProcessHandler parameter(File parameter)
-	{
-		return parameter("\"" + parameter.getPath().replace('\\', '/') + "\"");
-	}
+    public ProcessHandler parameter(File parameter)
+    {
+        return parameter("\"" + parameter.getPath().replace('\\', '/') + "\"");
+    }
 
-	public int consume() throws BuildException
-	{
-		ProcessBuilder processBuilder = new ProcessBuilder(parameters);
+    public int consume() throws BuildException
+    {
+        ProcessBuilder processBuilder = new ProcessBuilder(parameters);
 
-		if (directory != null)
-		{
-			processBuilder.directory(directory);
-		}
+        if (directory != null)
+        {
+            processBuilder.directory(directory);
+        }
 
-		Process process;
+        Process process;
 
-		try
-		{
-			process = processBuilder.start();
-		}
-		catch (IOException e)
-		{
-			throw new BuildException("Error starting process", e);
-		}
+        try
+        {
+            process = processBuilder.start();
+        }
+        catch (IOException e)
+        {
+            throw new BuildException("Error starting process", e);
+        }
 
-		ProcessInputHandler inputHandler = new ProcessInputHandler(consumer, false, process.getInputStream());
-		ProcessInputHandler errorHandler = new ProcessInputHandler(consumer, true, process.getErrorStream());
+        ProcessInputHandler inputHandler = new ProcessInputHandler(consumer, false, process.getInputStream());
+        ProcessInputHandler errorHandler = new ProcessInputHandler(consumer, true, process.getErrorStream());
 
-		inputHandler.start();
-		errorHandler.start();
+        inputHandler.start();
+        errorHandler.start();
 
-		try
-		{
-			process.waitFor();
+        try
+        {
+            process.waitFor();
 
-			inputHandler.waitFor();
-			errorHandler.waitFor();
-		}
-		catch (InterruptedException e)
-		{
-			throw new BuildException("Got interrupted", e);
-		}
+            inputHandler.waitFor();
+            errorHandler.waitFor();
+        }
+        catch (InterruptedException e)
+        {
+            throw new BuildException("Got interrupted", e);
+        }
 
-		return process.exitValue();
-	}
+        return process.exitValue();
+    }
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString()
-	{
-		StringBuilder builder = new StringBuilder();
-		Iterator<String> it = parameters.iterator();
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder();
+        Iterator<String> it = parameters.iterator();
 
-		while (it.hasNext())
-		{
-			builder.append(it.next());
+        while (it.hasNext())
+        {
+            builder.append(it.next());
 
-			if (it.hasNext())
-			{
-				builder.append(" ");
-			}
-		}
+            if (it.hasNext())
+            {
+                builder.append(" ");
+            }
+        }
 
-		return builder.toString();
-	}
+        return builder.toString();
+    }
 
-	//	private static String[] getEnvironment()
-	//	{
-	//		List<String> result = new ArrayList<String>();
-	//
-	//		for (Map.Entry<String, String> entry : System.getenv().entrySet())
-	//		{
-	//			result.add(entry.getKey() + "=" + entry.getValue());
-	//		}
-	//
-	//		return result.toArray(new String[result.size()]);
-	//	}
+    //	private static String[] getEnvironment()
+    //	{
+    //		List<String> result = new ArrayList<String>();
+    //
+    //		for (Map.Entry<String, String> entry : System.getenv().entrySet())
+    //		{
+    //			result.add(entry.getKey() + "=" + entry.getValue());
+    //		}
+    //
+    //		return result.toArray(new String[result.size()]);
+    //	}
 }

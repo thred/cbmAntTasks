@@ -9,7 +9,7 @@ import java.util.List;
 public class CBMDiskTrack
 {
 
-    private final List<CBMDiskSector> sectors = new ArrayList<CBMDiskSector>();
+    private final List<CBMDiskSector> sectors = new ArrayList<>();
 
     private final int trackNr;
 
@@ -70,8 +70,8 @@ public class CBMDiskTrack
         }
         catch (IndexOutOfBoundsException e)
         {
-            throw new IllegalArgumentException(String.format("Invalid sector number %d (track %d has %d sectors)", sector,
-                trackNr, sectors.size()));
+            throw new IllegalArgumentException(
+                String.format("Invalid sector number %d (track %d has %d sectors)", sector, trackNr, sectors.size()));
         }
     }
 

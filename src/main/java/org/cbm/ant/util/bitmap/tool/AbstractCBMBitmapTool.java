@@ -64,6 +64,6 @@ public abstract class AbstractCBMBitmapTool extends JPanel
     {
         CBMBitmapProjectController controller = getActiveController();
 
-        return (controller != null) ? controller.getModel() : null;
+        return controller != null ? controller.getModel() : null;
     }
 }

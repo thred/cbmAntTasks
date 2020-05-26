@@ -14,14 +14,14 @@ public class CBMBitmapUtility
 
     private static CBMBitmapFrame frame;
 
-    public static void main(String[] args) throws ClassNotFoundException, InstantiationException,
-        IllegalAccessException, UnsupportedLookAndFeelException
+    public static void main(String[] args)
+        throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException
     {
         Prefs.setDefault(CBMBitmapUtility.class);
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        
-        frame =
-            WindowUtils.setAndRecordState(Prefs.getDefault(), "CBMBitmapTool", WindowUtils.packAndCenter(new CBMBitmapFrame(WindowUtils
+
+        frame = WindowUtils.setAndRecordState(Prefs.getDefault(), "CBMBitmapTool",
+            WindowUtils.packAndCenter(new CBMBitmapFrame(WindowUtils
                 .getRecordedGraphicsConfiguration(Prefs.getDefault(), "CBMBitmapTool", CBMBitmapFrame.class))));
 
         frame.addWindowListener(new WindowAdapter()

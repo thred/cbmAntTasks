@@ -8,204 +8,208 @@ import org.apache.tools.ant.BuildException;
 public class DataText implements DataCommand
 {
 
-	private final StringBuilder builder = new StringBuilder();
+    private final StringBuilder builder = new StringBuilder();
 
-	private int length = -1;
-	private boolean convert = true;
+    private int length = -1;
+    private boolean convert = true;
 
-	public DataText()
-	{
-		super();
-	}
+    public DataText()
+    {
+        super();
+    }
 
-	public int getLength()
-	{
-		return length;
-	}
+    public int getLength()
+    {
+        return length;
+    }
 
-	public void setLength(int length)
-	{
-		this.length = length;
-	}
+    public void setLength(int length)
+    {
+        this.length = length;
+    }
 
-	public boolean isConvert()
-	{
-		return convert;
-	}
+    public boolean isConvert()
+    {
+        return convert;
+    }
 
-	public void setConvert(boolean convert)
-	{
-		this.convert = convert;
-	}
-	
-	protected char convert(char ch) {
-		if (convert)
-		{
-			if (ch == '\n') {
-				ch = '\r';
-			}
-			else if (ch == '\\') {
-				ch = 0xbf;
-			}
-			else if ((ch >= 0x40) && (ch < 0x60))
-			{
-				ch += 0x80;
-			}
-			else if ((ch >= 0x60) && (ch < 0x80))
-			{
-				ch -= 0x20;
-			}
-		}
-		
-		return ch;
-	}
+    public void setConvert(boolean convert)
+    {
+        this.convert = convert;
+    }
 
-	public void addText(String text)
-	{
-		builder.append(text.trim()).append(" ");
-	}
+    protected char convert(char ch)
+    {
+        if (convert)
+        {
+            if (ch == '\n')
+            {
+                ch = '\r';
+            }
+            else if (ch == '\\')
+            {
+                ch = 0xbf;
+            }
+            else if (ch >= 0x40 && ch < 0x60)
+            {
+                ch += 0x80;
+            }
+            else if (ch >= 0x60 && ch < 0x80)
+            {
+                ch -= 0x20;
+            }
+        }
 
-	/**
-	 * @see org.cbm.ant.data.DataCommand#isExecutionNecessary(long, boolean)
-	 */
-	@Override
-	public boolean isExecutionNecessary(long lastModified, boolean exists)
-	{
-		return !exists;
-	}
+        return ch;
+    }
 
-	/**
-	 * @see org.cbm.ant.data.DataCommand#execute(Data, java.io.OutputStream)
-	 */
-	@Override
-	public void execute(Data task, OutputStream out) throws BuildException, IOException
-	{
-		task.log("Adding text data");
+    public void addText(String text)
+    {
+        builder.append(text.trim()).append(" ");
+    }
 
-		char[] data = builder.toString().trim().toCharArray();
-		int index = 0;
-		int count = 0;
+    /**
+     * @see org.cbm.ant.data.DataCommand#isExecutionNecessary(long, boolean)
+     */
+    @Override
+    public boolean isExecutionNecessary(long lastModified, boolean exists)
+    {
+        return !exists;
+    }
 
-		while (index < data.length)
-		{
-			if (count >= length)
-			{
-				throw new BuildException("Text exceeds length");
-			}
+    /**
+     * @see org.cbm.ant.data.DataCommand#execute(Data, java.io.OutputStream)
+     */
+    @Override
+    public void execute(Data task, OutputStream out) throws BuildException, IOException
+    {
+        task.log("Adding text data");
 
-			char ch = data[index++];
+        char[] data = builder.toString().trim().toCharArray();
+        int index = 0;
+        int count = 0;
 
-			if (ch == '\\')
-			{
-				if (index >= data.length)
-				{
-					throw new BuildException("Invalid escape sequence at position " + index);
-				}
+        while (index < data.length)
+        {
+            if (count >= length)
+            {
+                throw new BuildException("Text exceeds length");
+            }
 
-				ch = data[index++];
+            char ch = data[index++];
 
-				switch (ch)
-				{
-					case '\\':
-						out.write(convert('\\'));
-						count += 1;
-						continue;
-						
-					case '0':
-						out.write(convert('\0'));
-						count += 1;
-						continue;
+            if (ch == '\\')
+            {
+                if (index >= data.length)
+                {
+                    throw new BuildException("Invalid escape sequence at position " + index);
+                }
 
-					case 'n':
-						out.write(convert('\n'));
-						count += 1;
-						continue;
+                ch = data[index++];
 
-					case 'r':
-						out.write(convert('\r'));
-						count += 1;
-						continue;
+                switch (ch)
+                {
+                    case '\\':
+                        out.write(convert('\\'));
+                        count += 1;
+                        continue;
 
-					case 't':
-						out.write(convert('\t'));
-						count += 1;
-						continue;
+                    case '0':
+                        out.write(convert('\0'));
+                        count += 1;
+                        continue;
 
-					case 'u':
-						if (index >= data.length)
-						{
-							throw new BuildException("Invalid escape sequence at position " + index);
-						}
+                    case 'n':
+                        out.write(convert('\n'));
+                        count += 1;
+                        continue;
 
-						ch = Character.toLowerCase(data[index++]);
+                    case 'r':
+                        out.write(convert('\r'));
+                        count += 1;
+                        continue;
 
-						if ((!((ch >= '0') && (ch <= '9'))) && (!((ch >= 'a') && (ch <= 'f'))))
-						{
-							throw new BuildException("Invalid escape sequence at position " + index);
-						}
+                    case 't':
+                        out.write(convert('\t'));
+                        count += 1;
+                        continue;
 
-						int value = ((ch >= '0') && (ch <= '9')) ? (ch - '0') : ((ch - 'a') + 10);
+                    case 'u':
+                        if (index >= data.length)
+                        {
+                            throw new BuildException("Invalid escape sequence at position " + index);
+                        }
 
-						if (index >= data.length)
-						{
-							throw new BuildException("Invalid escape sequence at position " + index);
-						}
+                        ch = Character.toLowerCase(data[index++]);
 
-						ch = data[index++];
+                        if (!(ch >= '0' && ch <= '9') && !(ch >= 'a' && ch <= 'f'))
+                        {
+                            throw new BuildException("Invalid escape sequence at position " + index);
+                        }
 
-						if (!Character.isDigit(ch))
-						{
-							throw new BuildException("Invalid escape sequence at position " + index);
-						}
+                        int value = ch >= '0' && ch <= '9' ? ch - '0' : ch - 'a' + 10;
 
-						value <<= 4;
-						value += ((ch >= '0') && (ch <= '9')) ? (ch - '0') : ((ch - 'a') + 10);
-						out.write(convert((char)value));
-						count += 1;
-						continue;
-				}
+                        if (index >= data.length)
+                        {
+                            throw new BuildException("Invalid escape sequence at position " + index);
+                        }
 
-				throw new BuildException("Invalid escape sequence at position " + index);
-			}
+                        ch = data[index++];
 
-			switch (ch) {
-				case '\u00c4':
-					ch = 0x5b;
-					break;
-					
-				case '\u00d6':
-					ch = 0x5c;
-					break;
+                        if (!Character.isDigit(ch))
+                        {
+                            throw new BuildException("Invalid escape sequence at position " + index);
+                        }
 
-				case '\u00dc':
-					ch = 0x5d;
-					break;
-					
-				case '\u00e4':
-					ch = 0x7b;
-					break;
-					
-				case '\u00f6':
-					ch = 0x7c;
-					break;
+                        value <<= 4;
+                        value += ch >= '0' && ch <= '9' ? ch - '0' : ch - 'a' + 10;
+                        out.write(convert((char) value));
+                        count += 1;
+                        continue;
+                }
 
-				case '\u00fc':
-					ch = 0x7d;
-					break;
-					
-				case '\u00df':
-					ch = 0x7e;
-					break;
-			}
-			
-			out.write(convert(ch));
-			count += 1;
-		}
+                throw new BuildException("Invalid escape sequence at position " + index);
+            }
 
-		while (count < length)
-		{
-			out.write(convert('\0'));
-			count += 1;
-		}
-	}
+            switch (ch)
+            {
+                case '\u00c4':
+                    ch = 0x5b;
+                    break;
+
+                case '\u00d6':
+                    ch = 0x5c;
+                    break;
+
+                case '\u00dc':
+                    ch = 0x5d;
+                    break;
+
+                case '\u00e4':
+                    ch = 0x7b;
+                    break;
+
+                case '\u00f6':
+                    ch = 0x7c;
+                    break;
+
+                case '\u00fc':
+                    ch = 0x7d;
+                    break;
+
+                case '\u00df':
+                    ch = 0x7e;
+                    break;
+            }
+
+            out.write(convert(ch));
+            count += 1;
+        }
+
+        while (count < length)
+        {
+            out.write(convert('\0'));
+            count += 1;
+        }
+    }
 }

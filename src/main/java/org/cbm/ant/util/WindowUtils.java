@@ -78,7 +78,7 @@ public class WindowUtils
         GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] devices = environment.getScreenDevices();
 
-        if ((index >= 0) && (index <= devices.length))
+        if (index >= 0 && index <= devices.length)
         {
             return devices[index];
         }
@@ -191,14 +191,14 @@ public class WindowUtils
             windowBounds.y = deviceBounds.y;
         }
 
-        if ((windowBounds.x + windowBounds.width) > (deviceBounds.x + deviceBounds.width))
+        if (windowBounds.x + windowBounds.width > deviceBounds.x + deviceBounds.width)
         {
-            windowBounds.x = (deviceBounds.x + deviceBounds.width) - windowBounds.width;
+            windowBounds.x = deviceBounds.x + deviceBounds.width - windowBounds.width;
         }
 
-        if ((windowBounds.y + windowBounds.height) > (deviceBounds.y + deviceBounds.height))
+        if (windowBounds.y + windowBounds.height > deviceBounds.y + deviceBounds.height)
         {
-            windowBounds.y = (deviceBounds.y + deviceBounds.height) - windowBounds.height;
+            windowBounds.y = deviceBounds.y + deviceBounds.height - windowBounds.height;
         }
 
         return windowBounds;
@@ -213,29 +213,30 @@ public class WindowUtils
 
     /**
      * A typical usage would look like this:
-     * 
+     *
      * <pre>
-     * ShowcaseFrame frame = WindowUtils.setAndRecordState(&quot;Showcase&quot;, WindowUtils.packAndCenter(new ShowcaseFrame(WindowUtils
-     *     .getRecordedGraphicsConfiguration(&quot;Showcase&quot;, ShowcaseFrame.class))));
+     * ShowcaseFrame frame = WindowUtils.setAndRecordState(&quot;Showcase&quot;, WindowUtils.packAndCenter(
+     *     new ShowcaseFrame(WindowUtils.getRecordedGraphicsConfiguration(&quot;Showcase&quot;, ShowcaseFrame.class))));
      * </pre>
-     * 
+     *
      * @param name the unique name of the window
      * @param windowType the type of the window
      * @return the graphics configuration
      */
-    public static GraphicsConfiguration getRecordedGraphicsConfiguration(String name, Class<? extends Window> windowType)
+    public static GraphicsConfiguration getRecordedGraphicsConfiguration(String name,
+        Class<? extends Window> windowType)
     {
         return getRecordedGraphicsConfiguration(Prefs.get(windowType), name, windowType);
     }
 
     /**
      * A typical usage would look like this:
-     * 
+     *
      * <pre>
-     * ShowcaseFrame frame = WindowUtils.setAndRecordState(&quot;Showcase&quot;, WindowUtils.packAndCenter(new ShowcaseFrame(WindowUtils
-     *     .getRecordedGraphicsConfiguration(&quot;Showcase&quot;, ShowcaseFrame.class))));
+     * ShowcaseFrame frame = WindowUtils.setAndRecordState(&quot;Showcase&quot;, WindowUtils.packAndCenter(
+     *     new ShowcaseFrame(WindowUtils.getRecordedGraphicsConfiguration(&quot;Showcase&quot;, ShowcaseFrame.class))));
      * </pre>
-     * 
+     *
      * @param prefs some {@link Prefs}
      * @param name the unique name of the window
      * @param windowType the type of the window
@@ -251,12 +252,12 @@ public class WindowUtils
 
     /**
      * A typical usage would look like this:
-     * 
+     *
      * <pre>
-     * ShowcaseFrame frame = WindowUtils.setAndRecordState(&quot;Showcase&quot;, WindowUtils.packAndCenter(new ShowcaseFrame(WindowUtils
-     *     .getRecordedGraphicsConfiguration(&quot;Showcase&quot;, ShowcaseFrame.class))));
+     * ShowcaseFrame frame = WindowUtils.setAndRecordState(&quot;Showcase&quot;, WindowUtils.packAndCenter(
+     *     new ShowcaseFrame(WindowUtils.getRecordedGraphicsConfiguration(&quot;Showcase&quot;, ShowcaseFrame.class))));
      * </pre>
-     * 
+     *
      * @param name the unique name of the window
      * @param window the window
      * @return the window itself
@@ -268,12 +269,12 @@ public class WindowUtils
 
     /**
      * A typical usage would look like this:
-     * 
+     *
      * <pre>
-     * ShowcaseFrame frame = WindowUtils.setAndRecordState(&quot;Showcase&quot;, WindowUtils.packAndCenter(new ShowcaseFrame(WindowUtils
-     *     .getRecordedGraphicsConfiguration(&quot;Showcase&quot;, ShowcaseFrame.class))));
+     * ShowcaseFrame frame = WindowUtils.setAndRecordState(&quot;Showcase&quot;, WindowUtils.packAndCenter(
+     *     new ShowcaseFrame(WindowUtils.getRecordedGraphicsConfiguration(&quot;Showcase&quot;, ShowcaseFrame.class))));
      * </pre>
-     * 
+     *
      * @param prefs some {@link Prefs}
      * @param name the unique name of the window
      * @param window the window
@@ -310,7 +311,7 @@ public class WindowUtils
     {
         String prefix = windowType.getName();
 
-        if ((name != null) && (!name.isEmpty()))
+        if (name != null && !name.isEmpty())
         {
             prefix += "#" + name;
         }
@@ -375,7 +376,7 @@ public class WindowUtils
 
         protected void storeLocation()
         {
-            if ((window instanceof Frame) && (((Frame) window).getExtendedState() != Frame.NORMAL))
+            if (window instanceof Frame && ((Frame) window).getExtendedState() != Frame.NORMAL)
             {
                 return;
             }
@@ -388,7 +389,7 @@ public class WindowUtils
 
         protected void storeSize()
         {
-            if ((window instanceof Frame) && (((Frame) window).getExtendedState() != Frame.NORMAL))
+            if (window instanceof Frame && ((Frame) window).getExtendedState() != Frame.NORMAL)
             {
                 return;
             }

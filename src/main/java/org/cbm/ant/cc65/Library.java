@@ -3,29 +3,28 @@ package org.cbm.ant.cc65;
 public class Library
 {
 
-	private String name;
+    private String name;
 
-	public Library()
+    public Library()
     {
-	    super();
+        super();
     }
 
-	public Library(String name)
+    public Library(String name)
     {
-	    super();
-	    
-	    this.name = name;
+        super();
+
+        this.name = name;
     }
 
-
-	public String getName()
+    public String getName()
     {
-    	return name;
+        return name;
     }
 
-	public void setName(String name)
+    public void setName(String name)
     {
-    	this.name = name;
+        this.name = name;
     }
-	
+
 }

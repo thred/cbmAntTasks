@@ -49,7 +49,7 @@ public class Prefs
 
     public boolean set(String key, int value)
     {
-        if ((exists(key)) && (Util.equals(prefs.getInt(key, 0), value)))
+        if (exists(key) && Util.equals(prefs.getInt(key, 0), value))
         {
             return false;
         }
@@ -66,7 +66,7 @@ public class Prefs
 
     public boolean set(String key, long value)
     {
-        if ((exists(key)) && (Util.equals(prefs.getLong(key, 0), value)))
+        if (exists(key) && Util.equals(prefs.getLong(key, 0), value))
         {
             return false;
         }
@@ -83,7 +83,7 @@ public class Prefs
 
     public boolean set(String key, float value)
     {
-        if ((exists(key)) && (Util.equals(prefs.getFloat(key, 0), value)))
+        if (exists(key) && Util.equals(prefs.getFloat(key, 0), value))
         {
             return false;
         }
@@ -100,7 +100,7 @@ public class Prefs
 
     public boolean set(String key, double value)
     {
-        if ((exists(key)) && (Util.equals(prefs.getDouble(key, 0), value)))
+        if (exists(key) && Util.equals(prefs.getDouble(key, 0), value))
         {
             return false;
         }
@@ -117,7 +117,7 @@ public class Prefs
 
     public boolean set(String key, String value)
     {
-        if ((exists(key)) && (Util.equals(prefs.get(key, null), value)))
+        if (exists(key) && Util.equals(prefs.get(key, null), value))
         {
             return false;
         }
@@ -134,7 +134,7 @@ public class Prefs
 
     public boolean set(String key, boolean value)
     {
-        if ((exists(key)) && (Util.equals(prefs.getBoolean(key, !value), value)))
+        if (exists(key) && Util.equals(prefs.getBoolean(key, !value), value))
         {
             return false;
         }
@@ -151,7 +151,7 @@ public class Prefs
 
     public boolean set(String key, byte[] value)
     {
-        if ((exists(key)) && (Util.equals(prefs.get(key, null), value)))
+        if (exists(key) && Util.equals(prefs.get(key, null), value))
         {
             return false;
         }
@@ -183,7 +183,7 @@ public class Prefs
 
     public <TYPE extends Enum<?>> boolean set(String key, TYPE value)
     {
-        if ((exists(key)) && (Util.equals(prefs.get(key, null), value.name())))
+        if (exists(key) && Util.equals(prefs.get(key, null), value.name()))
         {
             return false;
         }

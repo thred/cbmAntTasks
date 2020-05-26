@@ -5,5 +5,5 @@ import org.apache.tools.ant.BuildException;
 public interface VerifyTask
 {
 
-	void execute(Verify task) throws BuildException;
+    void execute(Verify task) throws BuildException;
 }

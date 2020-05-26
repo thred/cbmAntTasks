@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2012 swing-on-fire Team
- * 
+ *
  * This file is part of Swing-On-Fire (http://code.google.com/p/swing-on-fire), licensed under the terms of the MIT
  * License (MIT).
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
  * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
  * Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
@@ -52,7 +52,7 @@ public class GBC extends GridBagConstraints
         this.totalWidth = totalWidth;
         this.totalHeight = totalHeight;
 
-        grid = new boolean[(totalHeight > 0) ? totalHeight : 1][totalWidth];
+        grid = new boolean[totalHeight > 0 ? totalHeight : 1][totalWidth];
 
         gridx = 1;
         gridy = 1;
@@ -80,12 +80,11 @@ public class GBC extends GridBagConstraints
     {
         if (!insetsOverwritten)
         {
-            int top = (gridy > 1) ? defaultInsets.top : defaultOutsets.top;
-            int left = (gridx > 1) ? defaultInsets.left : defaultOutsets.left;
+            int top = gridy > 1 ? defaultInsets.top : defaultOutsets.top;
+            int left = gridx > 1 ? defaultInsets.left : defaultOutsets.left;
             int bottom =
-                ((totalHeight <= 0) || ((gridy + gridheight) < totalHeight)) ? defaultInsets.bottom
-                    : defaultOutsets.bottom;
-            int right = ((gridx + gridwidth) < totalWidth) ? defaultInsets.right : defaultOutsets.right;
+                totalHeight <= 0 || gridy + gridheight < totalHeight ? defaultInsets.bottom : defaultOutsets.bottom;
+            int right = gridx + gridwidth < totalWidth ? defaultInsets.right : defaultOutsets.right;
 
             insets = new Insets(top, left, bottom, right);
         }
@@ -129,14 +128,14 @@ public class GBC extends GridBagConstraints
 
         if (x2 > totalWidth)
         {
-            throw new IllegalArgumentException(String.format("x (%d) + width (%d) > totalWidth (%d)", x, width,
-                totalWidth));
+            throw new IllegalArgumentException(
+                String.format("x (%d) + width (%d) > totalWidth (%d)", x, width, totalWidth));
         }
 
-        if ((height > 0) && (y2 > totalHeight))
+        if (height > 0 && y2 > totalHeight)
         {
-            throw new IllegalArgumentException(String.format("y (%d) + height (%d) > totalHeight (%d)", y, height,
-                totalHeight));
+            throw new IllegalArgumentException(
+                String.format("y (%d) + height (%d) > totalHeight (%d)", y, height, totalHeight));
         }
 
         if (y2 > grid.length)
@@ -189,22 +188,22 @@ public class GBC extends GridBagConstraints
         this.gridwidth = gridwidth;
         this.gridheight = gridheight;
 
-        if ((gridx - 1 + gridwidth) > totalWidth)
+        if (gridx - 1 + gridwidth > totalWidth)
         {
-            throw new IllegalArgumentException(String.format("gridx (%d) + gridwidth (%d) > width (%d)", gridx - 1,
-                gridwidth, totalWidth));
+            throw new IllegalArgumentException(
+                String.format("gridx (%d) + gridwidth (%d) > width (%d)", gridx - 1, gridwidth, totalWidth));
         }
 
-        if ((totalHeight > 0) && ((gridy - 1 + gridheight) > totalHeight))
+        if (totalHeight > 0 && gridy - 1 + gridheight > totalHeight)
         {
-            throw new IllegalArgumentException(String.format("gridy (%d) + gridheight (%d) > height (%d)", gridy - 1,
-                gridheight, totalHeight));
+            throw new IllegalArgumentException(
+                String.format("gridy (%d) + gridheight (%d) > height (%d)", gridy - 1, gridheight, totalHeight));
         }
 
         if (isGridUsed())
         {
-            throw new IllegalArgumentException(String.format("Overlapping components: %d, %d, %d, %d", gridx - 1,
-                gridy - 1, gridwidth, gridheight));
+            throw new IllegalArgumentException(
+                String.format("Overlapping components: %d, %d, %d, %d", gridx - 1, gridy - 1, gridwidth, gridheight));
         }
 
         setGridUsed(true);

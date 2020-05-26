@@ -11,246 +11,235 @@ import javax.swing.SwingUtilities;
 
 import org.cbm.ant.cbm.bitmap.CBMBitmap;
 import org.cbm.ant.cbm.bitmap.CBMBitmapDither;
-import org.cbm.ant.cbm.bitmap.GraphicsMode;
 import org.cbm.ant.util.bitmap.util.CBMBitmapCanvas;
 
 public class CBMBitmapProjectController
 {
 
-	private final Object semaphore = new Object();
+    private final Object semaphore = new Object();
 
-	private final CBMBitmapProjectModel model;
-	private final CBMBitmapProjectView view;
+    private final CBMBitmapProjectModel model;
+    private final CBMBitmapProjectView view;
 
-	private Thread updateThread = null;
-	private boolean updateNeeded = false;
+    private Thread updateThread = null;
+    private boolean updateNeeded = false;
 
-	public CBMBitmapProjectController(CBMBitmapProjectModel model)
-	{
-		super();
+    public CBMBitmapProjectController(CBMBitmapProjectModel model)
+    {
+        super();
 
-		this.model = model;
+        this.model = model;
 
-		view = new CBMBitmapProjectView(model);
-	}
+        view = new CBMBitmapProjectView(model);
+    }
 
-	public CBMBitmapProjectModel getModel()
-	{
-		return model;
-	}
+    public CBMBitmapProjectModel getModel()
+    {
+        return model;
+    }
 
-	public CBMBitmapProjectView getView()
-	{
-		return view;
-	}
+    public CBMBitmapProjectView getView()
+    {
+        return view;
+    }
 
-	public void recalculate()
-	{
-		synchronized (semaphore)
-		{
-			updateNeeded = true;
+    public void recalculate()
+    {
+        synchronized (semaphore)
+        {
+            updateNeeded = true;
 
-			if (updateThread == null)
-			{
-				updateThread = new Thread(new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						try
-						{
-							while (updateNeeded)
-							{
-								synchronized (semaphore)
-								{
-									updateNeeded = false;
-								}
+            if (updateThread == null)
+            {
+                updateThread = new Thread((Runnable) () -> {
+                    try
+                    {
+                        while (updateNeeded)
+                        {
+                            synchronized (semaphore)
+                            {
+                                updateNeeded = false;
+                            }
 
-								final CBMBitmap bitmap = new CBMBitmap().blockSize(8, 8);
+                            final CBMBitmap bitmap = new CBMBitmap().blockSize(8, 8);
 
-								bitmap.setImage(model.getSourceImage());
+                            bitmap.setImage(model.getSourceImage());
 
-								if (model.getTargetWidth() != null)
-								{
-									bitmap.setTargetWidth(model.getTargetWidth());
-								}
+                            if (model.getTargetWidth() != null)
+                            {
+                                bitmap.setTargetWidth(model.getTargetWidth());
+                            }
 
-								if (model.getTargetHeight() != null)
-								{
-									bitmap.setTargetHeight(model.getTargetHeight());
-								}
+                            if (model.getTargetHeight() != null)
+                            {
+                                bitmap.setTargetHeight(model.getTargetHeight());
+                            }
 
-								bitmap.setDither(model.getDither());
-								bitmap.setDitherStrength(model.getDitherStrength());
-								bitmap.setEmboss(model.getEmboss());
-								bitmap.setEmbossStrength(model.getEmbossStrength());
-								bitmap.setMode(model.getGraphicsMode());
-								bitmap.setContrast(new float[] {
-										model.getContrastRed(), model.getContrastGreen(), model.getContrastBlue()
-								});
-								bitmap.setBrightness(new float[] {
-										model.getBrightnessRed(), model.getBrightnessGreen(), model.getBrightnessBlue()
-								});
-								bitmap.setAllowedColors(model.getAllowedColors());
-								bitmap.setMandatoryColors(model.getMandatoryColors());
-								bitmap.setEstimationPalette(model.createEsitmationPalette());
-								bitmap.setColorSpace(model.getColorSpace());
+                            bitmap.setDither(model.getDither());
+                            bitmap.setDitherStrength(model.getDitherStrength());
+                            bitmap.setEmboss(model.getEmboss());
+                            bitmap.setEmbossStrength(model.getEmbossStrength());
+                            bitmap.setMode(model.getGraphicsMode());
+                            bitmap.setContrast(
+                                new float[]{model.getContrastRed(), model.getContrastGreen(), model.getContrastBlue()});
+                            bitmap.setBrightness(new float[]{
+                                model.getBrightnessRed(),
+                                model.getBrightnessGreen(),
+                                model.getBrightnessBlue()});
+                            bitmap.setAllowedColors(model.getAllowedColors());
+                            bitmap.setMandatoryColors(model.getMandatoryColors());
+                            bitmap.setEstimationPalette(model.createEsitmationPalette());
+                            bitmap.setColorSpace(model.getColorSpace());
 
-								final BufferedImage sampleImage = bitmap.getSampleImage();
+                            final BufferedImage sampleImage = bitmap.getSampleImage();
 
-								SwingUtilities.invokeLater(new Runnable()
-								{
-									@Override
-									public void run()
-									{
-										model.setTargetImage(sampleImage);
-										updateTargetCanvas();
-									};
-								});
-							}
-						}
-						catch (Exception e)
-						{
-							e.printStackTrace(System.err);
-						}
-						finally
-						{
-							updateThread = null;
-						}
-					}
-				}, "Image update");
+                            SwingUtilities.invokeLater(() -> {
+                                model.setTargetImage(sampleImage);
+                                updateTargetCanvas();
+                            });
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace(System.err);
+                    }
+                    finally
+                    {
+                        updateThread = null;
+                    }
+                }, "Image update");
 
-				updateThread.setDaemon(true);
-				updateThread.start();
-			}
-		}
-	}
+                updateThread.setDaemon(true);
+                updateThread.start();
+            }
+        }
+    }
 
-	public void setSourceImage(File file, BufferedImage image)
-	{
-		model.setSourceImage(image);
+    public void setSourceImage(File file, BufferedImage image)
+    {
+        model.setSourceImage(image);
 
-		JScrollPane scrollPane = view.getSourceScrollPane();
-		Dimension viewSize = scrollPane.getViewport().getSize();
-		CBMBitmapCanvas canvas = view.getSourceCanvas();
+        JScrollPane scrollPane = view.getSourceScrollPane();
+        Dimension viewSize = scrollPane.getViewport().getSize();
+        CBMBitmapCanvas canvas = view.getSourceCanvas();
 
-		canvas.setImage(image);
-		canvas.setZoom(Math.min(
-				Math.min(viewSize.getWidth() / image.getWidth(), viewSize.getHeight() / image.getHeight()), 2));
+        canvas.setImage(image);
+        canvas.setZoom(
+            Math.min(Math.min(viewSize.getWidth() / image.getWidth(), viewSize.getHeight() / image.getHeight()), 2));
 
-		view.getSplitPane().setDividerLocation(0.5);
-		view.invalidate();
-		view.repaint();
+        view.getSplitPane().setDividerLocation(0.5);
+        view.invalidate();
+        view.repaint();
 
-		recalculate();
-	}
+        recalculate();
+    }
 
-	public void setSourceZoom(double zoom)
-	{
-		view.getSourceCanvas().setZoom(zoom);
-	}
+    public void setSourceZoom(double zoom)
+    {
+        view.getSourceCanvas().setZoom(zoom);
+    }
 
-	public void sourceZoom(double multiplier)
-	{
-		view.getSourceCanvas().zoom(multiplier, null);
-	}
+    public void sourceZoom(double multiplier)
+    {
+        view.getSourceCanvas().zoom(multiplier, null);
+    }
 
-	public void sourceZoomFit()
-	{
-		CBMBitmapCanvas canvas = view.getSourceCanvas();
-		zoomFit(canvas);
-	}
+    public void sourceZoomFit()
+    {
+        CBMBitmapCanvas canvas = view.getSourceCanvas();
+        zoomFit(canvas);
+    }
 
-	public void setTargetZoom(double zoom)
-	{
-		view.getTargetCanvas().setZoom(zoom);
-	}
+    public void setTargetZoom(double zoom)
+    {
+        view.getTargetCanvas().setZoom(zoom);
+    }
 
-	public void targetZoom(double multiplier)
-	{
-		view.getTargetCanvas().zoom(multiplier, null);
-	}
+    public void targetZoom(double multiplier)
+    {
+        view.getTargetCanvas().zoom(multiplier, null);
+    }
 
-	public void targetZoomFit()
-	{
-		CBMBitmapCanvas canvas = view.getTargetCanvas();
-		zoomFit(canvas);
-	}
+    public void targetZoomFit()
+    {
+        CBMBitmapCanvas canvas = view.getTargetCanvas();
+        zoomFit(canvas);
+    }
 
-	private void zoomFit(CBMBitmapCanvas canvas)
-	{
-		JScrollPane scrollPane = canvas.getScrollPane();
-		Dimension viewSize = scrollPane.getViewport().getSize();
-		BufferedImage image = canvas.getImage();
+    private void zoomFit(CBMBitmapCanvas canvas)
+    {
+        JScrollPane scrollPane = canvas.getScrollPane();
+        Dimension viewSize = scrollPane.getViewport().getSize();
+        BufferedImage image = canvas.getImage();
 
-		if (image == null)
-		{
-			return;
-		}
+        if (image == null)
+        {
+            return;
+        }
 
-		canvas.setZoom(Math.min(viewSize.getWidth() / image.getWidth(), viewSize.getHeight() / image.getHeight()));
-	}
+        canvas.setZoom(Math.min(viewSize.getWidth() / image.getWidth(), viewSize.getHeight() / image.getHeight()));
+    }
 
-	public void resize(int width, int height)
-	{
-		Image image = model.getSourceImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-		BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+    public void resize(int width, int height)
+    {
+        Image image = model.getSourceImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-		resizedImage.getGraphics().drawImage(image, 0, 0, null);
-		model.setSourceImage(resizedImage);
-		recalculate();
-		updateSourceCanvas();
-	}
+        resizedImage.getGraphics().drawImage(image, 0, 0, null);
+        model.setSourceImage(resizedImage);
+        recalculate();
+        updateSourceCanvas();
+    }
 
-	public void clearTargetSize()
-	{
-		model.setTargetWidth(null);
-		model.setTargetHeight(null);
-		recalculate();
-	}
+    public void clearTargetSize()
+    {
+        model.setTargetWidth(null);
+        model.setTargetHeight(null);
+        recalculate();
+    }
 
-	public void targetSize(Integer targetWidth, Integer targetHeight)
-	{
-		model.setTargetWidth(targetWidth);
-		model.setTargetHeight(targetHeight);
-		recalculate();
-	}
+    public void targetSize(Integer targetWidth, Integer targetHeight)
+    {
+        model.setTargetWidth(targetWidth);
+        model.setTargetHeight(targetHeight);
+        recalculate();
+    }
 
-	private void updateSourceCanvas()
-	{
-		view.getSourceCanvas().setImage(model.getSourceImage());
-		view.repaint();
-	}
+    private void updateSourceCanvas()
+    {
+        view.getSourceCanvas().setImage(model.getSourceImage());
+        view.repaint();
+    }
 
-	private void updateTargetCanvas()
-	{
-		view.getTargetCanvas().setImage(model.getTargetImage());
-		view.repaint();
-	}
+    private void updateTargetCanvas()
+    {
+        view.getTargetCanvas().setImage(model.getTargetImage());
+        view.repaint();
+    }
 
-	public void setDither(CBMBitmapDither dither)
-	{
-		model.setDither(dither);
-		recalculate();
-	}
+    public void setDither(CBMBitmapDither dither)
+    {
+        model.setDither(dither);
+        recalculate();
+    }
 
-	public void toggleSplit()
-	{
-		JSplitPane splitPane = view.getSplitPane();
-		int orientation = splitPane.getOrientation();
+    public void toggleSplit()
+    {
+        JSplitPane splitPane = view.getSplitPane();
+        int orientation = splitPane.getOrientation();
 
-		if (orientation == JSplitPane.HORIZONTAL_SPLIT)
-		{
-			splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		}
-		else
-		{
-			splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-		}
+        if (orientation == JSplitPane.HORIZONTAL_SPLIT)
+        {
+            splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        }
+        else
+        {
+            splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+        }
 
-		splitPane.setDividerLocation(0.5);
-		splitPane.invalidate();
-		splitPane.repaint();
-	}
+        splitPane.setDividerLocation(0.5);
+        splitPane.invalidate();
+        splitPane.repaint();
+    }
 
 }

@@ -6,137 +6,137 @@ import java.io.OutputStream;
 public class CBMDiskOutputStream extends OutputStream
 {
 
-	private final CBMDiskOperator operator;
-	private final CBMDiskDirEntry dirEntry;
+    private final CBMDiskOperator operator;
+    private final CBMDiskDirEntry dirEntry;
 
-	private CBMDiskLocation location = null;
-	private CBMDiskSector sector = null;
-	private int position;
-	private int size = 0;
+    private CBMDiskLocation location = null;
+    private CBMDiskSector sector = null;
+    private int position;
+    private int size = 0;
 
-	public CBMDiskOutputStream(CBMDiskOperator operator, CBMDiskDirEntry dirEntry, CBMDiskLocation location)
-	{
-		super();
+    public CBMDiskOutputStream(CBMDiskOperator operator, CBMDiskDirEntry dirEntry, CBMDiskLocation location)
+    {
+        super();
 
-		this.operator = operator;
-		this.dirEntry = dirEntry;
+        this.operator = operator;
+        this.dirEntry = dirEntry;
 
-		dirEntry.setFileTypeClosed(false);
-		
-		this.location = location;
-	}
+        dirEntry.setFileTypeClosed(false);
 
-	public CBMDiskOperator getOperator()
-	{
-		return operator;
-	}
+        this.location = location;
+    }
 
-	public CBMDiskDirEntry getDirEntry()
-	{
-		return dirEntry;
-	}
+    public CBMDiskOperator getOperator()
+    {
+        return operator;
+    }
 
-	public CBMDiskLocation getLocation()
-	{
-		return location;
-	}
+    public CBMDiskDirEntry getDirEntry()
+    {
+        return dirEntry;
+    }
 
-	public int getSize()
-	{
-		return size;
-	}
+    public CBMDiskLocation getLocation()
+    {
+        return location;
+    }
 
-	protected void ensure() throws IOException
-	{
-		if (location == null)
-		{
-			try
-			{
-				location = operator.getBAM().findFreeSector();
-			}
-			catch (CBMDiskException e)
-			{
-				throw new IOException(e.getMessage(), e);
-			}
+    public int getSize()
+    {
+        return size;
+    }
 
-			grab(location);
-		}
-		else if (position > 255)
-		{
-			CBMDiskLocation currentLocation = location;
+    protected void ensure() throws IOException
+    {
+        if (location == null)
+        {
+            try
+            {
+                location = operator.getBAM().findFreeSector();
+            }
+            catch (CBMDiskException e)
+            {
+                throw new IOException(e.getMessage(), e);
+            }
 
-			if (sector != null)
-			{
-				currentLocation = sector.getLocation();
-			}
+            grab(location);
+        }
+        else if (position > 255)
+        {
+            CBMDiskLocation currentLocation = location;
 
-			try
-			{
-				grab(operator.getBAM().findNextFreeSector(currentLocation));
-			}
-			catch (CBMDiskException e)
-			{
-				throw new IOException(e.getMessage(), e);
-			}
-		}
-	}
+            if (sector != null)
+            {
+                currentLocation = sector.getLocation();
+            }
 
-	protected void grab(CBMDiskLocation nextLocation) throws IOException
-	{
-		if (sector != null)
-		{
-			sector.setNextLocation(nextLocation);
-		}
-		else if (dirEntry != null)
-		{
-			dirEntry.setFileLocation(nextLocation);
-			dirEntry.setFileTypeClosed(false);
-		}
+            try
+            {
+                grab(operator.getBAM().findNextFreeSector(currentLocation));
+            }
+            catch (CBMDiskException e)
+            {
+                throw new IOException(e.getMessage(), e);
+            }
+        }
+    }
 
-		if (operator.getBAM().isSectorUsed(nextLocation))
-		{
-			throw new IOException(String.format("Track/sector %s already used", nextLocation));
-		}
+    protected void grab(CBMDiskLocation nextLocation) throws IOException
+    {
+        if (sector != null)
+        {
+            sector.setNextLocation(nextLocation);
+        }
+        else if (dirEntry != null)
+        {
+            dirEntry.setFileLocation(nextLocation);
+            dirEntry.setFileTypeClosed(false);
+        }
 
-		operator.getBAM().setSectorUsed(nextLocation, true);
-		sector = operator.getDisk().getSector(nextLocation);
-		position = 2;
-		size += 1;
-	}
+        if (operator.getBAM().isSectorUsed(nextLocation))
+        {
+            throw new IOException(String.format("Track/sector %s already used", nextLocation));
+        }
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see java.io.OutputStream#write(int)
-	 */
-	@Override
-	public void write(int b) throws IOException
-	{
-		ensure();
+        operator.getBAM().setSectorUsed(nextLocation, true);
+        sector = operator.getDisk().getSector(nextLocation);
+        position = 2;
+        size += 1;
+    }
 
-		sector.setByte(position, b);
-		position += 1;
-	}
+    /**
+     * {@inheritDoc}
+     * 
+     * @see java.io.OutputStream#write(int)
+     */
+    @Override
+    public void write(int b) throws IOException
+    {
+        ensure();
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see java.io.OutputStream#close()
-	 */
-	@Override
-	public void close() throws IOException
-	{
-		if (sector != null)
-		{
-			sector.setNextTrackNr(0);
-			sector.setNextSectorNr(position - 1);
-		}
+        sector.setByte(position, b);
+        position += 1;
+    }
 
-		if (dirEntry != null)
-		{
-			dirEntry.setFileSize(size);
-			dirEntry.setFileTypeClosed(true);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     * 
+     * @see java.io.OutputStream#close()
+     */
+    @Override
+    public void close() throws IOException
+    {
+        if (sector != null)
+        {
+            sector.setNextTrackNr(0);
+            sector.setNextSectorNr(position - 1);
+        }
+
+        if (dirEntry != null)
+        {
+            dirEntry.setFileSize(size);
+            dirEntry.setFileTypeClosed(true);
+        }
+    }
 
 }

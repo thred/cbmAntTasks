@@ -6,21 +6,21 @@ import java.util.Map;
 public class XVic extends AbstractViceLaunchTask
 {
 
-	private static final Map<String, String> EXECUTABLES = new HashMap<String, String>();
+    private static final Map<String, String> EXECUTABLES = new HashMap<>();
 
-	static
-	{
-		EXECUTABLES.put("Linux.*", "xvic");
-		EXECUTABLES.put("Windows.*", "xvic.exe");
-	}
+    static
+    {
+        EXECUTABLES.put("Linux.*", "xvic");
+        EXECUTABLES.put("Windows.*", "xvic.exe");
+    }
 
-	/**
-	 * @see org.cbm.ant.viceteam.AbstractViceTask#getExecutables()
-	 */
-	@Override
-	public Map<String, String> getExecutables()
-	{
-		return EXECUTABLES;
-	}
+    /**
+     * @see org.cbm.ant.viceteam.AbstractViceTask#getExecutables()
+     */
+    @Override
+    public Map<String, String> getExecutables()
+    {
+        return EXECUTABLES;
+    }
 
 }

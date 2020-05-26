@@ -5,10 +5,11 @@ import java.io.OutputStream;
 
 import org.apache.tools.ant.BuildException;
 
-public interface DataCommand {
+public interface DataCommand
+{
 
-	boolean isExecutionNecessary(long lastModified, boolean exists);
-	
-	void execute(Data task, OutputStream out) throws BuildException, IOException;
-	
+    boolean isExecutionNecessary(long lastModified, boolean exists);
+
+    void execute(Data task, OutputStream out) throws BuildException, IOException;
+
 }
