@@ -100,6 +100,10 @@ public class DataImage implements DataCommand
     {
         bitmap.setMandatoryColors(mandatoryPalette);
     }
+    
+    public void setPreferredColorIndices(String preferredColorIndices) {
+        bitmap.setPreferredColorIndices(preferredColorIndices);
+    }
 
     /**
      * {@inheritDoc}

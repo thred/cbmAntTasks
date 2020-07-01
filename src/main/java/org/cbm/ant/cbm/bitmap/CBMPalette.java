@@ -225,6 +225,11 @@ public class CBMPalette
 
         for (int i = 0; i < colors.length; i++)
         {
+            if (colors[i] == null)
+            {
+                continue;
+            }
+
             double delta = delta(value, values[colorSpace.ordinal()][colors[i].index()]);
 
             if (delta < minDelta)
@@ -244,6 +249,11 @@ public class CBMPalette
 
         for (CBMColor allowedColor : allowedColors)
         {
+            if (allowedColor == null)
+            {
+                continue;
+            }
+
             float delta = delta(value, values[colorSpace.ordinal()][allowedColor.index()]);
 
             if (Float.isNaN(minDelta) || delta < minDelta)

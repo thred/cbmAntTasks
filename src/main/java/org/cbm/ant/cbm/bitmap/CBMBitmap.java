@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +26,6 @@ public class CBMBitmap
 
     private static class Raster
     {
-
         private final CBMColor[][] raster;
         private final int width;
 
@@ -66,6 +66,49 @@ public class CBMBitmap
             raster[blockX + blockY * width] = existing;
         }
 
+        public void sortColors(int numberOfColors, CBMPreferredColorIndex... preferredColorIndices)
+        {
+            if (preferredColorIndices == null || preferredColorIndices.length == 0)
+            {
+                return;
+            }
+
+            for (int i = 0; i < raster.length; i++)
+            {
+                raster[i] = sortColors(raster[i], numberOfColors, preferredColorIndices);
+            }
+        }
+
+        private CBMColor[] sortColors(CBMColor[] colors, int numberOfColors,
+            CBMPreferredColorIndex[] preferredColorIndices)
+        {
+            Set<CBMColor> usedColors = new HashSet<>(Arrays.asList(colors));
+            CBMColor[] sortedColors = new CBMColor[numberOfColors];
+
+            for (CBMPreferredColorIndex preferredColorIndex : preferredColorIndices)
+            {
+                if (usedColors.contains(preferredColorIndex.getColor())
+                    && sortedColors[preferredColorIndex.getIndex()] == null)
+                {
+                    usedColors.remove(preferredColorIndex.getColor());
+                    sortedColors[preferredColorIndex.getIndex()] = preferredColorIndex.getColor();
+                }
+            }
+
+            Iterator<CBMColor> iterator = usedColors.iterator();
+            int i = 0;
+            while (iterator.hasNext())
+            {
+                while (sortedColors[i] != null)
+                {
+                    i++;
+                }
+
+                sortedColors[i] = iterator.next();
+            }
+
+            return sortedColors;
+        }
     }
 
     private static class Entry implements Comparable<Entry>
@@ -135,6 +178,7 @@ public class CBMBitmap
     private float[] brightness;
     private CBMColor[] allowedColors = CBMColor.values();
     private CBMColor[] mandatoryColors = new CBMColor[0];
+    private CBMPreferredColorIndex[] preferredColorIndices;
     private CBMPalette estimationPalette = CBMPalette.DEFAULT;
     private CBMPalette samplePalette = CBMPalette.DEFAULT;
     private CBMColorSpace colorSpace = CBMColorSpace.RGB;
@@ -521,6 +565,18 @@ public class CBMBitmap
     {
         this.mandatoryColors = mandatoryColors;
 
+        if (preferredColorIndices == null)
+        {
+            CBMPreferredColorIndex[] preferredColorIndices = new CBMPreferredColorIndex[mandatoryColors.length];
+
+            for (int i = 0; i < mandatoryColors.length; i++)
+            {
+                preferredColorIndices[i] = new CBMPreferredColorIndex(mandatoryColors[i], i);
+            }
+
+            setPreferredColorIndices(preferredColorIndices);
+        }
+
         updated = true;
     }
 
@@ -534,6 +590,47 @@ public class CBMBitmap
     public CBMBitmap mandatoryColors(CBMColor... mandatoryColors)
     {
         setMandatoryColors(mandatoryColors);
+
+        return this;
+    }
+
+    public void setPreferredColorIndices(String preferredColorIndices)
+    {
+        String[] values = preferredColorIndices.split("\\s*,\\s*");
+        CBMPreferredColorIndex[] indices = new CBMPreferredColorIndex[values.length];
+
+        for (int i = 0; i < values.length; i++)
+        {
+            try
+            {
+                indices[i] = CBMPreferredColorIndex.of(values[i]);
+            }
+            catch (IllegalArgumentException e)
+            {
+                throw new IllegalArgumentException("Failed to parse preferred color index: " + values[i], e);
+            }
+        }
+
+        setPreferredColorIndices(indices);
+    }
+
+    public void setPreferredColorIndices(CBMPreferredColorIndex... preferredColorIndices)
+    {
+        this.preferredColorIndices = preferredColorIndices;
+
+        updated = true;
+    }
+
+    public CBMBitmap preferredColorIndices(String preferredColorIndices)
+    {
+        setPreferredColorIndices(preferredColorIndices);
+
+        return this;
+    }
+
+    public CBMBitmap preferredColorIndices(CBMPreferredColorIndex... preferredColorIndices)
+    {
+        setPreferredColorIndices(preferredColorIndices);
 
         return this;
     }
@@ -678,6 +775,8 @@ public class CBMBitmap
         raster = createRaster(estimationImage, estimationPalette, Arrays.asList(mandatoryColors), overscan);
         targetImage = createImage(scaledImage, colorSpace, estimationPalette, allowedColors, mode, scaledBlockWidth,
             blockHeight, raster, dither, ditherStrength);
+
+        raster.sortColors(mode.getNumberOfColors(), preferredColorIndices);
 
         updated = false;
     }
@@ -896,13 +995,13 @@ public class CBMBitmap
 
                 if (mode == GraphicsMode.LORES)
                 {
-                    out.write(
-                        (colors.length > 2 ? colors[2].index() : 0) | (colors.length > 1 ? colors[1].index() : 0) << 4);
+                    out.write((colors.length > 2 && colors[2] != null ? colors[2].index() : 0)
+                        | (colors.length > 1 && colors[1] != null ? colors[1].index() : 0) << 4);
                 }
                 else
                 {
-                    out.write(
-                        (colors.length > 0 ? colors[0].index() : 0) | (colors.length > 1 ? colors[1].index() : 0) << 4);
+                    out.write((colors.length > 0 && colors[0] != null ? colors[0].index() : 0)
+                        | (colors.length > 1 && colors[1] != null ? colors[1].index() : 0) << 4);
                 }
             }
         }
@@ -945,7 +1044,7 @@ public class CBMBitmap
                 {
                     CBMColor[] colors = raster.get(x, y);
 
-                    out.write(colors.length > 3 ? colors[3].index() : 0);
+                    out.write(colors.length > 3 && colors[3] != null ? colors[3].index() : 0);
                 }
             }
         }
@@ -953,42 +1052,42 @@ public class CBMBitmap
         return targetHeight / mode.getHeightPerChar() * (scaledTargetWidth / mode.getWidthPerChar());
     }
 
-    private BufferedImage normalize(BufferedImage image)
-    {
-        int min = Integer.MAX_VALUE;
-        int max = Integer.MIN_VALUE;
-
-        for (int y = 0; y < image.getHeight(); y += 1)
-        {
-            for (int x = 0; x < image.getWidth(); x += 1)
-            {
-                int yuv = CBMPalette.rgb2yuv(image.getRGB(x, y));
-                int yChannel = yuv >> 16 & 0xff;
-
-                min = Math.min(yChannel, min);
-                max = Math.max(yChannel, max);
-            }
-        }
-
-        double delta = 255d / (max - min);
-
-        for (int y = 0; y < image.getHeight(); y += 1)
-        {
-            for (int x = 0; x < image.getWidth(); x += 1)
-            {
-                int yuv = CBMPalette.rgb2yuv(image.getRGB(x, y));
-                int yChannel = yuv >> 16 & 0xff;
-                int uChannel = yuv >> 8 & 0xff;
-                int vChannel = yuv & 0xff;
-
-                yChannel = (int) ((yChannel - min) * delta);
-
-                image.setRGB(x, y, CBMPalette.yuv2rgb(yChannel << 16 | uChannel << 8 | vChannel));
-            }
-        }
-
-        return image;
-    }
+    //    private BufferedImage normalize(BufferedImage image)
+    //    {
+    //        int min = Integer.MAX_VALUE;
+    //        int max = Integer.MIN_VALUE;
+    //
+    //        for (int y = 0; y < image.getHeight(); y += 1)
+    //        {
+    //            for (int x = 0; x < image.getWidth(); x += 1)
+    //            {
+    //                int yuv = CBMPalette.rgb2yuv(image.getRGB(x, y));
+    //                int yChannel = yuv >> 16 & 0xff;
+    //
+    //                min = Math.min(yChannel, min);
+    //                max = Math.max(yChannel, max);
+    //            }
+    //        }
+    //
+    //        double delta = 255d / (max - min);
+    //
+    //        for (int y = 0; y < image.getHeight(); y += 1)
+    //        {
+    //            for (int x = 0; x < image.getWidth(); x += 1)
+    //            {
+    //                int yuv = CBMPalette.rgb2yuv(image.getRGB(x, y));
+    //                int yChannel = yuv >> 16 & 0xff;
+    //                int uChannel = yuv >> 8 & 0xff;
+    //                int vChannel = yuv & 0xff;
+    //
+    //                yChannel = (int) ((yChannel - min) * delta);
+    //
+    //                image.setRGB(x, y, CBMPalette.yuv2rgb(yChannel << 16 | uChannel << 8 | vChannel));
+    //            }
+    //        }
+    //
+    //        return image;
+    //    }
 
     private Raster createRaster(CBMImage estimationImage, CBMPalette estimationPalette, List<CBMColor> mandatoryColors,
         int overscan)
@@ -1058,6 +1157,45 @@ public class CBMBitmap
         return toCBMColorArray(colors, numberOfColors);
     }
 
+    private CBMColor[] toCBMColorArray(List<CBMColor> palette, int max)
+    {
+        Set<CBMColor> usedColors = new HashSet<>();
+
+        for (int i = 0; i < palette.size() && i < max; i += 1)
+        {
+            usedColors.add(palette.get(i));
+        }
+
+        CBMColor[] sortedColors = new CBMColor[max];
+
+        if (preferredColorIndices != null)
+        {
+            for (CBMPreferredColorIndex preferredColorIndex : preferredColorIndices)
+            {
+                if (usedColors.contains(preferredColorIndex.getColor())
+                    && sortedColors[preferredColorIndex.getIndex()] == null)
+                {
+                    usedColors.remove(preferredColorIndex.getColor());
+                    sortedColors[preferredColorIndex.getIndex()] = preferredColorIndex.getColor();
+                }
+            }
+        }
+
+        Iterator<CBMColor> iterator = usedColors.iterator();
+        int i = 0;
+        while (iterator.hasNext())
+        {
+            while (sortedColors[i] != null)
+            {
+                i++;
+            }
+
+            sortedColors[i] = iterator.next();
+        }
+
+        return sortedColors;
+    }
+
     private static BufferedImage createScaledImage(BufferedImage image, int x, int y, int width, int height,
         int scaledTargetWidth, int targetHeight)
     {
@@ -1106,17 +1244,4 @@ public class CBMBitmap
 
         return result;
     }
-
-    private static CBMColor[] toCBMColorArray(List<CBMColor> palette, int max)
-    {
-        CBMColor[] result = new CBMColor[Math.min(palette.size(), max)];
-
-        for (int i = 0; i < palette.size() && i < max; i += 1)
-        {
-            result[i] = palette.get(i);
-        }
-
-        return result;
-    }
-
 }
