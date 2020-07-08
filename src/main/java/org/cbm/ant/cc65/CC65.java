@@ -35,6 +35,7 @@ public class CC65 extends AbstractCC65Task implements ProcessConsumer
     private boolean registerVariables = false;
     private boolean staticLocals = false;
     private boolean checkStack = false;
+    private String suppressWarnings = null;
 
     public CC65()
     {
@@ -153,6 +154,16 @@ public class CC65 extends AbstractCC65Task implements ProcessConsumer
         this.checkStack = checkStack;
     }
 
+    public String getSuppressWarnings()
+    {
+        return suppressWarnings;
+    }
+
+    public void setSuppressWarnings(String suppressWarnings)
+    {
+        this.suppressWarnings = suppressWarnings;
+    }
+
     /**
      * @see org.apache.tools.ant.Task#execute()
      */
@@ -221,6 +232,11 @@ public class CC65 extends AbstractCC65Task implements ProcessConsumer
                 if (isCheckStack())
                 {
                     handler.parameter("--check-stack");
+                }
+
+                if (suppressWarnings != null)
+                {
+                    handler.parameter("-W").parameter(suppressWarnings);
                 }
 
                 handler.parameter("--create-dep").parameter(outputFile.withExtension("d").ensureDirectory());
