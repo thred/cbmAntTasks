@@ -14,6 +14,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import org.cbm.ant.util.Util;
 import org.cbm.ant.util.bitmap.CBMBitmapProjectController;
 import org.cbm.ant.util.bitmap.CBMBitmapProjectModel;
 import org.cbm.ant.util.bitmap.util.CBMBitmapUtils;
@@ -109,7 +110,7 @@ public class CBMBitmapResizeSourceImageTool extends AbstractCBMBitmapTool implem
     {
         try
         {
-            return Integer.decode(widthField.getText().trim());
+            return Util.parseHex(widthField.getText().trim());
         }
         catch (NumberFormatException e)
         {
@@ -121,7 +122,7 @@ public class CBMBitmapResizeSourceImageTool extends AbstractCBMBitmapTool implem
     {
         try
         {
-            return Integer.decode(heightField.getText().trim());
+            return Util.parseHex(heightField.getText().trim());
         }
         catch (NumberFormatException e)
         {

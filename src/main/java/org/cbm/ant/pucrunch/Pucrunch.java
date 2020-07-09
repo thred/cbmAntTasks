@@ -10,7 +10,7 @@ import org.cbm.ant.util.Util;
 /**
  * Task for pucrunch by Pasi Ojala. Task was developed and tested by using the version found at
  * https://github.com/mist64/pucrunch
- * 
+ *
  * @author ham
  */
 public class Pucrunch extends AbstractPucrunchTask implements ProcessConsumer
@@ -176,7 +176,7 @@ public class Pucrunch extends AbstractPucrunchTask implements ProcessConsumer
 
         try
         {
-            int value = Integer.decode(loadAddress).intValue();
+            int value = Util.parseHex(loadAddress);
 
             if (value < 0x0000 || value > 0xffff)
             {
@@ -205,7 +205,7 @@ public class Pucrunch extends AbstractPucrunchTask implements ProcessConsumer
 
         try
         {
-            int value = Integer.decode(executionAddress).intValue();
+            int value = Util.parseHex(executionAddress);
 
             if (value < 0x0000 || value > 0xffff)
             {
@@ -324,7 +324,7 @@ public class Pucrunch extends AbstractPucrunchTask implements ProcessConsumer
 
         try
         {
-            int value = Integer.decode(memoryConfiguration).intValue();
+            int value = Util.parseHex(memoryConfiguration);
 
             if (value < 0x00 || value > 0xff)
             {
@@ -437,7 +437,7 @@ public class Pucrunch extends AbstractPucrunchTask implements ProcessConsumer
                 handler.parameter(getTarget().getPath());
             }
         }
-        
+
         log("Executing: " + handler);
 
         int exitValue = handler.consume();

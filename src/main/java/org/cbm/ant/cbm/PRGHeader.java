@@ -118,7 +118,7 @@ public class PRGHeader extends Task
 
         try
         {
-            int value = Integer.decode(header).intValue();
+            int value = Util.parseHex(header);
 
             if (value < 0x0000 || value > 0xffff)
             {

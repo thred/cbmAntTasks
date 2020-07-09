@@ -31,6 +31,18 @@ public class Util
         return value & 0xff;
     }
 
+    public static int parseHex(String hex) throws NumberFormatException
+    {
+        hex = hex.trim();
+
+        if (hex.startsWith("$"))
+        {
+            hex = "0x" + hex.substring(1);
+        }
+
+        return Integer.decode(hex).intValue();
+    }
+
     public static String toHex(byte value)
     {
         String result = Integer.toHexString(unsignedByteToInt(value));

@@ -33,7 +33,7 @@ public class PRGSplitPart
 
     /**
      * Sets the target file. Mandatory.
-     * 
+     *
      * @param target the target file
      */
     public void setTarget(File target)
@@ -50,7 +50,7 @@ public class PRGSplitPart
 
         try
         {
-            int value = Integer.decode(header).intValue();
+            int value = Util.parseHex(header);
 
             if (value < 0x0000 || value > 0xffff)
             {
@@ -67,7 +67,7 @@ public class PRGSplitPart
 
     /**
      * Sets the header address. The default is the header of the source file plus the offset
-     * 
+     *
      * @param header the header
      */
     public void setHeader(String header)
@@ -84,7 +84,7 @@ public class PRGSplitPart
 
         try
         {
-            int value = Integer.decode(offset).intValue();
+            int value = Util.parseHex(offset);
 
             if (value < 0x0000)
             {
@@ -101,7 +101,7 @@ public class PRGSplitPart
 
     /**
      * Sets the offset. The default is the the end of the last part or the beginning of the file
-     * 
+     *
      * @param offset the offset
      */
     public void setOffset(String offset)
@@ -118,7 +118,7 @@ public class PRGSplitPart
 
         try
         {
-            int value = Integer.decode(length).intValue();
+            int value = Util.parseHex(length);
 
             if (value < 0x0000)
             {
@@ -135,7 +135,7 @@ public class PRGSplitPart
 
     /**
      * Sets the length in bytes (decimal or hex value). Mandatory.
-     * 
+     *
      * @param length the length
      */
     public void setLength(String length)
@@ -150,7 +150,7 @@ public class PRGSplitPart
 
     /**
      * Set to false to skip the header. Default is "true".
-     * 
+     *
      * @param includeHeader true to include header
      */
     public void setIncludeHeader(boolean includeHeader)

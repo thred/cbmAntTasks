@@ -316,7 +316,7 @@ public class XMLParser implements Iterator<XMLParser>, Iterable<XMLParser>
             return defaultValue;
         }
 
-        return Integer.decode(value);
+        return Util.parseHex(value);
     }
 
     public boolean attribute(final String name, final boolean defaultValue)

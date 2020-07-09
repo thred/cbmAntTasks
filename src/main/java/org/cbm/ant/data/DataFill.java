@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.tools.ant.BuildException;
+import org.cbm.ant.util.Util;
 
 public class DataFill implements DataCommand
 {
@@ -53,7 +54,7 @@ public class DataFill implements DataCommand
     {
         task.log("Adding " + length + " time " + value);
 
-        int v = Integer.decode(value);
+        int v = Util.parseHex(value);
 
         for (int i = 0; i < length; i += 1)
         {

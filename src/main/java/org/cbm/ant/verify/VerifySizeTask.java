@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.apache.tools.ant.BuildException;
 import org.cbm.ant.util.PersistentProperties;
+import org.cbm.ant.util.Util;
 
 public class VerifySizeTask implements VerifyTask
 {
@@ -47,7 +48,7 @@ public class VerifySizeTask implements VerifyTask
         String lastLength = PersistentProperties.INSTANCE.get(file.getAbsolutePath() + "#length");
 
         long length = file.length();
-        int size = Integer.decode(this.size);
+        int size = Util.parseHex(this.size);
         double percent = (double) length / size;
         String info = "";
 

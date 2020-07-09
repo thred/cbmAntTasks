@@ -1,5 +1,7 @@
 package org.cbm.ant.cbm.bitmap;
 
+import org.cbm.ant.util.Util;
+
 public class CBMPreferredColorIndex
 {
     public static CBMPreferredColorIndex of(String preferredColorIndex)
@@ -25,7 +27,7 @@ public class CBMPreferredColorIndex
 
         try
         {
-            index = Integer.decode(split[1].trim());
+            index = Util.parseHex(split[1].trim());
         }
         catch (NumberFormatException e)
         {

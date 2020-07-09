@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.util.StringTokenizer;
 
 import org.apache.tools.ant.BuildException;
+import org.cbm.ant.util.Util;
 import org.cbm.ant.util.XMLParser;
 
 public class DataFont implements DataCommand
@@ -73,7 +74,7 @@ public class DataFont implements DataCommand
 
                 while (tokenizer.hasMoreTokens())
                 {
-                    out.write(Integer.decode(tokenizer.nextToken()));
+                    out.write(Util.parseHex(tokenizer.nextToken()));
                 }
 
                 return;

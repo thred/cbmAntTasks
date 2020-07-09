@@ -43,7 +43,7 @@ public class PRGSplit extends Task
 
     /**
      * Sets the source file. Mandatory.
-     * 
+     *
      * @param source the source file
      */
     public void setSource(File source)
@@ -60,7 +60,7 @@ public class PRGSplit extends Task
 
         try
         {
-            int value = Integer.decode(header).intValue();
+            int value = Util.parseHex(header);
 
             if (value < 0x0000 || value > 0xffff)
             {
@@ -78,7 +78,7 @@ public class PRGSplit extends Task
     /**
      * Sets the base header as decimal or hex value for the parts. The parts will get header plus their offset. Default
      * is specified by the header of the source file.
-     * 
+     *
      * @param header the header value
      */
     public void setHeader(String header)
@@ -93,7 +93,7 @@ public class PRGSplit extends Task
 
     /**
      * Set to false, if the source file does not contain header information (first two bytes). Default is "true".
-     * 
+     *
      * @param hasHeader true if file contains CBM PRG header
      */
     public void setHasHeader(boolean hasHeader)
@@ -103,7 +103,7 @@ public class PRGSplit extends Task
 
     /**
      * Adds a part
-     * 
+     *
      * @param part the part
      */
     public void addPart(PRGSplitPart part)

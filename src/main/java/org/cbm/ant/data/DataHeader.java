@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.tools.ant.BuildException;
+import org.cbm.ant.util.Util;
 
 public class DataHeader implements DataCommand
 {
@@ -22,7 +23,7 @@ public class DataHeader implements DataCommand
 
     public void setHeader(String header)
     {
-        int value = Integer.decode(header).intValue();
+        int value = Util.parseHex(header);
 
         if (value < 0x0000 || value > 0xffff)
         {
