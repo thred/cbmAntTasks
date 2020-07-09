@@ -119,6 +119,11 @@ public class Pucrunch extends AbstractPucrunchTask implements ProcessConsumer
 
     public File getSource()
     {
+        if (target == null)
+        {
+            throw new BuildException("Source is missing");
+        }
+
         return source;
     }
 
@@ -129,6 +134,11 @@ public class Pucrunch extends AbstractPucrunchTask implements ProcessConsumer
 
     public File getTarget()
     {
+        if (target == null)
+        {
+            throw new BuildException("Target is missing");
+        }
+
         return target;
     }
 
@@ -350,6 +360,21 @@ public class Pucrunch extends AbstractPucrunchTask implements ProcessConsumer
     @Override
     public void execute() throws BuildException
     {
+        File source = getSource();
+
+        if (!source.exists())
+        {
+            throw new BuildException("Source not available: " + source.getAbsolutePath());
+        }
+
+        File target = getTarget();
+
+        if (target.exists() && !target.equals(source) && source.lastModified() == target.lastModified())
+        {
+            // not update necessary
+            return;
+        }
+
         File executable = getExecutable();
         ProcessHandler handler = new ProcessHandler(this, executable).directory(executable.getParentFile());
 
@@ -445,6 +470,11 @@ public class Pucrunch extends AbstractPucrunchTask implements ProcessConsumer
         if (exitValue != 0)
         {
             throw new BuildException("Failed with exit value " + exitValue);
+        }
+
+        if (!source.equals(target))
+        {
+            target.setLastModified(source.lastModified());
         }
     }
 
