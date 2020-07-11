@@ -33,14 +33,7 @@ public class Util
 
     public static int parseHex(String hex) throws NumberFormatException
     {
-        hex = hex.trim();
-
-        if (hex.startsWith("$"))
-        {
-            hex = "0x" + hex.substring(1);
-        }
-
-        return Integer.decode(hex).intValue();
+        return ConstantStatement.evaluate(hex);
     }
 
     public static String toHex(byte value)
