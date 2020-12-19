@@ -26,7 +26,7 @@ public class CBMDiskDirEntry
     public void format()
     {
         setNextDirectoryTrack(0x00);
-        setNextDirectorySector(0x00);
+        setNextDirectorySector(0xff);
         getSector().setByte(getPosition(0x02), 0x00);
         setFileTrackNr(0x00);
         setFileSectorNr(0x00);
@@ -41,9 +41,10 @@ public class CBMDiskDirEntry
             return;
         }
 
-        out.printf(listKeys ? LIST_ENTRY_WITH_KEY : LIST_ENTRY_WITHOUT_KEY, getFileSize(),
-            CBMDiskUtil.apostrophes(getFileName()), getFileTypeDescription(), getFileLocation(),
-            CBMDiskUtil.id2Key(id));
+        out
+            .printf(listKeys ? LIST_ENTRY_WITH_KEY : LIST_ENTRY_WITHOUT_KEY, getFileSize(),
+                CBMDiskUtil.apostrophes(getFileName()), getFileTypeDescription(), getFileLocation(),
+                CBMDiskUtil.id2Key(id));
     }
 
     private String getFileTypeDescription()
@@ -248,7 +249,7 @@ public class CBMDiskDirEntry
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
