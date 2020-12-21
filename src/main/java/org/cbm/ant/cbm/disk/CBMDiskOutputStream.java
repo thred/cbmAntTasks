@@ -106,7 +106,7 @@ public class CBMDiskOutputStream extends OutputStream
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.io.OutputStream#write(int)
      */
     @Override
@@ -120,7 +120,7 @@ public class CBMDiskOutputStream extends OutputStream
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.io.OutputStream#close()
      */
     @Override

@@ -42,7 +42,7 @@ public class CBMDisk
 
     /**
      * Sets the specified mark to the specified sector
-     * 
+     *
      * @param trackNr the number of the track (starts with 1)
      * @param sectorNr the number of the sector (starts with 0)
      * @param mark the mark
@@ -72,7 +72,7 @@ public class CBMDisk
     /**
      * Initializes the disk using the specified format. This will wipe all data and invalidate the {@link CBMDiskDir}
      * and {@link CBMDiskBAM}.
-     * 
+     *
      * @param format the type
      */
     public void init(CBMDiskFormat format)
@@ -93,7 +93,7 @@ public class CBMDisk
 
     /**
      * Loads the data from the specified file. Tries to automatically determine the format of the disk image.
-     * 
+     *
      * @param file the file
      * @throws IOException on occasion
      */
@@ -120,7 +120,7 @@ public class CBMDisk
 
     /**
      * Reads the data from the specified stream. Calls {@link #init(CBMDiskFormat)} using the specified type.
-     * 
+     *
      * @param in the steam
      * @param format the format
      * @throws IOException on occasion
@@ -143,7 +143,7 @@ public class CBMDisk
 
     /**
      * Saves the data to the specified file.
-     * 
+     *
      * @param file the file
      * @throws IOException on occasion
      */
@@ -163,7 +163,7 @@ public class CBMDisk
 
     /**
      * Writes the data to the specified stream
-     * 
+     *
      * @param out the stream
      * @throws IOException on occasion
      */
@@ -177,7 +177,7 @@ public class CBMDisk
 
     /**
      * Returns the format of the disk
-     * 
+     *
      * @return the format
      */
     public CBMDiskFormat getFormat()
@@ -187,7 +187,7 @@ public class CBMDisk
 
     /**
      * Sets the format of the disk.
-     * 
+     *
      * @param format the format
      */
     public void setFormat(CBMDiskFormat format)
@@ -201,7 +201,7 @@ public class CBMDisk
 
     /**
      * Returns the number of the BAM track
-     * 
+     *
      * @return the number of the BAM track
      */
     public int getBAMTrackNr()
@@ -211,7 +211,7 @@ public class CBMDisk
 
     /**
      * Sets the number of the BAM track
-     * 
+     *
      * @param bamTrackNr the number of the BAM track
      */
     public void setBAMTrackNr(int bamTrackNr)
@@ -221,7 +221,7 @@ public class CBMDisk
 
     /**
      * Returns the sector number interleave of the directory
-     * 
+     *
      * @return the sector number interleave of the directory
      */
     public int getDirSectorNrInterleave()
@@ -231,7 +231,7 @@ public class CBMDisk
 
     /**
      * Sets the sector number interleave of the directory
-     * 
+     *
      * @param dirSectorNrInterleave the sector number interleave of the directory
      */
     public void setDirSectorNrInterleave(int dirSectorNrInterleave)
@@ -241,7 +241,7 @@ public class CBMDisk
 
     /**
      * Returns the sector number interleave
-     * 
+     *
      * @return the sector number interleave
      */
     public int getSectorNrInterleave()
@@ -251,7 +251,7 @@ public class CBMDisk
 
     /**
      * Sets the sector number interleave
-     * 
+     *
      * @param sectorNrInterleave the sector number interleave
      */
     public void setSectorNrInterleave(int sectorNrInterleave)
@@ -261,7 +261,7 @@ public class CBMDisk
 
     /**
      * Returns the track
-     * 
+     *
      * @param trackNr the number of the track
      * @return the track
      * @throws IllegalArgumentException if the number of the track is invalid
@@ -281,7 +281,7 @@ public class CBMDisk
 
     /**
      * Returns the specified sector
-     * 
+     *
      * @param location the location
      * @return the sector
      * @throws IllegalArgumentException if the number of the track and/or sector is invalid
@@ -293,7 +293,7 @@ public class CBMDisk
 
     /**
      * Returns the specified sector
-     * 
+     *
      * @param trackNr the number of the track
      * @param sectorNr the number of the sector
      * @return the sector
@@ -306,7 +306,7 @@ public class CBMDisk
 
     /**
      * Returns the number of tracks
-     * 
+     *
      * @return the number of tracks
      */
     public int getNumberOfTracks()
@@ -316,7 +316,7 @@ public class CBMDisk
 
     /**
      * Returns the number of sectors of the specified track
-     * 
+     *
      * @param trackNr the number of the track
      * @return the number of sectors
      * @throws IllegalArgumentException if the number of the track is invalid

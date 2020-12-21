@@ -80,12 +80,16 @@ public class CBMBitmapProjectController
                             bitmap.setEmboss(model.getEmboss());
                             bitmap.setEmbossStrength(model.getEmbossStrength());
                             bitmap.setMode(model.getGraphicsMode());
-                            bitmap.setContrast(
-                                new float[]{model.getContrastRed(), model.getContrastGreen(), model.getContrastBlue()});
-                            bitmap.setBrightness(new float[]{
-                                model.getBrightnessRed(),
-                                model.getBrightnessGreen(),
-                                model.getBrightnessBlue()});
+                            bitmap
+                                .setContrast(new float[]{
+                                    model.getContrastRed(),
+                                    model.getContrastGreen(),
+                                    model.getContrastBlue()});
+                            bitmap
+                                .setBrightness(new float[]{
+                                    model.getBrightnessRed(),
+                                    model.getBrightnessGreen(),
+                                    model.getBrightnessBlue()});
                             bitmap.setAllowedColors(model.getAllowedColors());
                             bitmap.setMandatoryColors(model.getMandatoryColors());
                             bitmap.setEstimationPalette(model.createEsitmationPalette());
@@ -124,8 +128,9 @@ public class CBMBitmapProjectController
         CBMBitmapCanvas canvas = view.getSourceCanvas();
 
         canvas.setImage(image);
-        canvas.setZoom(
-            Math.min(Math.min(viewSize.getWidth() / image.getWidth(), viewSize.getHeight() / image.getHeight()), 2));
+        canvas
+            .setZoom(Math
+                .min(Math.min(viewSize.getWidth() / image.getWidth(), viewSize.getHeight() / image.getHeight()), 2));
 
         view.getSplitPane().setDividerLocation(0.5);
         view.invalidate();

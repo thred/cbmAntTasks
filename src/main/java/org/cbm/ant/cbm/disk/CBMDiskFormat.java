@@ -22,7 +22,7 @@ public enum CBMDiskFormat
         21,
         21,
         21,
-        21, // Track 1-17 
+        21, // Track 1-17
         19,
         19,
         19,
@@ -61,7 +61,7 @@ public enum CBMDiskFormat
         21,
         21,
         21,
-        21, // Track 1-17 
+        21, // Track 1-17
         19,
         19,
         19,

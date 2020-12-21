@@ -44,7 +44,7 @@ public class C1541 extends AbstractViceTask implements ProcessConsumer
 
     /**
      * Adds an format command
-     * 
+     *
      * @param format the command
      */
     public void addFormat(C1541Format format)
@@ -54,7 +54,7 @@ public class C1541 extends AbstractViceTask implements ProcessConsumer
 
     /**
      * Adds a read command
-     * 
+     *
      * @param read the command
      */
     public void addRead(C1541Read read)
@@ -64,7 +64,7 @@ public class C1541 extends AbstractViceTask implements ProcessConsumer
 
     /**
      * Adds a write command
-     * 
+     *
      * @param write the command
      */
     public void addWrite(C1541Write write)
@@ -74,7 +74,7 @@ public class C1541 extends AbstractViceTask implements ProcessConsumer
 
     /**
      * Adds a list command
-     * 
+     *
      * @param list the list
      */
     public void addList(C1541List list)
@@ -84,7 +84,7 @@ public class C1541 extends AbstractViceTask implements ProcessConsumer
 
     /**
      * Returns the image file
-     * 
+     *
      * @return the image file
      */
     public File getImage()
@@ -94,7 +94,7 @@ public class C1541 extends AbstractViceTask implements ProcessConsumer
 
     /**
      * Sets the image file
-     * 
+     *
      * @param image the image file
      */
     public void setImage(File image)

@@ -10,7 +10,7 @@ public class CBMBitmapNoneDitherStrategy extends AbstractCBMBitmapDitherStrategy
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see org.cbm.ant.cbm.bitmap.CBMBitmapDitherStrategy#execute(CBMImage, org.cbm.ant.cbm.bitmap.CBMPalette,
      *      org.cbm.ant.cbm.bitmap.CBMColor[], int, int, float)
      */

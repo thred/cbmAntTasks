@@ -15,7 +15,7 @@ public class CBMDiskBAM
 
     /**
      * Creates the service for accessing the BAM using the speicifed operator
-     * 
+     *
      * @param operator the operator
      */
     public CBMDiskBAM(CBMDiskOperator operator)
@@ -27,7 +27,7 @@ public class CBMDiskBAM
 
     /**
      * Returns the disk
-     * 
+     *
      * @return the disk
      */
     private CBMDisk getDisk()
@@ -37,7 +37,7 @@ public class CBMDiskBAM
 
     /**
      * Returns the BAM sector
-     * 
+     *
      * @return the BAM sector
      */
     public CBMDiskSector getBAMSector()
@@ -49,7 +49,7 @@ public class CBMDiskBAM
 
     /**
      * Formats the BAM.
-     * 
+     *
      * @param diskName the name of the disk
      * @param diskId the id for the disk
      */
@@ -89,7 +89,7 @@ public class CBMDiskBAM
 
     /**
      * Searches for a free sector for program data, starting at the BAM track
-     * 
+     *
      * @return a free sector
      * @throws CBMDiskException on occasion (e.g. disk is full)
      */
@@ -104,7 +104,7 @@ public class CBMDiskBAM
     /**
      * Searches for a free sector for directory data, starting at the BAM track (in theory, it is possible that the
      * directory exceeds the track)
-     * 
+     *
      * @return a free sector
      * @throws CBMDiskException on occasion (e.g. disk is full)
      */
@@ -118,7 +118,7 @@ public class CBMDiskBAM
 
     /**
      * Searches for a free sector for program or directory data, starting at the BAM track
-     * 
+     *
      * @return a free sector
      * @throws CBMDiskException on occasion (e.g. disk is full)
      */
@@ -154,7 +154,7 @@ public class CBMDiskBAM
     /**
      * Searches for a free sector for program data, starting at the specified location plus the disks sector interleave.
      * This is the only method that respects the sector interleave of the disk.
-     * 
+     *
      * @param location the location the location
      * @return the free sector
      * @throws CBMDiskException on occasion (e.g. disk is full)
@@ -172,7 +172,7 @@ public class CBMDiskBAM
     /**
      * Searches for a free sector for directory data, starting at the specified location plus the disks sector
      * interleave for directories. This is the only method that respects the directory sector interleave of the disk.
-     * 
+     *
      * @param location the location the location
      * @return the free sector
      * @throws CBMDiskException on occasion (e.g. disk is full)
@@ -190,7 +190,7 @@ public class CBMDiskBAM
     /**
      * Searches for a free sector for program and/or directory data. Expected that the specified sector is free, if not
      * keeps adding one to the sector and the track increment to the track.
-     * 
+     *
      * @param trackNr the number of the track
      * @param sectorNr the number of the sector
      * @param trackNrIncrement the increment of the track number (should be -1 or 1)
@@ -255,7 +255,7 @@ public class CBMDiskBAM
 
     /**
      * Returns the track number of the directory as specified in the BAM
-     * 
+     *
      * @return the track number of the directory as specified in the BAM
      */
     public int getDirTrackNr()
@@ -265,7 +265,7 @@ public class CBMDiskBAM
 
     /**
      * Sets the track number of the directory to the BAM
-     * 
+     *
      * @param trackNr the track number
      */
     public void setDirTrackNr(int trackNr)
@@ -427,8 +427,9 @@ public class CBMDiskBAM
 
         builder.append(String.format("BAM of Disk %s\n", getDiskName()));
         builder.append("----------------------------------------\n");
-        builder.append(
-            String.format("Disk Type: %s (%d tracks)\n", disk.getFormat(), disk.getFormat().getNumberOfTracks()));
+        builder
+            .append(
+                String.format("Disk Type: %s (%d tracks)\n", disk.getFormat(), disk.getFormat().getNumberOfTracks()));
         builder.append(String.format("Directory track / sector: %d / %d\n", getDirTrackNr(), getDirSectorNr()));
         builder.append(String.format("Disk DOS Version: $%2x\n", getDOSVersion()));
         builder.append(String.format("Disk ID / DOS Type: %s / %s\n", getDiskID(), getDOSType()));

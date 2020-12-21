@@ -25,8 +25,7 @@ public class CBMBitmapToolPanel extends JPanel
 
     private static final long serialVersionUID = 220399334599462582L;
 
-    private final Map<String, AbstractCBMBitmapToolAction> toolActions =
-        new HashMap<>();
+    private final Map<String, AbstractCBMBitmapToolAction> toolActions = new HashMap<>();
 
     private final JToolBar toolBar = new JToolBar(JToolBar.HORIZONTAL);
     private final JPanel toolPanel = new JPanel(new BorderLayout(8, 4));

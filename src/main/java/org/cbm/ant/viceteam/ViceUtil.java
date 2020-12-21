@@ -5,7 +5,7 @@ public class ViceUtil
 
     /**
      * Escapes all chars other than [a-zA-Z0-9]
-     * 
+     *
      * @param s the string
      * @return the escaped string
      */

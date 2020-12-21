@@ -215,8 +215,10 @@ public class WindowUtils
      * A typical usage would look like this:
      *
      * <pre>
-     * ShowcaseFrame frame = WindowUtils.setAndRecordState(&quot;Showcase&quot;, WindowUtils.packAndCenter(
-     *     new ShowcaseFrame(WindowUtils.getRecordedGraphicsConfiguration(&quot;Showcase&quot;, ShowcaseFrame.class))));
+     * ShowcaseFrame frame = WindowUtils
+     *     .setAndRecordState(&quot;Showcase&quot;, WindowUtils
+     *         .packAndCenter(
+     *             new ShowcaseFrame(WindowUtils.getRecordedGraphicsConfiguration(&quot;Showcase&quot;, ShowcaseFrame.class))));
      * </pre>
      *
      * @param name the unique name of the window
@@ -233,8 +235,10 @@ public class WindowUtils
      * A typical usage would look like this:
      *
      * <pre>
-     * ShowcaseFrame frame = WindowUtils.setAndRecordState(&quot;Showcase&quot;, WindowUtils.packAndCenter(
-     *     new ShowcaseFrame(WindowUtils.getRecordedGraphicsConfiguration(&quot;Showcase&quot;, ShowcaseFrame.class))));
+     * ShowcaseFrame frame = WindowUtils
+     *     .setAndRecordState(&quot;Showcase&quot;, WindowUtils
+     *         .packAndCenter(
+     *             new ShowcaseFrame(WindowUtils.getRecordedGraphicsConfiguration(&quot;Showcase&quot;, ShowcaseFrame.class))));
      * </pre>
      *
      * @param prefs some {@link Prefs}
@@ -254,8 +258,10 @@ public class WindowUtils
      * A typical usage would look like this:
      *
      * <pre>
-     * ShowcaseFrame frame = WindowUtils.setAndRecordState(&quot;Showcase&quot;, WindowUtils.packAndCenter(
-     *     new ShowcaseFrame(WindowUtils.getRecordedGraphicsConfiguration(&quot;Showcase&quot;, ShowcaseFrame.class))));
+     * ShowcaseFrame frame = WindowUtils
+     *     .setAndRecordState(&quot;Showcase&quot;, WindowUtils
+     *         .packAndCenter(
+     *             new ShowcaseFrame(WindowUtils.getRecordedGraphicsConfiguration(&quot;Showcase&quot;, ShowcaseFrame.class))));
      * </pre>
      *
      * @param name the unique name of the window
@@ -271,8 +277,10 @@ public class WindowUtils
      * A typical usage would look like this:
      *
      * <pre>
-     * ShowcaseFrame frame = WindowUtils.setAndRecordState(&quot;Showcase&quot;, WindowUtils.packAndCenter(
-     *     new ShowcaseFrame(WindowUtils.getRecordedGraphicsConfiguration(&quot;Showcase&quot;, ShowcaseFrame.class))));
+     * ShowcaseFrame frame = WindowUtils
+     *     .setAndRecordState(&quot;Showcase&quot;, WindowUtils
+     *         .packAndCenter(
+     *             new ShowcaseFrame(WindowUtils.getRecordedGraphicsConfiguration(&quot;Showcase&quot;, ShowcaseFrame.class))));
      * </pre>
      *
      * @param prefs some {@link Prefs}

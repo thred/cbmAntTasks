@@ -48,7 +48,7 @@ public class C1541Write extends AbstractC1541Command
 
     /**
      * Sets the destination file name. If not specified, the name of the source file will be used
-     * 
+     *
      * @param destination the destination file name
      */
     public void setDestination(String destination)

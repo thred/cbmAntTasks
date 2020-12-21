@@ -54,7 +54,7 @@ public class PRGHeader extends Task
      * <li>modify: modified the first two bytes, the fill will keep its size</li>
      * <li>auto: if the first two bytes do not match the header, it will add the header</li>
      * <ul>
-     * 
+     *
      * @param method the method
      */
     public void setMethod(String method)
@@ -81,7 +81,7 @@ public class PRGHeader extends Task
 
     /**
      * Sets the source file. Default is the target file.
-     * 
+     *
      * @param source the source file
      */
     public void setSource(File source)
@@ -101,7 +101,7 @@ public class PRGHeader extends Task
 
     /**
      * Sets the target file. Mandatory.
-     * 
+     *
      * @param target the target
      */
     public void setTarget(File target)
@@ -135,7 +135,7 @@ public class PRGHeader extends Task
 
     /**
      * Sets the header as decimal or hex string. Mandatory.
-     * 
+     *
      * @param header the header
      */
     public void setHeader(String header)

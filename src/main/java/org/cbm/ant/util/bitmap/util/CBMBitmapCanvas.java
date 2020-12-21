@@ -95,8 +95,9 @@ public class CBMBitmapCanvas extends JComponent implements MouseListener, MouseM
                 g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             }
 
-            g.drawImage(image, (int) position.getX(), (int) position.getY(), (int) (image.getWidth() * zoom),
-                (int) (image.getHeight() * zoom), null);
+            g
+                .drawImage(image, (int) position.getX(), (int) position.getY(), (int) (image.getWidth() * zoom),
+                    (int) (image.getHeight() * zoom), null);
         }
     }
 
@@ -106,9 +107,10 @@ public class CBMBitmapCanvas extends JComponent implements MouseListener, MouseM
         Rectangle2D visibleComponentRectangle = getVisibleComponentRectangle();
         Point newMouseOnScreen = e.getLocationOnScreen();
 
-        visibleComponentRectangle.setRect(visibleComponentRectangle.getX() - (newMouseOnScreen.x - mouseOnScreen.x),
-            visibleComponentRectangle.getY() - (newMouseOnScreen.y - mouseOnScreen.y),
-            visibleComponentRectangle.getWidth(), visibleComponentRectangle.getHeight());
+        visibleComponentRectangle
+            .setRect(visibleComponentRectangle.getX() - (newMouseOnScreen.x - mouseOnScreen.x),
+                visibleComponentRectangle.getY() - (newMouseOnScreen.y - mouseOnScreen.y),
+                visibleComponentRectangle.getWidth(), visibleComponentRectangle.getHeight());
 
         scrollRectToVisible(visibleComponentRectangle.getBounds());
 
@@ -224,9 +226,10 @@ public class CBMBitmapCanvas extends JComponent implements MouseListener, MouseM
             Point2D newPointComponent = convertFromImageToComponent(pointImage);
             Rectangle2D newVisibleRectangle = getVisibleComponentRectangle();
 
-            newVisibleRectangle.setRect(newPointComponent.getX() - relativePointComponent.getX(),
-                newPointComponent.getY() - relativePointComponent.getY(), newVisibleRectangle.getWidth(),
-                newVisibleRectangle.getHeight());
+            newVisibleRectangle
+                .setRect(newPointComponent.getX() - relativePointComponent.getX(),
+                    newPointComponent.getY() - relativePointComponent.getY(), newVisibleRectangle.getWidth(),
+                    newVisibleRectangle.getHeight());
 
             scrollRectToVisible(newVisibleRectangle.getBounds());
         }

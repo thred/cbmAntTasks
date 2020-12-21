@@ -150,7 +150,7 @@ public class CBMDiskDirSector
 
     /**
      * Returns the sector of this directory
-     * 
+     *
      * @return the sector of this directory
      */
     public CBMDiskSector getSector()

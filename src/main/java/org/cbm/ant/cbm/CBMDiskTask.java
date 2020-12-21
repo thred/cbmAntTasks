@@ -53,7 +53,7 @@ public class CBMDiskTask extends AbstractDiskTask
 
     /**
      * Returns the image file
-     * 
+     *
      * @return the image file
      */
     public File getImage()
@@ -63,7 +63,7 @@ public class CBMDiskTask extends AbstractDiskTask
 
     /**
      * Sets the image file
-     * 
+     *
      * @param image the image file
      */
     public void setImage(File image)
@@ -73,7 +73,7 @@ public class CBMDiskTask extends AbstractDiskTask
 
     /**
      * Returns true if the default value for the commands is set to fail on error
-     * 
+     *
      * @return true if the default value for the commands is set to fail on error
      */
     public boolean isFailOnError()
@@ -83,7 +83,7 @@ public class CBMDiskTask extends AbstractDiskTask
 
     /**
      * Set to true if the default value for the commands is set to fail on error
-     * 
+     *
      * @param failOnError true if the default value for the commands is set to fail on error
      */
     public void setFailOnError(boolean failOnError)

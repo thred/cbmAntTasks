@@ -134,7 +134,7 @@ public abstract class AbstractViceLaunchTask extends AbstractViceTask implements
             {
             	File viceLaunchFile = File.createTempFile("cbmAntTasks", "viceLaunch");
             	Writer writer = new FileWriter(viceLaunchFile);
-            
+
             	try
             	{
             		writer.write("ll \"");
@@ -145,9 +145,9 @@ public abstract class AbstractViceLaunchTask extends AbstractViceTask implements
             	{
             		writer.close();
             	}
-            
+
             	handler.parameter("-moncommand").parameter(viceLaunchFile);
-            	
+
             	viceLaunchFile.deleteOnExit();
             }
             catch (IOException e)

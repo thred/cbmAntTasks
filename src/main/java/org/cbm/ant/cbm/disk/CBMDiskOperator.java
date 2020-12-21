@@ -38,7 +38,7 @@ public class CBMDiskOperator
 
     /**
      * Formats the disk. Reinitialized the bam and the directory structure. Does not touch any other sectors.
-     * 
+     *
      * @param format the format
      * @param diskName the name of the disk
      * @param diskId the id of the disk

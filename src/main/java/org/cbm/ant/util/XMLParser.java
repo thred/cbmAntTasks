@@ -38,7 +38,7 @@ public class XMLParser implements Iterator<XMLParser>, Iterable<XMLParser>
 
         /**
          * {@inheritDoc}
-         * 
+         *
          * @see java.util.Iterator#hasNext()
          */
         @Override
@@ -49,7 +49,7 @@ public class XMLParser implements Iterator<XMLParser>, Iterable<XMLParser>
 
         /**
          * {@inheritDoc}
-         * 
+         *
          * @see java.util.Iterator#next()
          */
         @Override
@@ -67,7 +67,7 @@ public class XMLParser implements Iterator<XMLParser>, Iterable<XMLParser>
 
         /**
          * {@inheritDoc}
-         * 
+         *
          * @see java.util.Iterator#remove()
          */
         @Override
@@ -78,7 +78,7 @@ public class XMLParser implements Iterator<XMLParser>, Iterable<XMLParser>
 
         /**
          * {@inheritDoc}
-         * 
+         *
          * @see java.lang.Iterable#iterator()
          */
         @Override
@@ -119,7 +119,7 @@ public class XMLParser implements Iterator<XMLParser>, Iterable<XMLParser>
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.lang.Iterable#iterator()
      */
     @Override
@@ -168,7 +168,7 @@ public class XMLParser implements Iterator<XMLParser>, Iterable<XMLParser>
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.util.Iterator#hasNext()
      */
     @Override
@@ -191,7 +191,7 @@ public class XMLParser implements Iterator<XMLParser>, Iterable<XMLParser>
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.util.Iterator#next()
      */
     @Override
@@ -214,7 +214,7 @@ public class XMLParser implements Iterator<XMLParser>, Iterable<XMLParser>
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.util.Iterator#remove()
      */
     @Override

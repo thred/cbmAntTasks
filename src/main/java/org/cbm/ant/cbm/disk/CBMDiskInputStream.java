@@ -14,7 +14,7 @@ public class CBMDiskInputStream extends InputStream
 
     /**
      * Creates an input stream using the specified disk operator and the specified sector
-     * 
+     *
      * @param operator the operator
      * @param trackNr the number of the track
      * @param sectorNr the number of the sector
@@ -46,7 +46,7 @@ public class CBMDiskInputStream extends InputStream
 
     /**
      * Initializes the specified sector
-     * 
+     *
      * @param trackNr the number of the track
      * @param sectorNr the number of the sector
      * @throws IllegalArgumentException if the number of the track and/or sector is invalid

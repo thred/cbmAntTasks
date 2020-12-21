@@ -13,7 +13,7 @@ public abstract class AbstractCBMDiskTaskCommand implements CBMDiskTaskCommand
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see org.cbm.ant.cbm.CBMDiskTaskCommand#isFailOnError()
      */
     @Override

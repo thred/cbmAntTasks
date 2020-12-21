@@ -21,7 +21,7 @@ public abstract class AbstractViceTask extends Task
 
     /**
      * Returns the vice home.
-     * 
+     *
      * @return the vice home
      */
     public File getViceHome()
@@ -65,7 +65,7 @@ public abstract class AbstractViceTask extends Task
      * <li>System environment "VICE_HOME"</li>
      * <li>The base directory</li>
      * </ul>
-     * 
+     *
      * @param viceHome the vice home
      */
     public void setViceHome(File viceHome)
@@ -75,7 +75,7 @@ public abstract class AbstractViceTask extends Task
 
     /**
      * Returns the executable. The default depends on the OS.
-     * 
+     *
      * @return the executable
      * @throws BuildException on occasion
      */
@@ -121,7 +121,7 @@ public abstract class AbstractViceTask extends Task
 
     /**
      * Sets the executable overwriting the default for the operating system.
-     * 
+     *
      * @param executable the executable
      */
     public void setExecutable(String executable)

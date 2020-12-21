@@ -36,7 +36,7 @@ public class CBMDiskListTaskCommand extends AbstractCBMDiskTaskCommand
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see org.cbm.ant.cbm.CBMDiskTaskCommand#isExecutionNecessary(long, boolean)
      */
     @Override
@@ -47,7 +47,7 @@ public class CBMDiskListTaskCommand extends AbstractCBMDiskTaskCommand
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see org.cbm.ant.cbm.CBMDiskTaskCommand#execute(org.cbm.ant.cbm.CBMDiskTask,
      *      org.cbm.ant.cbm.disk.CBMDiskOperator)
      */

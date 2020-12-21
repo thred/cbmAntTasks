@@ -258,8 +258,9 @@ public class CC65 extends AbstractCC65Task implements ProcessConsumer
                     throw new BuildException("Failed with exit value " + exitValue);
                 }
 
-                outputFile.setLastModified(
-                    Dependencies.load(getProject().getBaseDir(), dependencyFile).getLastModified(outputFile));
+                outputFile
+                    .setLastModified(
+                        Dependencies.load(getProject().getBaseDir(), dependencyFile).getLastModified(outputFile));
             }
         }
     }

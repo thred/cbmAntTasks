@@ -19,8 +19,9 @@ public class CBMTest
 
         operator.getDir().list(System.out, true, true);
 
-        IOUtils.write(new File("C:/home/dev/c64/projects/LocatorsSynd/bin/locators synd(2).prg"),
-            operator.open("locators synd"));
+        IOUtils
+            .write(new File("C:/home/dev/c64/projects/LocatorsSynd/bin/locators synd(2).prg"),
+                operator.open("locators synd"));
         IOUtils.write(new File("C:/home/dev/c64/projects/LocatorsSynd/bin/lib(2)"), operator.open("lib"));
 
         CBMDiskOutputStream out = operator.create("tst", CBMFileType.PRG);

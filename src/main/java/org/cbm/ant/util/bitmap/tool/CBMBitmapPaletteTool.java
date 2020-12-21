@@ -25,8 +25,7 @@ public class CBMBitmapPaletteTool extends AbstractCBMBitmapTool implements Actio
 
     private static final long serialVersionUID = -3018765182933957393L;
 
-    private final Map<CBMColor, CBMBitmapColorComponent> colorComponents =
-        new HashMap<>();
+    private final Map<CBMColor, CBMBitmapColorComponent> colorComponents = new HashMap<>();
     private final JButton resetButton = CBMBitmapUtils.createButton("Reset", this);
 
     public CBMBitmapPaletteTool()
@@ -74,7 +73,7 @@ public class CBMBitmapPaletteTool extends AbstractCBMBitmapTool implements Actio
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     @Override

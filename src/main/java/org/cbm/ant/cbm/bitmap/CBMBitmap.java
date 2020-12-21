@@ -809,8 +809,10 @@ public class CBMBitmap
         BufferedImage resultImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = resultImage.createGraphics();
 
-        g.drawImage(targetImage.toImage(estimationPalette, usedColors).getScaledInstance(targetWidth, targetHeight,
-            Image.SCALE_FAST), 0, 0, null);
+        g
+            .drawImage(targetImage
+                .toImage(estimationPalette, usedColors)
+                .getScaledInstance(targetWidth, targetHeight, Image.SCALE_FAST), 0, 0, null);
 
         if (drawSamplePalette)
         {
@@ -995,13 +997,15 @@ public class CBMBitmap
 
                 if (mode == GraphicsMode.LORES)
                 {
-                    out.write((colors.length > 2 && colors[2] != null ? colors[2].index() : 0)
-                        | (colors.length > 1 && colors[1] != null ? colors[1].index() : 0) << 4);
+                    out
+                        .write((colors.length > 2 && colors[2] != null ? colors[2].index() : 0)
+                            | (colors.length > 1 && colors[1] != null ? colors[1].index() : 0) << 4);
                 }
                 else
                 {
-                    out.write((colors.length > 0 && colors[0] != null ? colors[0].index() : 0)
-                        | (colors.length > 1 && colors[1] != null ? colors[1].index() : 0) << 4);
+                    out
+                        .write((colors.length > 0 && colors[0] != null ? colors[0].index() : 0)
+                            | (colors.length > 1 && colors[1] != null ? colors[1].index() : 0) << 4);
                 }
             }
         }
@@ -1125,8 +1129,8 @@ public class CBMBitmap
                     continue;
                 }
 
-                CBMColor color = estimationPalette.estimateCBMColor(CBMColor.values(), colorSpace,
-                    estimationImage.get(x + i, y + j));
+                CBMColor color = estimationPalette
+                    .estimateCBMColor(CBMColor.values(), colorSpace, estimationImage.get(x + i, y + j));
                 Entry entry = counts.get(color);
 
                 if (entry == null)
@@ -1224,8 +1228,9 @@ public class CBMBitmap
 
                     if (possiblePalette == null || possiblePalette.length < mode.getNumberOfColors())
                     {
-                        CBMColor targetColor = dither.getStrategy().execute(result, estimationPalette, allowedPalette,
-                            x, y, ditherStrength);
+                        CBMColor targetColor = dither
+                            .getStrategy()
+                            .execute(result, estimationPalette, allowedPalette, x, y, ditherStrength);
 
                         raster.add(x / blockWidth, y / blockHeight, targetColor);
                     }

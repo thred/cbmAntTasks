@@ -52,7 +52,7 @@ public class CBMDiskReadTaskCommand extends AbstractCBMDiskTaskCommand
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see org.cbm.ant.cbm.CBMDiskTaskCommand#isExecutionNecessary(long, boolean)
      */
     @Override
@@ -69,42 +69,44 @@ public class CBMDiskReadTaskCommand extends AbstractCBMDiskTaskCommand
     }
 
     /**
-	 * {@inheritDoc}
-	 *
-	 * @see org.cbm.ant.cbm.CBMDiskTaskCommand#execute(org.cbm.ant.cbm.CBMDiskTask,
-	 *      org.cbm.ant.cbm.disk.CBMDiskOperator)
-	 */
-	@Override
-	public Long execute(CBMDiskTask task, CBMDiskOperator operator) throws BuildException
-	{
-		task.log(String.format("Reading \"%s\" from disk image...", source));
+     * {@inheritDoc}
+     *
+     * @see org.cbm.ant.cbm.CBMDiskTaskCommand#execute(org.cbm.ant.cbm.CBMDiskTask,
+     *      org.cbm.ant.cbm.disk.CBMDiskOperator)
+     */
+    @Override
+    public Long execute(CBMDiskTask task, CBMDiskOperator operator) throws BuildException
+    {
+        task.log(String.format("Reading \"%s\" from disk image...", source));
 
-		byte[] bytes;
-		
-		try (InputStream in = operator.open(getSource())) {
-		    bytes = IOUtils.readFully(in);
+        byte[] bytes;
+
+        try (InputStream in = operator.open(getSource()))
+        {
+            bytes = IOUtils.readFully(in);
         }
         catch (IOException e)
         {
             throw new BuildException(String.format("Failed to read file \"%s\"", getSource()), e);
         }
 
-		try (FileOutputStream out = new FileOutputStream(getDestination())) {
-		    out.write(bytes);
-		}
-		catch (IOException e)
-		{
-			throw new BuildException(String.format("Failed to create file \"%s\"", getDestination()), e);
-		}
+        try (FileOutputStream out = new FileOutputStream(getDestination()))
+        {
+            out.write(bytes);
+        }
+        catch (IOException e)
+        {
+            throw new BuildException(String.format("Failed to create file \"%s\"", getDestination()), e);
+        }
 
-		long lastModified = getDestination().lastModified();
-		long millis = task.getImage().lastModified();
+        long lastModified = getDestination().lastModified();
+        long millis = task.getImage().lastModified();
 
-		if (millis > lastModified)
-		{
-			task.getImage().setLastModified(millis);
-		}
+        if (millis > lastModified)
+        {
+            task.getImage().setLastModified(millis);
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

@@ -25,7 +25,7 @@ public final class WildcardUtils
 
     /**
      * Returns true if the string contains wildcards (? and *)
-     * 
+     *
      * @param s the string, may be null
      * @return true if the string contains wildcards
      */
@@ -42,7 +42,7 @@ public final class WildcardUtils
     /**
      * Matches the string using wildcards (? and *). If the string is null, this method always returns false. Returns
      * true if at least one pattern matches.
-     * 
+     *
      * @param s the string, may be null
      * @param patterns the patterns, must be at least one
      * @return true if the string matches the pattern
@@ -72,7 +72,7 @@ public final class WildcardUtils
 
     /**
      * Performs a match operation using wildcards.
-     * 
+     *
      * @param patternIndex the patternIndex
      * @param tmpIndex the current index
      * @param value the value

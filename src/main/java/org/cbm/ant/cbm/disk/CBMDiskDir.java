@@ -16,7 +16,7 @@ public class CBMDiskDir
 
     /**
      * Creates the service for accessing the directory of a CBM disk image
-     * 
+     *
      * @param operator the operator
      */
     public CBMDiskDir(CBMDiskOperator operator)
@@ -68,7 +68,7 @@ public class CBMDiskDir
 
     /**
      * Lists the directory to the specified stream
-     * 
+     *
      * @param out the stream
      * @param listKeys if true adds a key to the listing that matches the key of the BAM listing
      * @param listDeleted if true even lists deleted files
@@ -109,7 +109,7 @@ public class CBMDiskDir
 
     /**
      * Searches for a file name. The file name supports wildcards.
-     * 
+     *
      * @param fileName the file name
      * @return the entry
      */
@@ -122,7 +122,7 @@ public class CBMDiskDir
 
     /**
      * Allocates a free directory entry.
-     * 
+     *
      * @return a free directory entry
      * @throws CBMDiskException on occasion
      */
@@ -135,7 +135,7 @@ public class CBMDiskDir
 
     /**
      * Returns the first directory sector
-     * 
+     *
      * @return the first directory sector
      */
     public CBMDiskDirSector getFirstDirSector()

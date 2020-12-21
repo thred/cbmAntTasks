@@ -20,9 +20,11 @@ public class CBMBitmapUtility
         Prefs.setDefault(CBMBitmapUtility.class);
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
-        frame = WindowUtils.setAndRecordState(Prefs.getDefault(), "CBMBitmapTool",
-            WindowUtils.packAndCenter(new CBMBitmapFrame(WindowUtils
-                .getRecordedGraphicsConfiguration(Prefs.getDefault(), "CBMBitmapTool", CBMBitmapFrame.class))));
+        frame = WindowUtils
+            .setAndRecordState(Prefs.getDefault(), "CBMBitmapTool",
+                WindowUtils
+                    .packAndCenter(new CBMBitmapFrame(WindowUtils
+                        .getRecordedGraphicsConfiguration(Prefs.getDefault(), "CBMBitmapTool", CBMBitmapFrame.class))));
 
         frame.addWindowListener(new WindowAdapter()
         {

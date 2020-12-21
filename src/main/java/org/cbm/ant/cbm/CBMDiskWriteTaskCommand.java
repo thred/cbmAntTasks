@@ -60,7 +60,7 @@ public class CBMDiskWriteTaskCommand extends AbstractCBMDiskTaskCommand
 
     /**
      * Sets the destination file name. If not specified, the name of the source file will be used
-     * 
+     *
      * @param destination the destination file name
      */
     public void setDestination(String destination)
@@ -126,7 +126,7 @@ public class CBMDiskWriteTaskCommand extends AbstractCBMDiskTaskCommand
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see org.cbm.ant.cbm.CBMDiskTaskCommand#execute(org.cbm.ant.cbm.CBMDiskTask,
      *      org.cbm.ant.cbm.disk.CBMDiskOperator)
      */
@@ -194,8 +194,9 @@ public class CBMDiskWriteTaskCommand extends AbstractCBMDiskTaskCommand
                 }
                 catch (IOException e)
                 {
-                    throw new BuildException(String.format("Failed to copy data from file \"%s\" to file \"%s\"",
-                        getSource(), getDestination()), e);
+                    throw new BuildException(String
+                        .format("Failed to copy data from file \"%s\" to file \"%s\"", getSource(), getDestination()),
+                        e);
                 }
             }
             finally

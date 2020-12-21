@@ -67,5 +67,5 @@ public enum CBMColor
 
         return colors[index];
     }
-    
+
 }

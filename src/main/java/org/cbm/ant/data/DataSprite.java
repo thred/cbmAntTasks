@@ -119,7 +119,7 @@ public class DataSprite implements DataCommand
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see org.cbm.ant.data.DataCommand#execute(org.cbm.ant.data.Data, java.io.OutputStream)
      */
     @Override
@@ -202,7 +202,7 @@ public class DataSprite implements DataCommand
     //
     //	private static int[] toRGB(int color) {
     //		color &= 0x00ffffff;
-    //		
+    //
     //		return new int[] { (color >> 16) % 256, (color >> 8) % 256,
     //				color % 256 };
     //	}

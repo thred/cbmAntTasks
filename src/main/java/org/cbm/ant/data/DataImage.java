@@ -100,14 +100,15 @@ public class DataImage implements DataCommand
     {
         bitmap.setMandatoryColors(mandatoryPalette);
     }
-    
-    public void setPreferredColorIndices(String preferredColorIndices) {
+
+    public void setPreferredColorIndices(String preferredColorIndices)
+    {
         bitmap.setPreferredColorIndices(preferredColorIndices);
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see org.cbm.ant.data.DataCommand#isExecutionNecessary(long, boolean)
      */
     @Override
@@ -125,7 +126,7 @@ public class DataImage implements DataCommand
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see org.cbm.ant.data.DataCommand#execute(org.cbm.ant.data.Data, java.io.OutputStream)
      */
     @Override

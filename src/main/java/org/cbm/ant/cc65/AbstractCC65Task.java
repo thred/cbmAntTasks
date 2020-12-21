@@ -23,7 +23,7 @@ public abstract class AbstractCC65Task extends AbstractCBMTask
 
     /**
      * Returns the cc65 home.
-     * 
+     *
      * @return the cc65 home
      */
     public File getCC65Home()
@@ -67,7 +67,7 @@ public abstract class AbstractCC65Task extends AbstractCBMTask
      * <li>System environment "CC65_HOME"</li>
      * <li>The base directory</li>
      * </ul>
-     * 
+     *
      * @param cc65Home the cc65 home
      */
     public void setCC65Home(File cc65Home)
@@ -77,7 +77,7 @@ public abstract class AbstractCC65Task extends AbstractCBMTask
 
     /**
      * Returns the executable. The default depends on the OS.
-     * 
+     *
      * @return the executable
      * @throws BuildException on occasion
      */
@@ -123,7 +123,7 @@ public abstract class AbstractCC65Task extends AbstractCBMTask
 
     /**
      * Sets the executable overwriting the default for the operating system.
-     * 
+     *
      * @param executable the executable
      */
     public void setExecutable(String executable)

@@ -72,8 +72,7 @@ public class CBMBitmapProjectModel
 
     protected final EventListenerList listenerList = new EventListenerList();
 
-    private final Map<CBMColor, PaletteEntry> paletteEntries =
-        new HashMap<>();
+    private final Map<CBMColor, PaletteEntry> paletteEntries = new HashMap<>();
 
     private String name;
     private BufferedImage sourceImage;

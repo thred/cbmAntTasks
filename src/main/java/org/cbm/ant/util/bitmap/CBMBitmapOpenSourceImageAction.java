@@ -78,9 +78,10 @@ public class CBMBitmapOpenSourceImageAction extends AbstractCBMBitmapAction
             {
                 e.printStackTrace(System.err);
 
-                JOptionPane.showMessageDialog(frame,
-                    "Failed to load image from \"" + file + "\".\nSee log for more information.",
-                    "Failed to load image", JOptionPane.ERROR_MESSAGE);
+                JOptionPane
+                    .showMessageDialog(frame,
+                        "Failed to load image from \"" + file + "\".\nSee log for more information.",
+                        "Failed to load image", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
