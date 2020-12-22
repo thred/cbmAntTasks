@@ -81,7 +81,9 @@ public class CBMDiskDir
 
         scan();
 
-        out.printf("%d \"%-16s\" %-2s %-2s\n", 0, bam.getDiskName(), bam.getDiskID(), bam.getDOSType());
+        out
+            .printf("%d \"%-16s\" %-2s %-2s\n", 0, bam.getDiskName().replace("\u00a0", " "), bam.getDiskID(),
+                bam.getDOSType());
         firstDirSector.list(out, listKeys, listDeleted);
         out.printf("%d blocks free.\n", bam.getFreeSectors());
     }

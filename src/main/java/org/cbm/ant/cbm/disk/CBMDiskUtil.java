@@ -278,6 +278,8 @@ public class CBMDiskUtil
             result += s.substring(0, index) + "\"" + s.substring(index);
         }
 
+        result = result.replace("\u00a0", " ");
+
         return result.trim();
     }
 

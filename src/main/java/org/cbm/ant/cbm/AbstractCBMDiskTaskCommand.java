@@ -8,7 +8,6 @@ public abstract class AbstractCBMDiskTaskCommand implements CBMDiskTaskCommand
     public AbstractCBMDiskTaskCommand()
     {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     /**
