@@ -30,15 +30,15 @@ public class CBMDiskDirSector
     {
         CBMDiskLocation location = getNextDirectoryLocation();
 
-        if (location.getTrackNr() != 0x00)
+        if (location.getTrackNr() == 0x00 || location.getSectorNr() == 0xff)
+        {
+            nextDirSector = null;
+        }
+        else
         {
             nextDirSector = new CBMDiskDirSector(dir, location, id + 8);
 
             nextDirSector.scan();
-        }
-        else
-        {
-            nextDirSector = null;
         }
     }
 
@@ -48,6 +48,8 @@ public class CBMDiskDirSector
         {
             entry.format();
         }
+
+        setNextDirectoryLocation(new CBMDiskLocation(0x00, 0xff));
 
         scan();
     }

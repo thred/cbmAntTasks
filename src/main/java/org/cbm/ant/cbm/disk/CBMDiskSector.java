@@ -8,6 +8,9 @@ import java.util.Arrays;
 public class CBMDiskSector
 {
 
+    private static final int NEXT_TRACK_NR_POS = 0x00;
+    private static final int NEXT_SECTOR_NR_POS = 0x01;
+
     private final byte[] data = new byte[256];
 
     private final CBMDiskLocation location;
@@ -48,22 +51,22 @@ public class CBMDiskSector
 
     public int getNextTrackNr()
     {
-        return getByte(0x00);
+        return getByte(NEXT_TRACK_NR_POS);
     }
 
     public void setNextTrackNr(int trackNr)
     {
-        setByte(0x00, trackNr);
+        setByte(NEXT_TRACK_NR_POS, trackNr);
     }
 
     public int getNextSectorNr()
     {
-        return getByte(0x01);
+        return getByte(NEXT_SECTOR_NR_POS);
     }
 
     public void setNextSectorNr(int sectorNr)
     {
-        setByte(0x01, sectorNr);
+        setByte(NEXT_SECTOR_NR_POS, sectorNr);
     }
 
     public CBMDiskLocation getNextLocation()

@@ -7,6 +7,18 @@ import org.cbm.ant.util.WildcardUtils;
 public class CBMDiskDirEntry
 {
 
+    private static final int FILE_TYPE_POS = 0x02;
+    private static final int TRACK_NR_POS = 0x03;
+    private static final int SECTOR_NR_POS = 0x04;
+    private static final int FILE_NAME_POS = 0x05;
+    private static final int FILE_NAME_LENGTH = 16;
+    private static final int REL_TRACK_NR_POS = 0x15;
+    private static final int REL_SECTOR_NR_POS = 0x16;
+    private static final int REL_FILE_RECORD_LENGTH_POS = 0x17;
+    private static final int FILE_SIZE_POS = 0x1e;
+
+    private static final int ENTRY_LENGTH = 0x20;
+
     private static final String LIST_ENTRY_WITH_KEY = "%-3d  %-18s %s [%s] (%c)\n";
     private static final String LIST_ENTRY_WITHOUT_KEY = "%-3d  %-18s %s [%s]\n";
 
@@ -25,13 +37,16 @@ public class CBMDiskDirEntry
 
     public void format()
     {
-        setNextDirectoryTrack(0x00);
-        setNextDirectorySector(0xff);
-        getSector().setByte(getPosition(0x02), 0x00);
+        if (index > 0)
+        {
+            getSector().fill(getPosition(0), 2, 0x00);
+        }
+        
+        getSector().setByte(getPosition(FILE_TYPE_POS), CBMFileType.DEL.getType());
         setFileTrackNr(0x00);
         setFileSectorNr(0x00);
-        getSector().fill(getPosition(0x05), 0x0f, 0xa0);
-        getSector().fill(getPosition(0x15), 0x0b, 0x00);
+        getSector().fill(getPosition(FILE_NAME_POS), FILE_NAME_LENGTH, 0xa0);
+        getSector().fill(getPosition(REL_TRACK_NR_POS), ENTRY_LENGTH - REL_TRACK_NR_POS, 0x00);
     }
 
     public void list(PrintStream out, boolean listKeys, boolean listDeleted)
@@ -112,77 +127,59 @@ public class CBMDiskDirEntry
 
     protected int getPosition(int pos)
     {
-        return index * 0x20 + pos;
-    }
-
-    public int getNextDirectoryTrack()
-    {
-        return getSector().getByte(getPosition(0x00));
-    }
-
-    public void setNextDirectoryTrack(int nextDirectoryTrack)
-    {
-        getSector().setByte(getPosition(0x00), nextDirectoryTrack);
-    }
-
-    public int getNextDirectorySector()
-    {
-        return getSector().getByte(getPosition(0x01));
-    }
-
-    public void setNextDirectorySector(int nextDirectorySector)
-    {
-        getSector().setByte(getPosition(0x01), nextDirectorySector);
+        return index * ENTRY_LENGTH + pos;
     }
 
     public CBMFileType getFileType()
     {
-        return CBMFileType.toCBMFileType(getSector().getByte(getPosition(0x02)));
+        return CBMFileType.toCBMFileType(getSector().getByte(getPosition(FILE_TYPE_POS)));
     }
 
     public void setFileType(CBMFileType fileType)
     {
-        getSector().setByte(getPosition(0x02), getSector().getByte(getPosition(0x02)) & 0xf8 | fileType.getType());
+        getSector()
+            .setByte(getPosition(FILE_TYPE_POS),
+                getSector().getByte(getPosition(FILE_TYPE_POS)) & 0xf8 | fileType.getType());
     }
 
     public boolean isFileTypeLocked()
     {
-        return getSector().isBit(getPosition(0x02), 6);
+        return getSector().isBit(getPosition(FILE_TYPE_POS), 6);
     }
 
     public void setFileTypeLocked(boolean locked)
     {
-        getSector().setBit(getPosition(0x02), 6, locked);
+        getSector().setBit(getPosition(FILE_TYPE_POS), 6, locked);
     }
 
     public boolean isFileTypeClosed()
     {
-        return getSector().isBit(getPosition(0x02), 7);
+        return getSector().isBit(getPosition(FILE_TYPE_POS), 7);
     }
 
     public void setFileTypeClosed(boolean closed)
     {
-        getSector().setBit(getPosition(0x02), 7, closed);
+        getSector().setBit(getPosition(FILE_TYPE_POS), 7, closed);
     }
 
     public int getFileTrackNr()
     {
-        return getSector().getByte(getPosition(0x03));
+        return getSector().getByte(getPosition(TRACK_NR_POS));
     }
 
     public void setFileTrackNr(int nextDirectoryTrackNr)
     {
-        getSector().setByte(getPosition(0x03), nextDirectoryTrackNr);
+        getSector().setByte(getPosition(TRACK_NR_POS), nextDirectoryTrackNr);
     }
 
     public int getFileSectorNr()
     {
-        return getSector().getByte(getPosition(0x04));
+        return getSector().getByte(getPosition(SECTOR_NR_POS));
     }
 
     public void setFileSectorNr(int nextDirectorySectorNr)
     {
-        getSector().setByte(getPosition(0x04), nextDirectorySectorNr);
+        getSector().setByte(getPosition(SECTOR_NR_POS), nextDirectorySectorNr);
     }
 
     public CBMDiskLocation getFileLocation()
@@ -198,32 +195,32 @@ public class CBMDiskDirEntry
 
     public String getFileName()
     {
-        return CBMDiskUtil.fromCBMDOSName(getSector().getBytes(getPosition(0x05), 16));
+        return CBMDiskUtil.fromCBMDOSName(getSector().getBytes(getPosition(FILE_NAME_POS), FILE_NAME_LENGTH));
     }
 
     public void setFileName(String fileName)
     {
-        getSector().setBytes(getPosition(0x05), CBMDiskUtil.toCBMDOSName(fileName, 16));
+        getSector().setBytes(getPosition(FILE_NAME_POS), CBMDiskUtil.toCBMDOSName(fileName, FILE_NAME_LENGTH));
     }
 
     public int getRELFileTrackNr()
     {
-        return getSector().getByte(getPosition(0x15));
+        return getSector().getByte(getPosition(REL_TRACK_NR_POS));
     }
 
     public void setRELFileTrackNr(int nextDirectoryTrackNr)
     {
-        getSector().setByte(getPosition(0x15), nextDirectoryTrackNr);
+        getSector().setByte(getPosition(REL_TRACK_NR_POS), nextDirectoryTrackNr);
     }
 
     public int getRELFileSectorNr()
     {
-        return getSector().getByte(getPosition(0x16));
+        return getSector().getByte(getPosition(REL_SECTOR_NR_POS));
     }
 
     public void setRELFileSectorNr(int nextDirectorySectorNr)
     {
-        getSector().setByte(getPosition(0x16), nextDirectorySectorNr);
+        getSector().setByte(getPosition(REL_SECTOR_NR_POS), nextDirectorySectorNr);
     }
 
     public CBMDiskLocation getRELFileLocation()
@@ -237,14 +234,24 @@ public class CBMDiskDirEntry
         setRELFileSectorNr(location.getSectorNr());
     }
 
+    public int getRELFileRecordLength()
+    {
+        return getSector().getByte(getPosition(REL_FILE_RECORD_LENGTH_POS));
+    }
+
+    public void setRELFileRectorLength(int nextDirectorySectorNr)
+    {
+        getSector().setByte(getPosition(REL_FILE_RECORD_LENGTH_POS), nextDirectorySectorNr);
+    }
+
     public int getFileSize()
     {
-        return getSector().getWord(getPosition(0x1e));
+        return getSector().getWord(getPosition(FILE_SIZE_POS));
     }
 
     public void setFileSize(int fileSize)
     {
-        getSector().setWord(getPosition(0x1e), fileSize);
+        getSector().setWord(getPosition(FILE_SIZE_POS), fileSize);
     }
 
     /**
