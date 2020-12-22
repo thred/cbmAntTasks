@@ -159,14 +159,10 @@ public class CBMDiskBAM
      * @return the free sector
      * @throws CBMDiskException on occasion (e.g. disk is full)
      */
-    public CBMDiskLocation findNextFreeSector(CBMDiskLocation location) throws CBMDiskException
+    public CBMDiskLocation findNextFreeSector(CBMDiskLocation location, CBMSectorInterleaves sectorInterleaves)
+        throws CBMDiskException
     {
-        int trackNr = location.getTrackNr();
-        int sectorNr = (location.getSectorNr() + getDisk().getSectorNrInterleave())
-            % operator.getDisk().getFormat().getNumberOfSectors(trackNr);
-        int trackNrIncrement = trackNr < getDisk().getBAMTrackNr() ? -1 : 1;
-
-        return findFreeSector(trackNr, sectorNr, trackNrIncrement, false);
+        return findNextFreeSector(location, sectorInterleaves, false);
     }
 
     /**
@@ -177,18 +173,41 @@ public class CBMDiskBAM
      * @return the free sector
      * @throws CBMDiskException on occasion (e.g. disk is full)
      */
-    public CBMDiskLocation findNextFreeDirSector(CBMDiskLocation location) throws CBMDiskException
+    public CBMDiskLocation findNextFreeDirSector(CBMDiskLocation location, CBMSectorInterleaves sectorInterleaves)
+        throws CBMDiskException
     {
+        return findNextFreeSector(location, sectorInterleaves, true);
+    }
+
+    protected CBMDiskLocation findNextFreeSector(CBMDiskLocation location, CBMSectorInterleaves sectorInterleaves,
+        boolean allowBAMTrack) throws CBMDiskException
+    {
+        if (sectorInterleaves == null)
+        {
+            sectorInterleaves = getDisk().getSectorInterleaves();
+        }
+
         int trackNr = location.getTrackNr();
-        int sectorNr = (location.getSectorNr() + getDisk().getDirSectorNrInterleave())
-            % operator.getDisk().getFormat().getNumberOfSectors(trackNr);
+        int sectorNr = location.getSectorNr() + sectorInterleaves.getInterleave(trackNr);
+        int numberOfSectors = operator.getDisk().getFormat().getNumberOfSectors(trackNr);
+
+        if (sectorNr > numberOfSectors)
+        {
+            sectorNr -= numberOfSectors;
+
+            if (sectorNr > 0)
+            {
+                --sectorNr;
+            }
+        }
+
         int trackNrIncrement = trackNr < getDisk().getBAMTrackNr() ? -1 : 1;
 
-        return findFreeSector(trackNr, sectorNr, trackNrIncrement, true);
+        return findFreeSector(trackNr, sectorNr, trackNrIncrement, allowBAMTrack);
     }
 
     /**
-     * Searches for a free sector for program and/or directory data. Expected that the specified sector is free, if not
+     * Searches for a free sector for program and/or directory data. Expects that the specified sector is free, if not
      * keeps adding one to the sector and the track increment to the track.
      *
      * @param trackNr the number of the track

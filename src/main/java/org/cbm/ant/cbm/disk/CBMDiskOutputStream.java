@@ -8,13 +8,15 @@ public class CBMDiskOutputStream extends OutputStream
 
     private final CBMDiskOperator operator;
     private final CBMDiskDirEntry dirEntry;
+    private final CBMSectorInterleaves sectorInterleaves;
 
     private CBMDiskLocation location = null;
     private CBMDiskSector sector = null;
     private int position;
     private int size = 0;
 
-    public CBMDiskOutputStream(CBMDiskOperator operator, CBMDiskDirEntry dirEntry, CBMDiskLocation location)
+    public CBMDiskOutputStream(CBMDiskOperator operator, CBMDiskDirEntry dirEntry, CBMDiskLocation location,
+        CBMSectorInterleaves sectorInterleaves)
     {
         super();
 
@@ -24,6 +26,7 @@ public class CBMDiskOutputStream extends OutputStream
         dirEntry.setFileTypeClosed(false);
 
         this.location = location;
+        this.sectorInterleaves = sectorInterleaves;
     }
 
     public CBMDiskOperator getOperator()
@@ -72,7 +75,7 @@ public class CBMDiskOutputStream extends OutputStream
 
             try
             {
-                grab(operator.getBAM().findNextFreeSector(currentLocation));
+                grab(operator.getBAM().findNextFreeSector(currentLocation, sectorInterleaves));
             }
             catch (CBMDiskException e)
             {

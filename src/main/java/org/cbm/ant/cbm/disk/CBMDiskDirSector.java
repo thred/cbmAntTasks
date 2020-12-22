@@ -96,7 +96,7 @@ public class CBMDiskDirSector
         return null;
     }
 
-    public CBMDiskDirEntry allocate() throws CBMDiskException
+    public CBMDiskDirEntry allocate(CBMSectorInterleaves sectorInterleaves) throws CBMDiskException
     {
         for (CBMDiskDirEntry entry : entries)
         {
@@ -110,7 +110,7 @@ public class CBMDiskDirSector
         {
             CBMDiskBAM bam = getDir().getOperator().getBAM();
 
-            CBMDiskLocation location = bam.findNextFreeDirSector(getLocation());
+            CBMDiskLocation location = bam.findNextFreeDirSector(getLocation(), sectorInterleaves);
 
             bam.setSectorUsed(location, true);
 
@@ -120,7 +120,7 @@ public class CBMDiskDirSector
             setNextDirectoryLocation(location);
         }
 
-        return nextDirSector.allocate();
+        return nextDirSector.allocate(sectorInterleaves);
     }
 
     public CBMDiskDir getDir()

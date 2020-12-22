@@ -242,6 +242,8 @@ public abstract class ConstantStatement
             {
                 throw new IllegalArgumentException("Unclosed bracket.");
             }
+
+            token = tokenizer.next();
         }
         else
         {

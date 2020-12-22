@@ -21,8 +21,7 @@ public class CBMDisk
 
     private CBMDiskFormat format;
     private int bamTrackNr;
-    private int dirSectorNrInterleave;
-    private int sectorNrInterleave;
+    private CBMSectorInterleaves sectorInterleaves;
 
     public CBMDisk()
     {
@@ -195,8 +194,7 @@ public class CBMDisk
         this.format = format;
 
         bamTrackNr = format.getBAMTrackNr();
-        dirSectorNrInterleave = format.getDirSectorNrInterleave();
-        sectorNrInterleave = format.getSectorNrInterleave();
+        sectorInterleaves = format.getSectorInterleaves();
     }
 
     /**
@@ -220,43 +218,33 @@ public class CBMDisk
     }
 
     /**
-     * Returns the sector number interleave of the directory
-     *
-     * @return the sector number interleave of the directory
+     * @return the sector interleaves
      */
-    public int getDirSectorNrInterleave()
+    public CBMSectorInterleaves getSectorInterleaves()
     {
-        return dirSectorNrInterleave;
+        return sectorInterleaves;
     }
 
     /**
-     * Sets the sector number interleave of the directory
+     * Sets the sector interleaves.
      *
-     * @param dirSectorNrInterleave the sector number interleave of the directory
+     * @param sectorInterleaves the interleaves
      */
-    public void setDirSectorNrInterleave(int dirSectorNrInterleave)
+    public void setSectorInterleaves(CBMSectorInterleaves sectorInterleaves)
     {
-        this.dirSectorNrInterleave = dirSectorNrInterleave;
+        this.sectorInterleaves = sectorInterleaves;
     }
 
     /**
-     * Returns the sector number interleave
+     * Sets the sector interleaves from a comma-separated list: <code>[ &lt;TRACK&gt; [ \"-\" &lt;TRACK&gt; ] \":\" ]
+     * &lt;INTERLEAVE&gt;</code>
      *
-     * @return the sector number interleave
+     * @param sectorInterleaves the interleaves
      */
-    public int getSectorNrInterleave()
+    public void setSectorInterleaves(String sectorInterleaves)
     {
-        return sectorNrInterleave;
-    }
-
-    /**
-     * Sets the sector number interleave
-     *
-     * @param sectorNrInterleave the sector number interleave
-     */
-    public void setSectorNrInterleave(int sectorNrInterleave)
-    {
-        this.sectorNrInterleave = sectorNrInterleave;
+        this.sectorInterleaves =
+            CBMSectorInterleaves.parse(format != null ? format.getSectorInterleaves() : null, sectorInterleaves);
     }
 
     /**

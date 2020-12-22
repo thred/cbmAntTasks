@@ -5,101 +5,99 @@ import java.io.File;
 public enum CBMDiskFormat
 {
 
-    CBM_154x(new int[]{ //
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21, // Track 1-17
-        19,
-        19,
-        19,
-        19,
-        19,
-        19,
-        19, // Track 18-24
-        18,
-        18,
-        18,
-        18,
-        18,
-        18, // Track 25-30
-        17,
-        17,
-        17,
-        17,
-        17
-    // Track 31-35
-    }, false, 18, 3, 10),
+    CBM_154x(new int[]{
+        21, // 1
+        21, // 2
+        21, // 3
+        21, // 4
+        21, // 5
+        21, // 6
+        21, // 7
+        21, // 8
+        21, // 9
+        21, // 10
+        21, // 11
+        21, // 12
+        21, // 13
+        21, // 14
+        21, // 15
+        21, // 16
+        21, // 17
+        19, // 18
+        19, // 19
+        19, // 20
+        19, // 21
+        19, // 22
+        19, // 23
+        19, // 24
+        18, // 25
+        18, // 26
+        18, // 27
+        18, // 28
+        18, // 29
+        18, // 30
+        17, // 31
+        17, // 32
+        17, // 33
+        17, // 34
+        17 //  35
+    }, false, 18, CBMSectorInterleaves.parse("10, 18: 3")),
 
     CBM_154x_EXTENDED(new int[]{ //
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21,
-        21, // Track 1-17
-        19,
-        19,
-        19,
-        19,
-        19,
-        19,
-        19, // Track 18-24
-        18,
-        18,
-        18,
-        18,
-        18,
-        18, // Track 25-30
-        17,
-        17,
-        17,
-        17,
-        17, // Track 31-35
-        17,
-        17,
-        17,
-        17,
-        17
-    // Track 36-40
-    }, false, 18, 3, 10);
+        21, // 1
+        21, // 2
+        21, // 3
+        21, // 4
+        21, // 5
+        21, // 6
+        21, // 7
+        21, // 8
+        21, // 9
+        21, // 10
+        21, // 11
+        21, // 12
+        21, // 13
+        21, // 14
+        21, // 15
+        21, // 16
+        21, // 17
+        19, // 18
+        19, // 19
+        19, // 20
+        19, // 21
+        19, // 22
+        19, // 23
+        19, // 24
+        18, // 25
+        18, // 26
+        18, // 27
+        18, // 28
+        18, // 29
+        18, // 30
+        17, // 31
+        17, // 32
+        17, // 33
+        17, // 34
+        17, // 35
+        17, // 36
+        17, // 37
+        17, // 38
+        17, // 39
+        17 //  40
+    }, false, 18, CBMSectorInterleaves.parse("10, 18: 3"));
 
     private final int numberOfTracks;
     private final int[] numberOfSectors;
     private final boolean errorInformationAvailable;
     private final int fileSize;
     private final int bamTrackNr;
-    private final int dirSectorNrInterleave;
-    private final int sectorNrInterleave;
+    private final CBMSectorInterleaves sectorInterleaves;
 
     private CBMDiskFormat(int[] numberOfSectors, boolean errorInformationAvailable, int bamTrackNr,
-        int dirSectorNrInterleave, int sectorNrInterleave)
+        CBMSectorInterleaves interleaves)
     {
         numberOfTracks = numberOfSectors.length;
+
         this.numberOfSectors = numberOfSectors;
         this.errorInformationAvailable = errorInformationAvailable;
 
@@ -112,8 +110,7 @@ public enum CBMDiskFormat
 
         this.fileSize = fileSize;
         this.bamTrackNr = bamTrackNr;
-        this.dirSectorNrInterleave = dirSectorNrInterleave;
-        this.sectorNrInterleave = sectorNrInterleave;
+        sectorInterleaves = interleaves;
     }
 
     public int getNumberOfTracks()
@@ -152,14 +149,9 @@ public enum CBMDiskFormat
         return bamTrackNr;
     }
 
-    public int getDirSectorNrInterleave()
+    public CBMSectorInterleaves getSectorInterleaves()
     {
-        return dirSectorNrInterleave;
-    }
-
-    public int getSectorNrInterleave()
-    {
-        return sectorNrInterleave;
+        return sectorInterleaves;
     }
 
     public static CBMDiskFormat determineDiskType(File file)

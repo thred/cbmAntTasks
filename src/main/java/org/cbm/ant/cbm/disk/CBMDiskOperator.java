@@ -62,15 +62,16 @@ public class CBMDiskOperator
         return new CBMDiskInputStream(this, entry.getFileTrackNr(), entry.getFileSectorNr());
     }
 
-    public CBMDiskOutputStream create(String fileName, CBMFileType fileType) throws IOException, CBMDiskException
-    {
-        return create(null, fileName, fileType);
-    }
-
-    public CBMDiskOutputStream create(CBMDiskLocation location, String fileName, CBMFileType fileType)
+    public CBMDiskOutputStream create(String fileName, CBMFileType fileType, CBMSectorInterleaves sectorInterleaves)
         throws IOException, CBMDiskException
     {
-        CBMDiskDirEntry dirEntry = getDir().allocate();
+        return create(null, fileName, fileType, sectorInterleaves);
+    }
+
+    public CBMDiskOutputStream create(CBMDiskLocation location, String fileName, CBMFileType fileType,
+        CBMSectorInterleaves sectorInterleaves) throws IOException, CBMDiskException
+    {
+        CBMDiskDirEntry dirEntry = getDir().allocate(sectorInterleaves);
 
         dirEntry.setFileTrackNr(0);
         dirEntry.setFileSectorNr(0);
@@ -82,27 +83,13 @@ public class CBMDiskOperator
         dirEntry.setRELFileSectorNr(0);
         dirEntry.setFileSize(0);
 
-        return create(location, dirEntry);
+        return create(location, dirEntry, sectorInterleaves);
     }
 
-    public CBMDiskOutputStream create(CBMDiskDirEntry dirEntry)
+    public CBMDiskOutputStream create(CBMDiskLocation location, CBMDiskDirEntry dirEntry,
+        CBMSectorInterleaves sectorInterleaves)
     {
-        return null;
-    }
-
-    public CBMDiskOutputStream create()
-    {
-        return create((CBMDiskLocation) null, (CBMDiskDirEntry) null);
-    }
-
-    public CBMDiskOutputStream create(CBMDiskLocation location)
-    {
-        return create(location, null);
-    }
-
-    public CBMDiskOutputStream create(CBMDiskLocation location, CBMDiskDirEntry dirEntry)
-    {
-        return new CBMDiskOutputStream(this, dirEntry, location);
+        return new CBMDiskOutputStream(this, dirEntry, location, sectorInterleaves);
     }
 
 }

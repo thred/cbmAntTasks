@@ -11,6 +11,7 @@ import org.cbm.ant.cbm.disk.CBMDiskLocation;
 import org.cbm.ant.cbm.disk.CBMDiskOperator;
 import org.cbm.ant.cbm.disk.CBMDiskOutputStream;
 import org.cbm.ant.cbm.disk.CBMFileType;
+import org.cbm.ant.cbm.disk.CBMSectorInterleaves;
 import org.cbm.ant.util.IOUtils;
 
 public class CBMDiskWriteTaskCommand extends AbstractCBMDiskTaskCommand
@@ -21,7 +22,7 @@ public class CBMDiskWriteTaskCommand extends AbstractCBMDiskTaskCommand
     private CBMFileType fileType = CBMFileType.PRG;
     private Integer track;
     private Integer sector;
-    private Integer sectorInterleave;
+    private String sectorInterleaves;
 
     public CBMDiskWriteTaskCommand()
     {
@@ -98,14 +99,23 @@ public class CBMDiskWriteTaskCommand extends AbstractCBMDiskTaskCommand
         this.sector = sector;
     }
 
-    public Integer getSectorInterleave()
+    /**
+     * @return the sector interleaves
+     */
+    public String getSectorInterleaves()
     {
-        return sectorInterleave;
+        return sectorInterleaves;
     }
 
-    public void setSectorInterleave(Integer sectorInterleave)
+    /**
+     * Sets the sector interleaves from a comma-separated list: <code>[ &lt;TRACK&gt; [ \"-\" &lt;TRACK&gt; ] \":\" ]
+     * &lt;INTERLEAVE&gt;</code>
+     *
+     * @param sectorInterleaves the interleaves
+     */
+    public void setSectorInterleaves(String sectorInterleaves)
     {
-        this.sectorInterleave = sectorInterleave;
+        this.sectorInterleaves = sectorInterleaves;
     }
 
     /**
@@ -135,85 +145,78 @@ public class CBMDiskWriteTaskCommand extends AbstractCBMDiskTaskCommand
     {
         task.log(String.format("Writing \"%s\" to disk image...", source));
 
-        int sectorInterleaveBackup = operator.getDisk().getSectorNrInterleave();
+        CBMSectorInterleaves currentSectorInterleaves = operator.getDisk().getSectorInterleaves();
 
-        if (sectorInterleave != null)
+        if (sectorInterleaves != null)
         {
-            operator.getDisk().setSectorNrInterleave(sectorInterleave);
+            currentSectorInterleaves = CBMSectorInterleaves.parse(currentSectorInterleaves, sectorInterleaves);
+        }
+
+        CBMDiskLocation location = null;
+
+        if (track != null || sector != null)
+        {
+            if (track == null)
+            {
+                throw new BuildException("Sector is set, but track is missing");
+            }
+
+            if (sector == null)
+            {
+                throw new BuildException("Track is set, but sector is missing");
+            }
+
+            location = new CBMDiskLocation(track, sector);
+        }
+
+        CBMDiskOutputStream out;
+
+        try
+        {
+            out = operator.create(location, getDestination(), getFileType(), currentSectorInterleaves);
+        }
+        catch (IOException e)
+        {
+            throw new BuildException(String.format("Failed to create file \"%s\"", getDestination()), e);
+        }
+        catch (CBMDiskException e)
+        {
+            throw new BuildException(
+                String.format("Failed to create file \"%s\": %s", getDestination(), e.getMessage()), e);
         }
 
         try
         {
-            CBMDiskLocation location = null;
-
-            if (track != null || sector != null)
-            {
-                if (track == null)
-                {
-                    throw new BuildException("Sector is set, but track is missing");
-                }
-
-                if (sector == null)
-                {
-                    throw new BuildException("Track is set, but sector is missing");
-                }
-
-                location = new CBMDiskLocation(track, sector);
-            }
-
-            CBMDiskOutputStream out;
-
             try
             {
-                out = operator.create(location, getDestination(), getFileType());
+                InputStream in = new FileInputStream(getSource());
+
+                try
+                {
+                    IOUtils.copy(in, out);
+                }
+                finally
+                {
+                    in.close();
+                }
             }
             catch (IOException e)
             {
-                throw new BuildException(String.format("Failed to create file \"%s\"", getDestination()), e);
-            }
-            catch (CBMDiskException e)
-            {
                 throw new BuildException(
-                    String.format("Failed to create file \"%s\": %s", getDestination(), e.getMessage()), e);
-            }
-
-            try
-            {
-                try
-                {
-                    InputStream in = new FileInputStream(getSource());
-
-                    try
-                    {
-                        IOUtils.copy(in, out);
-                    }
-                    finally
-                    {
-                        in.close();
-                    }
-                }
-                catch (IOException e)
-                {
-                    throw new BuildException(String
-                        .format("Failed to copy data from file \"%s\" to file \"%s\"", getSource(), getDestination()),
-                        e);
-                }
-            }
-            finally
-            {
-                try
-                {
-                    out.close();
-                }
-                catch (IOException e)
-                {
-                    throw new BuildException(String.format("Failed to close file \"%s\"", getDestination()), e);
-                }
+                    String.format("Failed to copy data from file \"%s\" to file \"%s\"", getSource(), getDestination()),
+                    e);
             }
         }
         finally
         {
-            operator.getDisk().setSectorNrInterleave(sectorInterleaveBackup);
+            try
+            {
+                out.close();
+            }
+            catch (IOException e)
+            {
+                throw new BuildException(String.format("Failed to close file \"%s\"", getDestination()), e);
+            }
         }
 
         return Long.valueOf(getSource().lastModified());

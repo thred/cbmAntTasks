@@ -1,5 +1,7 @@
 package org.cbm.ant.cbm.disk;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 
 /**
@@ -126,11 +128,11 @@ public class CBMDiskDir
      * @return a free directory entry
      * @throws CBMDiskException on occasion
      */
-    public CBMDiskDirEntry allocate() throws CBMDiskException
+    public CBMDiskDirEntry allocate(CBMSectorInterleaves sectorInterleaves) throws CBMDiskException
     {
         scan();
 
-        return firstDirSector.allocate();
+        return firstDirSector.allocate(sectorInterleaves);
     }
 
     /**
@@ -143,4 +145,21 @@ public class CBMDiskDir
         return firstDirSector;
     }
 
+    @Override
+    public String toString()
+    {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream())
+        {
+            try (PrintStream stream = new PrintStream(out))
+            {
+                list(stream, true, true);
+            }
+
+            return new String(out.toByteArray());
+        }
+        catch (IOException e)
+        {
+            throw new IllegalStateException("Failed to write stream", e);
+        }
+    }
 }

@@ -44,7 +44,6 @@ public class CBMDiskIntegrationTest
     public void testReadWrite() throws IOException, CBMDiskException
     {
         CBMDiskOperator operator = createOperator();
-        byte[] sample0 = createSample(256 * 0);
         byte[] sampleA = createSample(256 * 1);
         byte[] sampleB = createSample(256 * 2);
         byte[] sampleC = createSample(256 * 4);
@@ -55,7 +54,6 @@ public class CBMDiskIntegrationTest
         byte[] sampleH = createSample(256 * 128);
         byte[] sampleI = createSample(256 * 256);
 
-        writeToDisk(operator, "sample 0", sample0);
         writeToDisk(operator, "sample a", sampleA);
         writeToDisk(operator, "sample b", sampleB);
         writeToDisk(operator, "sample c", sampleC);
@@ -67,9 +65,9 @@ public class CBMDiskIntegrationTest
         writeToDisk(operator, "sample i", sampleI);
 
         System.out.println(operator.getBAM());
+
         operator.getDir().list(System.out, false, false);
 
-        assertArrayEquals(sampleA, readFromDisk(operator, "sample 0"));
         assertArrayEquals(sampleA, readFromDisk(operator, "sample a"));
         assertArrayEquals(sampleB, readFromDisk(operator, "sample b"));
         assertArrayEquals(sampleC, readFromDisk(operator, "sample c"));
@@ -86,7 +84,7 @@ public class CBMDiskIntegrationTest
     private void writeToDisk(CBMDiskOperator operator, String fileName, byte[] sampleA)
         throws IOException, CBMDiskException
     {
-        CBMDiskOutputStream out = operator.create(fileName, CBMFileType.PRG);
+        CBMDiskOutputStream out = operator.create(fileName, CBMFileType.PRG, null);
 
         try
         {

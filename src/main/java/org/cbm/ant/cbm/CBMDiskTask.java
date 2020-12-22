@@ -18,6 +18,7 @@ public class CBMDiskTask extends AbstractDiskTask
     private File image;
     private boolean failOnError = true;
     private boolean ignoreIfNotExists = false;
+    private String sectorInterleaves;
 
     public CBMDiskTask()
     {
@@ -101,6 +102,16 @@ public class CBMDiskTask extends AbstractDiskTask
         this.ignoreIfNotExists = ignoreIfNotExists;
     }
 
+    public String getSectorInterleaves()
+    {
+        return sectorInterleaves;
+    }
+
+    public void setSectorInterleaves(String sectorInterleaves)
+    {
+        this.sectorInterleaves = sectorInterleaves;
+    }
+
     /**
      * @see org.apache.tools.ant.Task#execute()
      */
@@ -142,6 +153,11 @@ public class CBMDiskTask extends AbstractDiskTask
                     throw new BuildException(String.format("Failed to load image \"%s\"", image), e);
                 }
             }
+        }
+
+        if (sectorInterleaves != null)
+        {
+            disk.setSectorInterleaves(sectorInterleaves);
         }
 
         Long modification = null;
