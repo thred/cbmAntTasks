@@ -31,7 +31,7 @@ public class CBMDiskInputStream extends InputStream
 
     private boolean hasNextSector()
     {
-        return sector.getNextTrackNr() > 0;
+        return sector != null && sector.getNextTrackNr() > 0;
     }
 
     private void nextSector()
@@ -57,7 +57,7 @@ public class CBMDiskInputStream extends InputStream
         {
             // empty file
             position = 2;
-            end = 2;
+            end = 1;
 
             return;
         }
