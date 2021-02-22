@@ -17,7 +17,7 @@
 	</target>
 
 	<target name="compile" depends="init" description="compile the source ">
-		<javac srcdir="${java.src.path}" destdir="${classes.target.path}" />
+		<javac srcdir="${java.src.path}" destdir="${classes.target.path}" target="1.11" />
 
 		<copy todir="${classes.target.path}">
 			<fileset dir="${resources.src.path}">
