@@ -15,6 +15,12 @@ public abstract class AbstractViceLaunchTask extends AbstractViceTask implements
     private File drive9;
     private File drive10;
     private File drive11;
+    private Boolean drive8Readonly;
+    private Boolean drive9Readonly;
+    private Boolean drive10Readonly;
+    private Boolean drive11Readonly;
+    private Boolean verbose;
+    private Boolean silent;
 
     private File labelFile;
 
@@ -83,6 +89,66 @@ public abstract class AbstractViceLaunchTask extends AbstractViceTask implements
         this.drive11 = drive11;
     }
 
+    public Boolean getDrive8Readonly()
+    {
+        return drive8Readonly;
+    }
+
+    public void setDrive8Readonly(Boolean drive8Readonly)
+    {
+        this.drive8Readonly = drive8Readonly;
+    }
+
+    public Boolean getDrive9Readonly()
+    {
+        return drive9Readonly;
+    }
+
+    public void setDrive9Readonly(Boolean drive9Readonly)
+    {
+        this.drive9Readonly = drive9Readonly;
+    }
+
+    public Boolean getDrive10Readonly()
+    {
+        return drive10Readonly;
+    }
+
+    public void setDrive10Readonly(Boolean drive10Readonly)
+    {
+        this.drive10Readonly = drive10Readonly;
+    }
+
+    public Boolean getDrive11Readonly()
+    {
+        return drive11Readonly;
+    }
+
+    public void setDrive11Readonly(Boolean drive11Readonly)
+    {
+        this.drive11Readonly = drive11Readonly;
+    }
+
+    public Boolean getVerbose()
+    {
+        return verbose;
+    }
+
+    public void setVerbose(Boolean verbose)
+    {
+        this.verbose = verbose;
+    }
+
+    public Boolean getSilent()
+    {
+        return silent;
+    }
+
+    public void setSilent(Boolean silent)
+    {
+        this.silent = silent;
+    }
+
     public File getLabelFile()
     {
         return labelFile;
@@ -127,6 +193,36 @@ public abstract class AbstractViceLaunchTask extends AbstractViceTask implements
             handler.parameter("-11").parameter(getDrive11());
         }
 
+        if (getDrive8Readonly() != null)
+        {
+            handler.parameter("-AttachDrive8Readonly=" + (getDrive8Readonly() ? "1" : "0"));
+        }
+
+        if (getDrive9Readonly() != null)
+        {
+            handler.parameter("-AttachDrive9Readonly=" + (getDrive9Readonly() ? "1" : "0"));
+        }
+
+        if (getDrive10Readonly() != null)
+        {
+            handler.parameter("-AttachDrive10Readonly=" + (getDrive10Readonly() ? "1" : "0"));
+        }
+
+        if (getDrive11Readonly() != null)
+        {
+            handler.parameter("-AttachDrive11Readonly=" + (getDrive11Readonly() ? "1" : "0"));
+        }
+
+        if (getVerbose() != null)
+        {
+            handler.parameter("-verbose");
+        }
+
+        if (getSilent() != null)
+        {
+            handler.parameter("-silent");
+        }
+
         if (getLabelFile() != null)
         {
             /* VICE does not handle that right - it does not load all the labels
@@ -134,7 +230,7 @@ public abstract class AbstractViceLaunchTask extends AbstractViceTask implements
             {
             	File viceLaunchFile = File.createTempFile("cbmAntTasks", "viceLaunch");
             	Writer writer = new FileWriter(viceLaunchFile);
-
+            
             	try
             	{
             		writer.write("ll \"");
@@ -145,9 +241,9 @@ public abstract class AbstractViceLaunchTask extends AbstractViceTask implements
             	{
             		writer.close();
             	}
-
+            
             	handler.parameter("-moncommand").parameter(viceLaunchFile);
-
+            
             	viceLaunchFile.deleteOnExit();
             }
             catch (IOException e)

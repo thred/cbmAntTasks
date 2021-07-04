@@ -88,6 +88,16 @@ public abstract class AbstractViceTask extends Task
             if (!result.isAbsolute())
             {
                 result = new File(getViceHome(), executable);
+
+                if (!result.exists())
+                {
+                    File binResult = new File(new File(getViceHome(), "bin"), executable);
+
+                    if (binResult.exists())
+                    {
+                        result = binResult;
+                    }
+                }
             }
 
             if (!result.exists())
@@ -106,6 +116,16 @@ public abstract class AbstractViceTask extends Task
             if (os.matches(entry.getKey()))
             {
                 File result = new File(getViceHome(), entry.getValue());
+
+                if (!result.exists())
+                {
+                    File binResult = new File(new File(getViceHome(), "bin"), entry.getValue());
+
+                    if (binResult.exists())
+                    {
+                        result = binResult;
+                    }
+                }
 
                 if (!result.exists())
                 {
