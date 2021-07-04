@@ -290,8 +290,7 @@ public class TinyCrunch extends AbstractPyhtonTask
             return;
         }
 
-        File executable = getExecutable();
-        ProcessHandler handler = new ProcessHandler(this, executable).directory(getProject().getBaseDir());
+        ProcessHandler handler = createProcessHandler();
 
         handler.parameter(getTinyCrunchScript());
 
@@ -356,14 +355,5 @@ public class TinyCrunch extends AbstractPyhtonTask
         {
             target.setLastModified(source.lastModified());
         }
-    }
-
-    /**
-     * @see org.cbm.ant.util.ProcessConsumer#processOutput(java.lang.String, boolean)
-     */
-    @Override
-    public void processOutput(String output, boolean isError)
-    {
-        log(output);
     }
 }

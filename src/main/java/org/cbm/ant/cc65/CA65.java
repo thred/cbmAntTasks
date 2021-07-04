@@ -10,18 +10,17 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.DirSet;
 import org.apache.tools.ant.types.FileSet;
 import org.cbm.ant.util.AntFile;
-import org.cbm.ant.util.ProcessConsumer;
 import org.cbm.ant.util.ProcessHandler;
 
-public class CA65 extends AbstractCC65Task implements ProcessConsumer
+public class CA65 extends AbstractCC65Task
 {
 
     private static final Map<String, String> EXECUTABLES = new HashMap<>();
 
     static
     {
-        EXECUTABLES.put("Linux.*", "bin/ca65");
-        EXECUTABLES.put("Windows.*", "bin/ca65.exe");
+        EXECUTABLES.put("Linux.*", "ca65");
+        EXECUTABLES.put("Windows.*", "ca65.exe");
     }
 
     private final Collection<FileSet> files;
@@ -110,9 +109,7 @@ public class CA65 extends AbstractCC65Task implements ProcessConsumer
 
             if (isExecutionNecessary(inputFile, outputFile))
             {
-                ProcessHandler handler = new ProcessHandler(this, getExecutable());
-
-                handler.directory(getProject().getBaseDir());
+                ProcessHandler handler = createProcessHandler();
 
                 if (getTarget() != null)
                 {
@@ -171,14 +168,4 @@ public class CA65 extends AbstractCC65Task implements ProcessConsumer
 
         return false;
     }
-
-    /**
-     * @see org.cbm.ant.util.ProcessConsumer#processOutput(java.lang.String, boolean)
-     */
-    @Override
-    public void processOutput(String output, boolean isError)
-    {
-        log(output);
-    }
-
 }

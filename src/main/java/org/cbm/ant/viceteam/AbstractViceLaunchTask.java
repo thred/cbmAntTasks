@@ -3,10 +3,9 @@ package org.cbm.ant.viceteam;
 import java.io.File;
 
 import org.apache.tools.ant.BuildException;
-import org.cbm.ant.util.ProcessConsumer;
 import org.cbm.ant.util.ProcessHandler;
 
-public abstract class AbstractViceLaunchTask extends AbstractViceTask implements ProcessConsumer
+public abstract class AbstractViceLaunchTask extends AbstractViceTask
 {
 
     private File autostart;
@@ -165,8 +164,7 @@ public abstract class AbstractViceLaunchTask extends AbstractViceTask implements
     @Override
     public void execute() throws BuildException
     {
-        File executable = getExecutable();
-        ProcessHandler handler = new ProcessHandler(this, executable).directory(executable.getParentFile());
+        ProcessHandler handler = createProcessHandler();
 
         if (getTape() != null)
         {
@@ -230,7 +228,7 @@ public abstract class AbstractViceLaunchTask extends AbstractViceTask implements
             {
             	File viceLaunchFile = File.createTempFile("cbmAntTasks", "viceLaunch");
             	Writer writer = new FileWriter(viceLaunchFile);
-            
+
             	try
             	{
             		writer.write("ll \"");
@@ -241,9 +239,9 @@ public abstract class AbstractViceLaunchTask extends AbstractViceTask implements
             	{
             		writer.close();
             	}
-            
+
             	handler.parameter("-moncommand").parameter(viceLaunchFile);
-            
+
             	viceLaunchFile.deleteOnExit();
             }
             catch (IOException e)
@@ -268,14 +266,4 @@ public abstract class AbstractViceLaunchTask extends AbstractViceTask implements
             throw new BuildException("Failed with exit value " + exitValue);
         }
     }
-
-    /**
-     * @see org.cbm.ant.util.ProcessConsumer#processOutput(java.lang.String, boolean)
-     */
-    @Override
-    public void processOutput(String output, boolean isError)
-    {
-        log(output);
-    }
-
 }

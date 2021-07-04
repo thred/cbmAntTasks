@@ -5,8 +5,10 @@ import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.cbm.ant.util.ProcessConsumer;
+import org.cbm.ant.util.ProcessHandler;
 
-public abstract class AbstractViceTask extends Task
+public abstract class AbstractViceTask extends Task implements ProcessConsumer
 {
 
     private File viceHome;
@@ -52,7 +54,7 @@ public abstract class AbstractViceTask extends Task
             return new File(environmentSetting);
         }
 
-        return getProject().getBaseDir();
+        return null;
     }
 
     /**
@@ -74,69 +76,26 @@ public abstract class AbstractViceTask extends Task
     }
 
     /**
-     * Returns the executable. The default depends on the OS.
+     * Creates a process handler.
      *
      * @return the executable
      * @throws BuildException on occasion
      */
-    public File getExecutable() throws BuildException
+    public ProcessHandler createProcessHandler() throws BuildException
     {
+        ProcessHandler handler = new ProcessHandler(this).directory(getProject().getBaseDir());
+
         if (executable != null)
         {
-            File result = new File(executable);
-
-            if (!result.isAbsolute())
-            {
-                result = new File(getViceHome(), executable);
-
-                if (!result.exists())
-                {
-                    File binResult = new File(new File(getViceHome(), "bin"), executable);
-
-                    if (binResult.exists())
-                    {
-                        result = binResult;
-                    }
-                }
-            }
-
-            if (!result.exists())
-            {
-                throw new BuildException("Executable invalid: " + result.getAbsolutePath());
-            }
-
-            return result;
+            return handler.executable(executable);
         }
 
-        String os = System.getProperty("os.name");
-        Map<String, String> executables = getExecutables();
+        return handler.executable(getViceHome(), getExecutables());
+    }
 
-        for (Map.Entry<String, String> entry : executables.entrySet())
-        {
-            if (os.matches(entry.getKey()))
-            {
-                File result = new File(getViceHome(), entry.getValue());
-
-                if (!result.exists())
-                {
-                    File binResult = new File(new File(getViceHome(), "bin"), entry.getValue());
-
-                    if (binResult.exists())
-                    {
-                        result = binResult;
-                    }
-                }
-
-                if (!result.exists())
-                {
-                    throw new BuildException("Executable invalid: " + result.getAbsolutePath());
-                }
-
-                return result;
-            }
-        }
-
-        throw new BuildException("No executable defined for " + os);
+    public String getExecutable()
+    {
+        return executable;
     }
 
     /**
@@ -149,4 +108,12 @@ public abstract class AbstractViceTask extends Task
         this.executable = executable;
     }
 
+    /**
+     * @see org.cbm.ant.util.ProcessConsumer#processOutput(java.lang.String, boolean)
+     */
+    @Override
+    public void processOutput(String output, boolean isError)
+    {
+        log(output);
+    }
 }

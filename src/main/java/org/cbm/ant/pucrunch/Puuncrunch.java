@@ -77,8 +77,7 @@ public class Puuncrunch extends AbstractPucrunchTask implements ProcessConsumer
             return;
         }
 
-        File executable = getExecutable();
-        ProcessHandler handler = new ProcessHandler(this, executable).directory(executable.getParentFile());
+        ProcessHandler handler = createProcessHandler();
 
         handler.parameter("-u");
 
@@ -105,14 +104,5 @@ public class Puuncrunch extends AbstractPucrunchTask implements ProcessConsumer
         {
             target.setLastModified(source.lastModified());
         }
-    }
-
-    /**
-     * @see org.cbm.ant.util.ProcessConsumer#processOutput(java.lang.String, boolean)
-     */
-    @Override
-    public void processOutput(String output, boolean isError)
-    {
-        log(output);
     }
 }

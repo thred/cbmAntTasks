@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
 
@@ -15,8 +16,9 @@ public class ProcessHandler
     private final List<String> parameters;
 
     private File directory;
+    private String executable;
 
-    private ProcessHandler(ProcessConsumer consumer)
+    public ProcessHandler(ProcessConsumer consumer)
     {
         super();
 
@@ -25,25 +27,56 @@ public class ProcessHandler
         parameters = new ArrayList<>();
     }
 
-    public ProcessHandler(ProcessConsumer consumer, String command)
-    {
-        this(consumer);
-
-        parameter(command);
-    }
-
-    public ProcessHandler(ProcessConsumer consumer, File command)
-    {
-        this(consumer);
-
-        parameter(command);
-    }
-
     public ProcessHandler directory(File directory)
     {
         this.directory = directory;
 
         return this;
+    }
+
+    public ProcessHandler executable(String executable)
+    {
+        this.executable = executable;
+
+        return this;
+    }
+
+    public ProcessHandler executable(File home, Map<String, String> executablesByOs)
+    {
+        String os = System.getProperty("os.name");
+
+        for (Map.Entry<String, String> entry : executablesByOs.entrySet())
+        {
+            if (os.matches(entry.getKey()))
+            {
+                if (home != null)
+                {
+                    File file = new File(home, entry.getValue());
+
+                    if (!file.canExecute())
+                    {
+                        File binFile = new File(new File(home, "bin"), entry.getValue());
+
+                        if (!binFile.canExecute())
+                        {
+                            throw new BuildException("Invalid executable, nether \""
+                                + file.getAbsolutePath()
+                                + "\" nor \""
+                                + binFile.getAbsolutePath()
+                                + "\" can be found");
+                        }
+
+                        file = binFile;
+                    }
+
+                    return executable(file.getAbsolutePath());
+                }
+
+                return executable(entry.getValue());
+            }
+        }
+
+        throw new BuildException("No executable defined for OS: " + os);
     }
 
     public ProcessHandler parameter(String parameter)
@@ -55,11 +88,20 @@ public class ProcessHandler
 
     public ProcessHandler parameter(File parameter)
     {
-        return parameter("\"" + parameter.getPath().replace('\\', '/') + "\"");
+        return parameter(parameter.getPath().replace('\\', '/'));
     }
 
     public int consume() throws BuildException
     {
+        List<String> parameters = new ArrayList<>();
+
+        if (executable != null)
+        {
+            parameters.add(executable);
+        }
+
+        parameters.addAll(this.parameters);
+
         ProcessBuilder processBuilder = new ProcessBuilder(parameters);
 
         if (directory != null)
@@ -107,6 +149,16 @@ public class ProcessHandler
     {
         StringBuilder builder = new StringBuilder();
         Iterator<String> it = parameters.iterator();
+
+        if (executable != null)
+        {
+            builder.append(executable);
+
+            if (it.hasNext())
+            {
+                builder.append(" ");
+            }
+        }
 
         while (it.hasNext())
         {

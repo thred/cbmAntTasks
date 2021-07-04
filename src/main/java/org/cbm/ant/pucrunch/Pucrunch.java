@@ -3,7 +3,6 @@ package org.cbm.ant.pucrunch;
 import java.io.File;
 
 import org.apache.tools.ant.BuildException;
-import org.cbm.ant.util.ProcessConsumer;
 import org.cbm.ant.util.ProcessHandler;
 import org.cbm.ant.util.Util;
 
@@ -13,7 +12,7 @@ import org.cbm.ant.util.Util;
  *
  * @author ham
  */
-public class Pucrunch extends AbstractPucrunchTask implements ProcessConsumer
+public class Pucrunch extends AbstractPucrunchTask
 {
 
     /** The source file */
@@ -375,8 +374,7 @@ public class Pucrunch extends AbstractPucrunchTask implements ProcessConsumer
             return;
         }
 
-        File executable = getExecutable();
-        ProcessHandler handler = new ProcessHandler(this, executable).directory(executable.getParentFile());
+        ProcessHandler handler = createProcessHandler();
 
         if (getDecompressor() != null)
         {
@@ -476,14 +474,5 @@ public class Pucrunch extends AbstractPucrunchTask implements ProcessConsumer
         {
             target.setLastModified(source.lastModified());
         }
-    }
-
-    /**
-     * @see org.cbm.ant.util.ProcessConsumer#processOutput(java.lang.String, boolean)
-     */
-    @Override
-    public void processOutput(String output, boolean isError)
-    {
-        log(output);
     }
 }

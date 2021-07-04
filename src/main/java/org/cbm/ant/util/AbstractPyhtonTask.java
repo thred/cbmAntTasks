@@ -49,7 +49,7 @@ public abstract class AbstractPyhtonTask extends Task implements ProcessConsumer
             return new File(environmentSetting);
         }
 
-        return getProject().getBaseDir();
+        return null;
     }
 
     public void setPythonHome(File pythonHome)
@@ -57,47 +57,40 @@ public abstract class AbstractPyhtonTask extends Task implements ProcessConsumer
         this.pythonHome = pythonHome;
     }
 
-    public File getExecutable()
+    /**
+     * Creates a process handler.
+     *
+     * @return the executable
+     * @throws BuildException on occasion
+     */
+    public ProcessHandler createProcessHandler() throws BuildException
     {
+        ProcessHandler handler = new ProcessHandler(this).directory(getProject().getBaseDir());
+
         if (executable != null)
         {
-            File result = new File(executable);
-
-            if (!result.isAbsolute())
-            {
-                result = new File(getPythonHome(), executable);
-            }
-
-            if (!result.exists())
-            {
-                throw new BuildException("Executable invalid: " + result.getAbsolutePath());
-            }
-
-            return result;
+            return handler.executable(executable);
         }
 
-        String os = System.getProperty("os.name");
+        return handler.executable(getPythonHome(), EXECUTABLES);
+    }
 
-        for (Map.Entry<String, String> entry : EXECUTABLES.entrySet())
-        {
-            if (os.matches(entry.getKey()))
-            {
-                File result = new File(getPythonHome(), entry.getValue());
-
-                if (!result.exists())
-                {
-                    throw new BuildException("Executable invalid: " + result.getAbsolutePath());
-                }
-
-                return result;
-            }
-        }
-
-        throw new BuildException("No executable defined for " + os);
+    public String getExecutable()
+    {
+        return executable;
     }
 
     public void setExecutable(String executable)
     {
         this.executable = executable;
+    }
+
+    /**
+     * @see org.cbm.ant.util.ProcessConsumer#processOutput(java.lang.String, boolean)
+     */
+    @Override
+    public void processOutput(String output, boolean isError)
+    {
+        log(output);
     }
 }

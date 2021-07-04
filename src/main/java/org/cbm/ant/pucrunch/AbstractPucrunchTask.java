@@ -6,8 +6,10 @@ import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.cbm.ant.util.ProcessConsumer;
+import org.cbm.ant.util.ProcessHandler;
 
-public abstract class AbstractPucrunchTask extends Task
+public abstract class AbstractPucrunchTask extends Task implements ProcessConsumer
 {
 
     private static final Map<String, String> EXECUTABLES = new HashMap<>();
@@ -49,7 +51,7 @@ public abstract class AbstractPucrunchTask extends Task
             return new File(environmentSetting);
         }
 
-        return getProject().getBaseDir();
+        return null;
     }
 
     public void setPucrunchHome(File pucrunchHome)
@@ -57,43 +59,27 @@ public abstract class AbstractPucrunchTask extends Task
         this.pucrunchHome = pucrunchHome;
     }
 
-    public File getExecutable()
+    /**
+     * Creates a process handler.
+     *
+     * @return the executable
+     * @throws BuildException on occasion
+     */
+    public ProcessHandler createProcessHandler() throws BuildException
     {
+        ProcessHandler handler = new ProcessHandler(this).directory(getProject().getBaseDir());
+
         if (executable != null)
         {
-            File result = new File(executable);
-
-            if (!result.isAbsolute())
-            {
-                result = new File(getPucrunchHome(), executable);
-            }
-
-            if (!result.exists())
-            {
-                throw new BuildException("Executable invalid: " + result.getAbsolutePath());
-            }
-
-            return result;
+            return handler.executable(executable);
         }
 
-        String os = System.getProperty("os.name");
+        return handler.executable(getPucrunchHome(), EXECUTABLES);
+    }
 
-        for (Map.Entry<String, String> entry : EXECUTABLES.entrySet())
-        {
-            if (os.matches(entry.getKey()))
-            {
-                File result = new File(getPucrunchHome(), entry.getValue());
-
-                if (!result.exists())
-                {
-                    throw new BuildException("Executable invalid: " + result.getAbsolutePath());
-                }
-
-                return result;
-            }
-        }
-
-        throw new BuildException("No executable defined for " + os);
+    public String getExecutable()
+    {
+        return executable;
     }
 
     public void setExecutable(String executable)
@@ -101,4 +87,12 @@ public abstract class AbstractPucrunchTask extends Task
         this.executable = executable;
     }
 
+    /**
+     * @see org.cbm.ant.util.ProcessConsumer#processOutput(java.lang.String, boolean)
+     */
+    @Override
+    public void processOutput(String output, boolean isError)
+    {
+        log(output);
+    }
 }

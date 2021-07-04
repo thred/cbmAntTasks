@@ -12,7 +12,6 @@ import org.cbm.ant.util.ProcessHandler;
 
 public class C1541 extends AbstractViceTask implements ProcessConsumer
 {
-
     private static final Map<String, String> EXECUTABLES = new HashMap<>();
 
     static
@@ -125,11 +124,9 @@ public class C1541 extends AbstractViceTask implements ProcessConsumer
             return;
         }
 
-        File executable = getExecutable();
-
         for (C1541Command command : commands)
         {
-            ProcessHandler handler = new ProcessHandler(this, executable).directory(executable.getParentFile());
+            ProcessHandler handler = createProcessHandler();
 
             try
             {
@@ -197,5 +194,4 @@ public class C1541 extends AbstractViceTask implements ProcessConsumer
     {
         log(output);
     }
-
 }

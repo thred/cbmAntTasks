@@ -10,18 +10,17 @@ import java.util.Map;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
 import org.cbm.ant.util.AntFile;
-import org.cbm.ant.util.ProcessConsumer;
 import org.cbm.ant.util.ProcessHandler;
 
-public class LD65 extends AbstractCC65Task implements ProcessConsumer
+public class LD65 extends AbstractCC65Task
 {
 
     private static final Map<String, String> EXECUTABLES = new HashMap<>();
 
     static
     {
-        EXECUTABLES.put("Linux.*", "bin/ld65");
-        EXECUTABLES.put("Windows.*", "bin/ld65.exe");
+        EXECUTABLES.put("Linux.*", "ld65");
+        EXECUTABLES.put("Windows.*", "ld65.exe");
     }
 
     private final Collection<FileSet> files;
@@ -137,9 +136,7 @@ public class LD65 extends AbstractCC65Task implements ProcessConsumer
         }
 
         Collection<AntFile> inputFiles = collect(files);
-        ProcessHandler handler = new ProcessHandler(this, getExecutable());
-
-        handler.directory(getProject().getBaseDir());
+        ProcessHandler handler = createProcessHandler();
 
         if (outputFile != null)
         {
@@ -197,14 +194,4 @@ public class LD65 extends AbstractCC65Task implements ProcessConsumer
 
         outputFile.setLastModified(lastModified());
     }
-
-    /**
-     * @see org.cbm.ant.util.ProcessConsumer#processOutput(java.lang.String, boolean)
-     */
-    @Override
-    public void processOutput(String output, boolean isError)
-    {
-        log(output);
-    }
-
 }

@@ -6,8 +6,10 @@ import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
 import org.cbm.ant.AbstractCBMTask;
+import org.cbm.ant.util.ProcessConsumer;
+import org.cbm.ant.util.ProcessHandler;
 
-public abstract class AbstractCC65Task extends AbstractCBMTask
+public abstract class AbstractCC65Task extends AbstractCBMTask implements ProcessConsumer
 {
 
     private File cc65Home;
@@ -54,7 +56,7 @@ public abstract class AbstractCC65Task extends AbstractCBMTask
             return new File(environmentSetting);
         }
 
-        return getProject().getBaseDir();
+        return null;
     }
 
     /**
@@ -76,49 +78,26 @@ public abstract class AbstractCC65Task extends AbstractCBMTask
     }
 
     /**
-     * Returns the executable. The default depends on the OS.
+     * Creates a process handler.
      *
      * @return the executable
      * @throws BuildException on occasion
      */
-    public File getExecutable() throws BuildException
+    public ProcessHandler createProcessHandler() throws BuildException
     {
+        ProcessHandler handler = new ProcessHandler(this).directory(getProject().getBaseDir());
+
         if (executable != null)
         {
-            File result = new File(executable);
-
-            if (!result.isAbsolute())
-            {
-                result = new File(getCC65Home(), executable);
-            }
-
-            if (!result.exists())
-            {
-                throw new BuildException("Executable invalid: " + result.getAbsolutePath());
-            }
-
-            return result;
+            return handler.executable(executable);
         }
 
-        String os = System.getProperty("os.name");
-        Map<String, String> executables = getExecutables();
+        return handler.executable(getCC65Home(), getExecutables());
+    }
 
-        for (Map.Entry<String, String> entry : executables.entrySet())
-        {
-            if (os.matches(entry.getKey()))
-            {
-                File result = new File(getCC65Home(), entry.getValue());
-
-                if (!result.exists())
-                {
-                    throw new BuildException("Executable invalid: " + result.getAbsolutePath());
-                }
-
-                return result;
-            }
-        }
-
-        throw new BuildException("No executable defined for " + os);
+    public String getExecutable()
+    {
+        return executable;
     }
 
     /**
@@ -146,4 +125,12 @@ public abstract class AbstractCC65Task extends AbstractCBMTask
         this.target = Target.valueOf(target.toUpperCase(Locale.getDefault()));
     }
 
+    /**
+     * @see org.cbm.ant.util.ProcessConsumer#processOutput(java.lang.String, boolean)
+     */
+    @Override
+    public void processOutput(String output, boolean isError)
+    {
+        log(output);
+    }
 }
