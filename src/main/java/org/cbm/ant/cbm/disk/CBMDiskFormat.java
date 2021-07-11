@@ -93,7 +93,7 @@ public enum CBMDiskFormat
     private final int bamTrackNr;
     private final CBMSectorInterleaves sectorInterleaves;
 
-    private CBMDiskFormat(int[] numberOfSectors, boolean errorInformationAvailable, int bamTrackNr,
+    CBMDiskFormat(int[] numberOfSectors, boolean errorInformationAvailable, int bamTrackNr,
         CBMSectorInterleaves interleaves)
     {
         numberOfTracks = numberOfSectors.length;

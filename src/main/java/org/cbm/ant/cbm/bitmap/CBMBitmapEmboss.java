@@ -24,7 +24,7 @@ public enum CBMBitmapEmboss
     private final String name;
     private final float[] mask;
 
-    private CBMBitmapEmboss(String name, float[] mask)
+    CBMBitmapEmboss(String name, float[] mask)
     {
         this.name = name;
         this.mask = mask;

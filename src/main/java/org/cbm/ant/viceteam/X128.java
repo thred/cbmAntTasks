@@ -3,24 +3,28 @@ package org.cbm.ant.viceteam;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cbm.ant.util.OS;
+
 public class X128 extends AbstractViceLaunchTask
 {
 
-    private static final Map<String, String> EXECUTABLES = new HashMap<>();
+    private static final Map<OS, String> EXECUTABLES = new HashMap<>();
 
     static
     {
-        EXECUTABLES.put("Linux.*", "x128");
-        EXECUTABLES.put("Windows.*", "x128.exe");
+        EXECUTABLES.put(OS.LINUX, "x128");
+        EXECUTABLES.put(OS.WINDOWS, "x128.exe");
     }
 
-    /**
-     * @see org.cbm.ant.viceteam.AbstractViceTask#getExecutables()
-     */
     @Override
-    public Map<String, String> getExecutables()
+    protected String getExecutablePropertyKey()
+    {
+        return "x128";
+    }
+
+    @Override
+    protected Map<OS, String> getExecutables()
     {
         return EXECUTABLES;
     }
-
 }

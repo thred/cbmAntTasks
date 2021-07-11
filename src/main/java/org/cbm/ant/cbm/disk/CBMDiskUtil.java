@@ -243,7 +243,7 @@ public class CBMDiskUtil
     {
         for (int i = 0; i < PETSCII_MAPPING.length; i += 1)
         {
-            ASCII_MAPPING.put(PETSCII_MAPPING[i], Byte.valueOf((byte) (i & 0xff)));
+            ASCII_MAPPING.put(PETSCII_MAPPING[i], (byte) (i & 0xff));
         }
     }
 

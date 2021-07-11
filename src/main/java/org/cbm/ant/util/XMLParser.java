@@ -247,15 +247,9 @@ public class XMLParser implements Iterator<XMLParser>, Iterable<XMLParser>
 
     private static Node parse(final File file) throws IOException
     {
-        final FileInputStream in = new FileInputStream(file);
-
-        try
+        try (FileInputStream in = new FileInputStream(file))
         {
             return parse(in);
-        }
-        finally
-        {
-            in.close();
         }
     }
 

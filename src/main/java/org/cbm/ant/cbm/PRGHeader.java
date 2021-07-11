@@ -230,9 +230,7 @@ public class PRGHeader extends Task
 
     private static void write(File file, byte[] header, byte[] bytes) throws IOException
     {
-        OutputStream out = new FileOutputStream(file);
-
-        try
+        try (OutputStream out = new FileOutputStream(file))
         {
             if (header != null)
             {
@@ -240,10 +238,6 @@ public class PRGHeader extends Task
             }
 
             out.write(bytes);
-        }
-        finally
-        {
-            out.close();
         }
     }
 

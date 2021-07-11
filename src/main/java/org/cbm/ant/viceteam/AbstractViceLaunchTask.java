@@ -7,7 +7,6 @@ import org.cbm.ant.util.ProcessHandler;
 
 public abstract class AbstractViceLaunchTask extends AbstractViceTask
 {
-
     private File autostart;
     private File tape;
     private File drive8;
@@ -228,7 +227,7 @@ public abstract class AbstractViceLaunchTask extends AbstractViceTask
             {
             	File viceLaunchFile = File.createTempFile("cbmAntTasks", "viceLaunch");
             	Writer writer = new FileWriter(viceLaunchFile);
-
+            
             	try
             	{
             		writer.write("ll \"");
@@ -239,9 +238,9 @@ public abstract class AbstractViceLaunchTask extends AbstractViceTask
             	{
             		writer.close();
             	}
-
+            
             	handler.parameter("-moncommand").parameter(viceLaunchFile);
-
+            
             	viceLaunchFile.deleteOnExit();
             }
             catch (IOException e)

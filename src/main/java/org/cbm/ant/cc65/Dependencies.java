@@ -24,9 +24,7 @@ public class Dependencies
 
         try
         {
-            BufferedReader reader = new BufferedReader(new FileReader(dependencyFile));
-
-            try
+            try (BufferedReader reader = new BufferedReader(new FileReader(dependencyFile)))
             {
                 String line;
 
@@ -46,10 +44,6 @@ public class Dependencies
                         }
                     }
                 }
-            }
-            finally
-            {
-                reader.close();
             }
         }
         catch (IOException e)

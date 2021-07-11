@@ -317,13 +317,13 @@ public class WindowUtils
 
     private static String determineStateRecordPrefix(Class<? extends Window> windowType, String name)
     {
-        String prefix = windowType.getName();
+        StringBuilder prefix = new StringBuilder(windowType.getName());
 
         if (name != null && !name.isEmpty())
         {
-            prefix += "#" + name;
+            prefix.append("#").append(name);
         }
-        return prefix;
+        return prefix.toString();
     }
 
     private static class WindowStateRecorder implements ComponentListener, WindowStateListener

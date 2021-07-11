@@ -84,7 +84,7 @@ public class CBMDiskFormatTaskCommand extends AbstractCBMDiskTaskCommand
 
         operator.format(getType().getFormat(), getDiskName(), getId());
 
-        return Long.valueOf(System.currentTimeMillis());
+        return System.currentTimeMillis();
     }
 
 }

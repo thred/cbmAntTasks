@@ -1,5 +1,7 @@
 package org.cbm.ant.cbm.disk;
 
+import java.util.Objects;
+
 public class CBMDiskLocation
 {
 
@@ -31,13 +33,7 @@ public class CBMDiskLocation
     @Override
     public int hashCode()
     {
-        final int prime = 31;
-        int result = 1;
-
-        result = prime * result + sectorNr;
-        result = prime * result + trackNr;
-
-        return result;
+        return Objects.hash(sectorNr, trackNr);
     }
 
     /**

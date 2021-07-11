@@ -6,10 +6,10 @@ import org.cbm.ant.cbm.disk.CBMDiskOperator;
 public interface CBMDiskTaskCommand
 {
 
-    public boolean isFailOnError();
+    boolean isFailOnError();
 
-    public boolean isExecutionNecessary(long lastModified, boolean exists);
+    boolean isExecutionNecessary(long lastModified, boolean exists);
 
-    public Long execute(CBMDiskTask task, CBMDiskOperator operator) throws BuildException;
+    Long execute(CBMDiskTask task, CBMDiskOperator operator) throws BuildException;
 
 }

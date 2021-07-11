@@ -17,7 +17,7 @@ public enum Decompressor
 
     private final String key;
 
-    private Decompressor(String key)
+    Decompressor(String key)
     {
         this.key = key;
     }

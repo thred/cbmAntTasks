@@ -179,9 +179,7 @@ public class PRGSplitPart
 
         try
         {
-            FileOutputStream out = new FileOutputStream(target);
-
-            try
+            try (FileOutputStream out = new FileOutputStream(target))
             {
                 if (isIncludeHeader())
                 {
@@ -189,10 +187,6 @@ public class PRGSplitPart
                 }
 
                 out.write(bytes, offset, length);
-            }
-            finally
-            {
-                out.close();
             }
         }
         catch (IOException e)

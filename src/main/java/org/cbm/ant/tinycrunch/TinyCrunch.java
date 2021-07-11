@@ -3,7 +3,7 @@ package org.cbm.ant.tinycrunch;
 import java.io.File;
 
 import org.apache.tools.ant.BuildException;
-import org.cbm.ant.util.AbstractPyhtonTask;
+import org.cbm.ant.AbstractCBMPyhtonTask;
 import org.cbm.ant.util.ProcessHandler;
 import org.cbm.ant.util.Util;
 
@@ -13,7 +13,7 @@ import org.cbm.ant.util.Util;
  *
  * @author ham
  */
-public class TinyCrunch extends AbstractPyhtonTask
+public class TinyCrunch extends AbstractCBMPyhtonTask
 {
 
     private File tinyCrunchScript;

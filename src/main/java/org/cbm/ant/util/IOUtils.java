@@ -13,29 +13,17 @@ public class IOUtils
 
     public static void read(File file, OutputStream out) throws IOException
     {
-        InputStream in = new FileInputStream(file);
-
-        try
+        try (InputStream in = new FileInputStream(file))
         {
             copy(in, out);
-        }
-        finally
-        {
-            in.close();
         }
     }
 
     public static void write(File file, InputStream in) throws IOException
     {
-        OutputStream out = new FileOutputStream(file);
-
-        try
+        try (OutputStream out = new FileOutputStream(file))
         {
             copy(in, out);
-        }
-        finally
-        {
-            out.close();
         }
     }
 

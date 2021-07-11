@@ -120,7 +120,7 @@ public enum CBMBitmapDither
     private final String name;
     private final CBMBitmapDitherStrategy strategy;
 
-    private CBMBitmapDither(String name, CBMBitmapDitherStrategy strategy)
+    CBMBitmapDither(String name, CBMBitmapDitherStrategy strategy)
     {
         this.name = name;
         this.strategy = strategy;

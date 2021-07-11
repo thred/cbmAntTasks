@@ -105,4 +105,4 @@ public class CBMBitmapErrorDiffusionDitherStrategy extends AbstractCBMBitmapDith
         value[2] += coefficient * error[2];
     }
 
-};
+}

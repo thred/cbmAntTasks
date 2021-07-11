@@ -3,9 +3,9 @@ package org.cbm.ant.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
 
@@ -41,42 +41,32 @@ public class ProcessHandler
         return this;
     }
 
-    public ProcessHandler executable(File home, Map<String, String> executablesByOs)
+    public ProcessHandler executable(File home, String executable)
     {
-        String os = System.getProperty("os.name");
-
-        for (Map.Entry<String, String> entry : executablesByOs.entrySet())
+        if (home != null)
         {
-            if (os.matches(entry.getKey()))
+            File file = new File(home, executable);
+
+            if (!file.canExecute())
             {
-                if (home != null)
+                File binFile = new File(new File(home, "bin"), executable);
+
+                if (!binFile.canExecute())
                 {
-                    File file = new File(home, entry.getValue());
-
-                    if (!file.canExecute())
-                    {
-                        File binFile = new File(new File(home, "bin"), entry.getValue());
-
-                        if (!binFile.canExecute())
-                        {
-                            throw new BuildException("Invalid executable, nether \""
-                                + file.getAbsolutePath()
-                                + "\" nor \""
-                                + binFile.getAbsolutePath()
-                                + "\" can be found");
-                        }
-
-                        file = binFile;
-                    }
-
-                    return executable(file.getAbsolutePath());
+                    throw new BuildException("Invalid executable, nether \""
+                        + file.getAbsolutePath()
+                        + "\" nor \""
+                        + binFile.getAbsolutePath()
+                        + "\" can be found");
                 }
 
-                return executable(entry.getValue());
+                file = binFile;
             }
+
+            return executable(file.getAbsolutePath());
         }
 
-        throw new BuildException("No executable defined for OS: " + os);
+        return executable(executable);
     }
 
     public ProcessHandler parameter(String parameter)
@@ -97,7 +87,19 @@ public class ProcessHandler
 
         if (executable != null)
         {
-            parameters.add(executable);
+            executable = executable.trim();
+            if (executable.startsWith("\"") && executable.endsWith("\""))
+            {
+                parameters.add(executable);
+            }
+            else if (executable.startsWith("\'") && executable.endsWith("\'"))
+            {
+                parameters.add(executable);
+            }
+            else
+            {
+                Collections.addAll(parameters, executable.split(" +"));
+            }
         }
 
         parameters.addAll(this.parameters);

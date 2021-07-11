@@ -205,19 +205,13 @@ public class Prefs
 
         try
         {
-            ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes));
-
-            try
+            try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes)))
             {
                 return (TYPE) in.readObject();
             }
             catch (ClassNotFoundException e)
             {
                 return defaultValue;
-            }
-            finally
-            {
-                in.close();
             }
         }
         catch (IOException e)

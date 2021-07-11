@@ -15,8 +15,8 @@ public enum GraphicsMode
     private final int heightPerSprite;
     private final int numberOfColors;
 
-    private GraphicsMode(String name, int divider, int widthPerChar, int heightPerChar, int widthPerSprite,
-        int heightPerSprite, int numberOfColors)
+    GraphicsMode(String name, int divider, int widthPerChar, int heightPerChar, int widthPerSprite, int heightPerSprite,
+        int numberOfColors)
     {
         this.name = name;
         this.divider = divider;

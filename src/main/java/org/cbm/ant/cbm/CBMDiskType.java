@@ -11,7 +11,7 @@ public enum CBMDiskType
 
     private final CBMDiskFormat format;
 
-    private CBMDiskType(CBMDiskFormat format)
+    CBMDiskType(CBMDiskFormat format)
     {
         this.format = format;
     }

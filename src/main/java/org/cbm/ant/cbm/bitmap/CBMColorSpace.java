@@ -23,7 +23,7 @@ public enum CBMColorSpace
     private final String name;
     private final CBMColorConversion conversion;
 
-    private CBMColorSpace(String name, CBMColorConversion conversion)
+    CBMColorSpace(String name, CBMColorConversion conversion)
     {
         this.name = name;
         this.conversion = conversion;

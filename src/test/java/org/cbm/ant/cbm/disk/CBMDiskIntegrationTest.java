@@ -88,9 +88,7 @@ public class CBMDiskIntegrationTest
     private void writeToDisk(CBMDiskOperator operator, String fileName, byte[] sampleA)
         throws IOException, CBMDiskException
     {
-        CBMDiskOutputStream out = operator.create(fileName, CBMFileType.PRG, null);
-
-        try
+        try (CBMDiskOutputStream out = operator.create(fileName, CBMFileType.PRG, null))
         {
             ByteArrayInputStream in = new ByteArrayInputStream(sampleA);
 
@@ -103,10 +101,6 @@ public class CBMDiskIntegrationTest
                 in.close();
             }
         }
-        finally
-        {
-            out.close();
-        }
     }
 
     public byte[] readFromDisk(CBMDiskOperator operator, String fileName) throws IOException
@@ -115,15 +109,9 @@ public class CBMDiskIntegrationTest
 
         try
         {
-            InputStream in = operator.open(fileName);
-
-            try
+            try (InputStream in = operator.open(fileName))
             {
                 IOUtils.copy(in, out);
-            }
-            finally
-            {
-                in.close();
             }
         }
         finally

@@ -105,15 +105,9 @@ public class CBMDisk
             throw new IOException("Unsupported file format");
         }
 
-        InputStream in = new FileInputStream(file);
-
-        try
+        try (InputStream in = new FileInputStream(file))
         {
             read(in, format);
-        }
-        finally
-        {
-            in.close();
         }
     }
 
@@ -148,15 +142,9 @@ public class CBMDisk
      */
     public void save(File file) throws IOException
     {
-        OutputStream out = new FileOutputStream(file);
-
-        try
+        try (OutputStream out = new FileOutputStream(file))
         {
             write(out);
-        }
-        finally
-        {
-            out.close();
         }
     }
 

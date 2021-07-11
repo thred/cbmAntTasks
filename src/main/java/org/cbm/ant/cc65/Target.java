@@ -8,7 +8,7 @@ public enum Target
     private final String name;
     private final Library[] libraries;
 
-    private Target(String name, Library... libraries)
+    Target(String name, Library... libraries)
     {
         this.name = name;
         this.libraries = libraries;

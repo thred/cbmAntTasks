@@ -102,18 +102,12 @@ public class Data extends Task
 
         try
         {
-            FileOutputStream out = new FileOutputStream(target);
-
-            try
+            try (FileOutputStream out = new FileOutputStream(target))
             {
                 for (DataCommand command : commands)
                 {
                     command.execute(this, out);
                 }
-            }
-            finally
-            {
-                out.close();
             }
         }
         catch (IOException e)

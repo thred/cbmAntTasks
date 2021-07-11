@@ -3,7 +3,6 @@ package org.cbm.ant.pucrunch;
 import java.io.File;
 
 import org.apache.tools.ant.BuildException;
-import org.cbm.ant.util.ProcessConsumer;
 import org.cbm.ant.util.ProcessHandler;
 
 /**
@@ -12,7 +11,7 @@ import org.cbm.ant.util.ProcessHandler;
  *
  * @author ham
  */
-public class Puuncrunch extends AbstractPucrunchTask implements ProcessConsumer
+public class Puuncrunch extends AbstractPucrunchTask
 {
 
     /** The source file */

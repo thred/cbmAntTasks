@@ -66,9 +66,7 @@ public class Util
 
         try
         {
-            InputStream in = new FileInputStream(file);
-
-            try
+            try (InputStream in = new FileInputStream(file))
             {
                 byte[] buffer = new byte[4096];
                 int length;
@@ -77,10 +75,6 @@ public class Util
                 {
                     out.write(buffer, 0, length);
                 }
-            }
-            finally
-            {
-                in.close();
             }
         }
         finally

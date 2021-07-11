@@ -38,15 +38,9 @@ public class PersistentProperties
         {
             try
             {
-                FileInputStream in = new FileInputStream(file);
-
-                try
+                try (FileInputStream in = new FileInputStream(file))
                 {
                     properties.load(in);
-                }
-                finally
-                {
-                    in.close();
                 }
             }
             catch (IOException e)
@@ -62,15 +56,9 @@ public class PersistentProperties
 
         try
         {
-            FileOutputStream out = new FileOutputStream(file);
-
-            try
+            try (FileOutputStream out = new FileOutputStream(file))
             {
                 properties.store(out, "CBMAntTasks - Persistent Properties");
-            }
-            finally
-            {
-                out.close();
             }
         }
         catch (IOException e)

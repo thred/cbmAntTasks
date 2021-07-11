@@ -7,17 +7,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
-import org.cbm.ant.util.ProcessConsumer;
+import org.cbm.ant.util.OS;
 import org.cbm.ant.util.ProcessHandler;
 
-public class C1541 extends AbstractViceTask implements ProcessConsumer
+public class C1541 extends AbstractViceTask
 {
-    private static final Map<String, String> EXECUTABLES = new HashMap<>();
+    private static final Map<OS, String> EXECUTABLES = new HashMap<>();
 
     static
     {
-        EXECUTABLES.put("Linux.*", "c1541");
-        EXECUTABLES.put("Windows.*", "c1541.exe");
+        EXECUTABLES.put(OS.LINUX, "c1541");
+        EXECUTABLES.put(OS.WINDOWS, "c1541.exe");
     }
 
     private final List<C1541Command> commands;
@@ -32,11 +32,14 @@ public class C1541 extends AbstractViceTask implements ProcessConsumer
         commands = new ArrayList<>();
     }
 
-    /**
-     * @see org.cbm.ant.viceteam.AbstractViceTask#getExecutables()
-     */
     @Override
-    public Map<String, String> getExecutables()
+    protected String getExecutablePropertyKey()
+    {
+        return "c1541";
+    }
+
+    @Override
+    protected Map<OS, String> getExecutables()
     {
         return EXECUTABLES;
     }

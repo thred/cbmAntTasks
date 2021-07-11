@@ -189,15 +189,9 @@ public class CBMDiskWriteTaskCommand extends AbstractCBMDiskTaskCommand
         {
             try
             {
-                InputStream in = new FileInputStream(getSource());
-
-                try
+                try (InputStream in = new FileInputStream(getSource()))
                 {
                     IOUtils.copy(in, out);
-                }
-                finally
-                {
-                    in.close();
                 }
             }
             catch (IOException e)
@@ -219,6 +213,6 @@ public class CBMDiskWriteTaskCommand extends AbstractCBMDiskTaskCommand
             }
         }
 
-        return Long.valueOf(getSource().lastModified());
+        return getSource().lastModified();
     }
 }

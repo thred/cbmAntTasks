@@ -8,9 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Grammar:
- *
- * statement = expression { operator expression }.<br>
+ * Grammar: statement = expression { operator expression }.<br>
  * expression = [unaryOperator] ( "(" statement ")" | INT ).<br>
  * operator = "+" | "-" | "*" | "/" | "&" | "|".<br>
  * unaryOperator = "-" | "~".<br>

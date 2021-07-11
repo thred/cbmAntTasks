@@ -10,17 +10,18 @@ import java.util.Map;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
 import org.cbm.ant.util.AntFile;
+import org.cbm.ant.util.OS;
 import org.cbm.ant.util.ProcessHandler;
 
 public class CL65 extends AbstractCC65Task
 {
 
-    private static final Map<String, String> EXECUTABLES = new HashMap<>();
+    private static final Map<OS, String> EXECUTABLES = new HashMap<>();
 
     static
     {
-        EXECUTABLES.put("Linux.*", "cl65");
-        EXECUTABLES.put("Windows.*", "cl65.exe");
+        EXECUTABLES.put(OS.LINUX, "cl65");
+        EXECUTABLES.put(OS.WINDOWS, "cl65.exe");
     }
 
     private final List<FileSet> files;
@@ -37,11 +38,14 @@ public class CL65 extends AbstractCC65Task
         includes = new ArrayList<>();
     }
 
-    /**
-     * @see org.cbm.ant.cc65.AbstractCC65Task#getExecutables()
-     */
     @Override
-    public Map<String, String> getExecutables()
+    protected String getExecutablePropertyKey()
+    {
+        return "cl65";
+    }
+
+    @Override
+    protected Map<OS, String> getExecutables()
     {
         return EXECUTABLES;
     }

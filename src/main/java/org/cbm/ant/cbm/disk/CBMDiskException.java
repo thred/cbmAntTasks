@@ -3,14 +3,14 @@ package org.cbm.ant.cbm.disk;
 public class CBMDiskException extends Exception
 {
 
-    public static enum Type
+    public enum Type
     {
         DISK_FULL("Disk is full"),
         NO_FREE_SECTOR("No free sector found");
 
         private final String message;
 
-        private Type(String message)
+        Type(String message)
         {
             this.message = message;
         }

@@ -41,7 +41,7 @@ public class CBMDiskDirEntry
         {
             getSector().fill(getPosition(0), 2, 0x00);
         }
-        
+
         getSector().setByte(getPosition(FILE_TYPE_POS), CBMFileType.DEL.getType());
         setFileTrackNr(0x00);
         setFileSectorNr(0x00);

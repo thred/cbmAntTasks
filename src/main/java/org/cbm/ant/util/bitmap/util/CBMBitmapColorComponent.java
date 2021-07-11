@@ -34,7 +34,7 @@ import org.cbm.ant.util.bitmap.CBMBitmapUtility;
 public class CBMBitmapColorComponent extends JComponent implements ActionListener
 {
 
-    private static interface PickerCallable
+    private interface PickerCallable
     {
 
         void picked(Color color);
@@ -304,8 +304,6 @@ public class CBMBitmapColorComponent extends JComponent implements ActionListene
         if (source == doNotUseItem || source == optionalItem || source == mandatoryItem)
         {
             fireActionEvent();
-
-            return;
         }
         else if (source == pickHueItem)
         {

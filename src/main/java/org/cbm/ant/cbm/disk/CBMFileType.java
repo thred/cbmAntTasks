@@ -12,7 +12,7 @@ public enum CBMFileType
     private final String name;
     private final int type;
 
-    private CBMFileType(String name, int type)
+    CBMFileType(String name, int type)
     {
         this.name = name;
         this.type = type;
