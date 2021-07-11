@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,13 +40,10 @@ public class CBMBitmapUtils
         {
             try
             {
-                object = type.newInstance();
+                object = type.getConstructor().newInstance();
             }
-            catch (InstantiationException e)
-            {
-                throw new IllegalArgumentException("Failed to create instance of " + type, e);
-            }
-            catch (IllegalAccessException e)
+            catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException | NoSuchMethodException | SecurityException e)
             {
                 throw new IllegalArgumentException("Failed to create instance of " + type, e);
             }

@@ -19,7 +19,7 @@ public class CBMBitmapDitherModeTool extends AbstractCBMBitmapTool implements Ac
 
     private static final long serialVersionUID = -3018765182933957393L;
 
-    private final JComboBox ditherBox = new JComboBox(CBMBitmapDither.values());
+    private final JComboBox<CBMBitmapDither> ditherBox = new JComboBox<>(CBMBitmapDither.values());
     private final CBMBitmapSlider ditherStrengthSlider = CBMBitmapUtils.createSlider(100, 0, 100, 5, 25, this);
 
     public CBMBitmapDitherModeTool()

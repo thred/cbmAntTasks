@@ -90,15 +90,9 @@ public class CBMDiskIntegrationTest
     {
         try (CBMDiskOutputStream out = operator.create(fileName, CBMFileType.PRG, null))
         {
-            ByteArrayInputStream in = new ByteArrayInputStream(sampleA);
-
-            try
+            try (ByteArrayInputStream in = new ByteArrayInputStream(sampleA))
             {
                 IOUtils.copy(in, out);
-            }
-            finally
-            {
-                in.close();
             }
         }
     }

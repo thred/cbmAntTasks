@@ -17,8 +17,8 @@ public class CBMBitmapConversionTool extends AbstractCBMBitmapTool implements Ac
 
     private static final long serialVersionUID = -3018765182933957393L;
 
-    private final JComboBox colorSpaceBox = new JComboBox(CBMColorSpace.values());
-    private final JComboBox graphicsModeBox = new JComboBox(GraphicsMode.values());
+    private final JComboBox<CBMColorSpace> colorSpaceBox = new JComboBox<>(CBMColorSpace.values());
+    private final JComboBox<GraphicsMode> graphicsModeBox = new JComboBox<>(GraphicsMode.values());
 
     public CBMBitmapConversionTool()
     {

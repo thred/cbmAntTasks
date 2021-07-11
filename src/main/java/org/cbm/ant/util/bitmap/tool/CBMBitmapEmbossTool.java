@@ -19,7 +19,7 @@ public class CBMBitmapEmbossTool extends AbstractCBMBitmapTool implements Action
 
     private static final long serialVersionUID = -3018765182933957393L;
 
-    private final JComboBox embossBox = new JComboBox(CBMBitmapEmboss.values());
+    private final JComboBox<CBMBitmapEmboss> embossBox = new JComboBox<>(CBMBitmapEmboss.values());
     private final CBMBitmapSlider embossStrengthSlider = CBMBitmapUtils.createSlider(100, 0, 500, 10, 50, this);
 
     public CBMBitmapEmbossTool()
