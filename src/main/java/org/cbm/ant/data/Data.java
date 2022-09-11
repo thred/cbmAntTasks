@@ -42,6 +42,11 @@ public class Data extends Task
         commands.add(command);
     }
 
+    public void addCharImage(DataCharImage image)
+    {
+        addCommand(image);
+    }
+
     public void addFill(DataFill fill)
     {
         addCommand(fill);
