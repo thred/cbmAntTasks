@@ -1,6 +1,7 @@
 package org.cbm.ant.cbm.disk;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.cbm.ant.util.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CBMDiskIntegrationTest
 {
@@ -21,23 +22,24 @@ public class CBMDiskIntegrationTest
         CBMDiskBAM bam = operator.getBAM();
         CBMDiskSector bamSector = bam.getBAMSector();
 
-        assertEquals(18, bamSector.getTrackNr());
-        assertEquals(0, bamSector.getSectorNr());
+        assertThat(bamSector.getTrackNr(), equalTo(18));
+        assertThat(bamSector.getSectorNr(), equalTo(0));
 
-        assertEquals(18, bam.getDirTrackNr());
-        assertEquals(1, bam.getDirSectorNr());
-        assertTrue(bam.isSectorUsed(18, 0));
+        assertThat(bam.getDirTrackNr(), equalTo(18));
+        assertThat(bam.getDirSectorNr(), equalTo(1));
+        assertThat(bam.isSectorUsed(18, 0), equalTo(true));
 
-        assertEquals("01", bam.getDiskID());
-        assertEquals("a2", bam.getDOSType());
-        assertEquals(0x41, bam.getDOSVersion());
-        assertEquals("test\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0", bam.getDiskName());
-        assertEquals(664, bam.getFreeSectors());
+        assertThat(bam.getDiskID(), equalTo("01"));
+        assertThat(bam.getDOSType(), equalTo("a2"));
+        assertThat(bam.getDOSVersion(), equalTo(0x41));
+        assertThat(bam.getDiskName(),
+            equalTo("test\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0"));
+        assertThat(bam.getFreeSectors(), equalTo(664));
 
         CBMDiskDir dir = operator.getDir();
         CBMDiskDirSector firstDirSector = dir.getFirstDirSector();
 
-        assertTrue(bam.isSectorUsed(firstDirSector.getLocation()));
+        assertThat(bam.isSectorUsed(firstDirSector.getLocation()), equalTo(true));
     }
 
     @Test
@@ -71,18 +73,16 @@ public class CBMDiskIntegrationTest
 
         operator.getDir().list(System.out, false, false);
 
-        assertArrayEquals(sample0, readFromDisk(operator, "sample 0"));
-        assertArrayEquals(sampleA, readFromDisk(operator, "sample a"));
-        assertArrayEquals(sampleB, readFromDisk(operator, "sample b"));
-        assertArrayEquals(sampleC, readFromDisk(operator, "sample c"));
-        assertArrayEquals(sampleD, readFromDisk(operator, "sample d"));
-        assertArrayEquals(sampleE, readFromDisk(operator, "sample e"));
-        assertArrayEquals(sampleF, readFromDisk(operator, "sample f"));
-        assertArrayEquals(sampleG, readFromDisk(operator, "sample g"));
-        assertArrayEquals(sampleH, readFromDisk(operator, "sample h"));
-        assertArrayEquals(sampleI, readFromDisk(operator, "sample i"));
-
-        //operator.getDisk().save(new File("D:/test.d64"));
+        assertThat(readFromDisk(operator, "sample 0"), equalTo(sample0));
+        assertThat(readFromDisk(operator, "sample a"), equalTo(sampleA));
+        assertThat(readFromDisk(operator, "sample b"), equalTo(sampleB));
+        assertThat(readFromDisk(operator, "sample c"), equalTo(sampleC));
+        assertThat(readFromDisk(operator, "sample d"), equalTo(sampleD));
+        assertThat(readFromDisk(operator, "sample e"), equalTo(sampleE));
+        assertThat(readFromDisk(operator, "sample f"), equalTo(sampleF));
+        assertThat(readFromDisk(operator, "sample g"), equalTo(sampleG));
+        assertThat(readFromDisk(operator, "sample h"), equalTo(sampleH));
+        assertThat(readFromDisk(operator, "sample i"), equalTo(sampleI));
     }
 
     private void writeToDisk(CBMDiskOperator operator, String fileName, byte[] sampleA)

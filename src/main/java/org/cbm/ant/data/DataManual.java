@@ -1,14 +1,12 @@
 package org.cbm.ant.data;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.StringTokenizer;
 
 import org.apache.tools.ant.BuildException;
 
-public class DataManual implements DataCommand
+public class DataManual extends AbstractDataCommand
 {
-
     private String values;
 
     public DataManual()
@@ -27,7 +25,7 @@ public class DataManual implements DataCommand
     }
 
     /**
-     * @see org.cbm.ant.data.DataCommand#isExecutionNecessary(long, boolean)
+     * @see org.cbm.ant.data.AbstractDataCommand#isExecutionNecessary(long, boolean)
      */
     @Override
     public boolean isExecutionNecessary(long lastModified, boolean exists)
@@ -36,19 +34,16 @@ public class DataManual implements DataCommand
     }
 
     /**
-     * @see org.cbm.ant.data.DataCommand#execute(Data, java.io.OutputStream)
+     * @see org.cbm.ant.data.AbstractDataCommand#execute(Data, DataWriter)
      */
     @Override
-    public void execute(Data task, OutputStream out) throws BuildException, IOException
+    public void execute(Data task, DataWriter writer) throws BuildException, IOException
     {
-        task.log("Adding manual data");
-
         StringTokenizer tokenizer = new StringTokenizer(values);
 
         while (tokenizer.hasMoreTokens())
         {
-            out.write(Integer.parseInt(tokenizer.nextToken()));
+            writer.writeByte(Integer.parseInt(tokenizer.nextToken()));
         }
     }
-
 }

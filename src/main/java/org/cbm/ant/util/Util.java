@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
@@ -36,7 +38,7 @@ public class Util
         return ConstantStatement.evaluate(hex);
     }
 
-    public static String toHex(byte value)
+    public static String toHex(String prefix, byte value)
     {
         String result = Integer.toHexString(unsignedByteToInt(value));
 
@@ -45,10 +47,10 @@ public class Util
             result = "0" + result;
         }
 
-        return "0x" + result;
+        return prefix + result;
     }
 
-    public static String toHex(int value)
+    public static String toHex(String prefix, int value)
     {
         String result = Integer.toHexString(value);
 
@@ -57,7 +59,7 @@ public class Util
             result = "0" + result;
         }
 
-        return "0x" + result;
+        return prefix + result;
     }
 
     public static byte[] read(File file) throws IOException
@@ -261,4 +263,59 @@ public class Util
         return file;
     }
 
+    public static List<String> splitAndSanitizeLines(String text)
+    {
+        List<String> lines = new ArrayList<>();
+
+        Collections.addAll(lines, text.split("(\\r|\\n|(\\r\\n))"));
+
+        if (lines.isEmpty())
+        {
+            return lines;
+        }
+
+        if (lines.get(0).isBlank())
+        {
+            lines.remove(0);
+        }
+
+        if (lines.get(lines.size() - 1).isBlank())
+        {
+            lines.remove(lines.get(lines.size() - 1));
+        }
+
+        while (removeCommonPrefix(lines, " ") || removeCommonPrefix(lines, "\t"))
+        {
+            // intentionally left blank;
+        }
+
+        return lines;
+    }
+
+    private static boolean removeCommonPrefix(List<String> lines, String prefix)
+    {
+        if (prefix.length() == 0)
+        {
+            return false;
+        }
+
+        if (!lines.stream().filter(line -> !line.isBlank()).allMatch(line -> line.startsWith(prefix)))
+        {
+            return false;
+        }
+
+        for (int i = 0; i < lines.size(); ++i)
+        {
+            String line = lines.get(i);
+
+            if (line.isBlank() && !line.startsWith(prefix))
+            {
+                continue;
+            }
+
+            lines.set(i, line.substring(prefix.length()));
+        }
+
+        return true;
+    }
 }

@@ -162,7 +162,7 @@ public class PRGSplit extends Task
         {
             header = (bytes[0] & 0xff) + ((bytes[1] & 0xff) << 8);
 
-            log("Header is " + Util.toHex(header));
+            log("Header is " + Util.toHex("0x", header));
 
             bytes = Arrays.copyOfRange(bytes, 2, bytes.length);
         }

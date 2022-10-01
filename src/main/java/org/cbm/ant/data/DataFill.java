@@ -1,14 +1,12 @@
 package org.cbm.ant.data;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import org.apache.tools.ant.BuildException;
 import org.cbm.ant.util.Util;
 
-public class DataFill implements DataCommand
+public class DataFill extends AbstractDataCommand
 {
-
     private int length;
     private String value;
 
@@ -38,7 +36,7 @@ public class DataFill implements DataCommand
     }
 
     /**
-     * @see org.cbm.ant.data.DataCommand#isExecutionNecessary(long, boolean)
+     * @see org.cbm.ant.data.AbstractDataCommand#isExecutionNecessary(long, boolean)
      */
     @Override
     public boolean isExecutionNecessary(long lastModified, boolean exists)
@@ -47,19 +45,16 @@ public class DataFill implements DataCommand
     }
 
     /**
-     * @see org.cbm.ant.data.DataCommand#execute(Data, java.io.OutputStream)
+     * @see org.cbm.ant.data.AbstractDataCommand#execute(Data, DataWriter)
      */
     @Override
-    public void execute(Data task, OutputStream out) throws BuildException, IOException
+    public void execute(Data task, DataWriter writer) throws BuildException, IOException
     {
-        task.log("Adding " + length + " time " + value);
-
         int v = Util.parseHex(value);
 
         for (int i = 0; i < length; i += 1)
         {
-            out.write(v);
+            writer.writeByte(v);
         }
     }
-
 }

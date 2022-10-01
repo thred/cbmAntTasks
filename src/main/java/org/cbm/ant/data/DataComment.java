@@ -3,32 +3,20 @@ package org.cbm.ant.data;
 import java.io.IOException;
 
 import org.apache.tools.ant.BuildException;
-import org.cbm.ant.util.Util;
 
-public class DataHeader extends AbstractDataCommand
+public class DataComment extends AbstractDataCommand
 {
-    private byte[] header;
 
-    public DataHeader()
+    private final StringBuilder builder = new StringBuilder();
+
+    public DataComment()
     {
         super();
     }
 
-    public byte[] getHeader()
+    public void addText(String text)
     {
-        return header;
-    }
-
-    public void setHeader(String header)
-    {
-        int value = Util.parseHex(header);
-
-        if (value < 0x0000 || value > 0xffff)
-        {
-            throw new BuildException("Invalid header: " + header);
-        }
-
-        this.header = new byte[]{(byte) (value % 0x0100), (byte) (value / 0x0100)};
+        builder.append(text);
     }
 
     /**
@@ -46,6 +34,6 @@ public class DataHeader extends AbstractDataCommand
     @Override
     public void execute(Data task, DataWriter writer) throws BuildException, IOException
     {
-        writer.writeBytes(header);
+        writer.writeComment(builder.toString());
     }
 }

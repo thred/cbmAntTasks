@@ -3,6 +3,8 @@ package org.cbm.ant.data;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,9 +18,10 @@ import org.apache.tools.ant.Task;
  */
 public class Data extends Task
 {
-
     private File target;
-    private final List<DataCommand> commands;
+    private DataFormat format;
+    private Charset charset;
+    private final List<AbstractDataCommand> commands;
 
     public Data()
     {
@@ -37,7 +40,37 @@ public class Data extends Task
         this.target = target;
     }
 
-    private void addCommand(DataCommand command)
+    public DataFormat getFormat()
+    {
+        if (format == null)
+        {
+            return DataFormat.BINARY;
+        }
+
+        return format;
+    }
+
+    public void setFormat(DataFormat format)
+    {
+        this.format = format;
+    }
+
+    public Charset getCharset()
+    {
+        if (charset == null)
+        {
+            charset = StandardCharsets.UTF_8;
+        }
+
+        return charset;
+    }
+
+    public void setCharset(Charset charset)
+    {
+        this.charset = charset;
+    }
+
+    private void addCommand(AbstractDataCommand command)
     {
         commands.add(command);
     }
@@ -45,6 +78,11 @@ public class Data extends Task
     public void addCharImage(DataCharImage image)
     {
         addCommand(image);
+    }
+
+    public void addComment(DataComment comment)
+    {
+        addCommand(comment);
     }
 
     public void addFill(DataFill fill)
@@ -89,7 +127,7 @@ public class Data extends Task
         boolean exists = target.exists();
         long lastModified = exists ? target.lastModified() : -1;
 
-        for (DataCommand command : commands)
+        for (AbstractDataCommand command : commands)
         {
             if (command.isExecutionNecessary(lastModified, exists))
             {
@@ -109,9 +147,26 @@ public class Data extends Task
         {
             try (FileOutputStream out = new FileOutputStream(target))
             {
-                for (DataCommand command : commands)
+                Charset charset = getCharset();
+                DataWriter writer = null;
+                DataFormat format = null;
+
+                for (AbstractDataCommand command : commands)
                 {
-                    command.execute(this, out);
+                    DataFormat currentFormat = command.getFormat();
+
+                    if (currentFormat == null)
+                    {
+                        currentFormat = getFormat();
+                    }
+
+                    if (format != currentFormat)
+                    {
+                        format = currentFormat;
+                        writer = format.createWriter(out, charset);
+                    }
+
+                    command.execute(this, writer);
                 }
             }
         }
@@ -120,5 +175,4 @@ public class Data extends Task
             throw new BuildException("Failed to write file: " + target, e);
         }
     }
-
 }

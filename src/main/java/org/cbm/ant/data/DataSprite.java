@@ -11,9 +11,8 @@ import org.cbm.ant.cbm.bitmap.CBMBitmap;
 import org.cbm.ant.cbm.bitmap.CBMBitmapDither;
 import org.cbm.ant.cbm.bitmap.GraphicsMode;
 
-public class DataSprite implements DataCommand
+public class DataSprite extends AbstractDataCommand
 {
-
     private final CBMBitmap bitmap;
 
     private File image;
@@ -102,7 +101,7 @@ public class DataSprite implements DataCommand
     }
 
     /**
-     * @see org.cbm.ant.data.DataCommand#isExecutionNecessary(long, boolean)
+     * @see org.cbm.ant.data.AbstractDataCommand#isExecutionNecessary(long, boolean)
      */
     @Override
     public boolean isExecutionNecessary(long lastModified, boolean exists)
@@ -120,13 +119,11 @@ public class DataSprite implements DataCommand
     /**
      * {@inheritDoc}
      *
-     * @see org.cbm.ant.data.DataCommand#execute(org.cbm.ant.data.Data, java.io.OutputStream)
+     * @see org.cbm.ant.data.AbstractDataCommand#execute(org.cbm.ant.data.Data, DataWriter)
      */
     @Override
-    public void execute(Data task, OutputStream out) throws BuildException, IOException
+    public void execute(Data task, DataWriter writer) throws BuildException, IOException
     {
-        task.log("Extracting sprite data from: " + image);
-
         bitmap.image(ImageIO.read(getImage()));
 
         if (sample != null)
@@ -134,76 +131,11 @@ public class DataSprite implements DataCommand
             ImageIO.write(bitmap.getSampleImage(), "PNG", sample);
         }
 
-        bitmap.writeSpriteData(out);
-        //bitmap.writeCharacterData(out);
-        //bitmap.writeColorData(out);
-        out.write(0);
+        try (OutputStream stream = writer.createByteStream())
+        {
+            bitmap.writeSpriteData(stream);
+            
+            stream.write(0);
+        }
     }
-
-    //	/**
-    //	 * @see org.cbm.ant.data.DataCommand#execute(Data, java.io.OutputStream)
-    //	 */
-    //	@Override
-    //	public void execute(Data task, OutputStream out) throws BuildException, IOException {
-    //		task.log("Extracting sprite data from: " + image);
-    //
-    //		BufferedImage image;
-    //
-    //		try {
-    //			image = ImageIO.read(imageFile);
-    //		} catch (IOException e) {
-    //			throw new BuildException("Failed to read image: " + imageFile, e);
-    //		}
-    //
-    //		for (int y = 0; y < 21; y += 1) {
-    //			for (int x = 0; x < 24; x += 8) {
-    //				int value = (getBit(image.getRGB(this.x + x, this.y + y)) << 7) + (getBit(image
-    //						.getRGB(this.x + x + 1, this.y + y)) << 6) + (getBit(image
-    //						.getRGB(this.x + x + 2, this.y + y)) << 5) + (getBit(image
-    //						.getRGB(this.x + x + 3, this.y + y)) << 4) + (getBit(image
-    //						.getRGB(this.x + x + 4, this.y + y)) << 3) + (getBit(image
-    //						.getRGB(this.x + x + 5, this.y + y)) << 2) + (getBit(image
-    //						.getRGB(this.x + x + 6, this.y + y)) << 1) + getBit(image
-    //						.getRGB(this.x + x + 7, this.y + y));
-    //				out.write(value);
-    //			}
-    //		}
-    //		out.write(0);
-    //	}
-    //
-    //	private int getBit(int color) {
-    //		int[] colorRGB = toRGB(color);
-    //		int backgroundDelta = getDelta(colorRGB, background);
-    //		int foregroundDelta = getDelta(colorRGB, foreground);
-    //
-    //
-    //		if (backgroundDelta < foregroundDelta) {
-    //			return 0;
-    //		}
-    //
-    //		return 1;
-    //	}
-    //
-    //	private static int getDelta(int[] color, int[] otherColor) {
-    //		return (Math.abs(color[0] - otherColor[0])
-    //				+ Math.abs(color[1] - otherColor[1]) + Math.abs(color[2]
-    //				- otherColor[2]));
-    //	}
-    //
-    //	private static int parseColor(String color) {
-    //		if (color.startsWith("#")) {
-    //			color = color.substring(1);
-    //		} else if (color.startsWith("0x")) {
-    //			color = color.substring(2);
-    //		}
-    //
-    //		return Integer.parseInt(color, 16);
-    //	}
-    //
-    //	private static int[] toRGB(int color) {
-    //		color &= 0x00ffffff;
-    //
-    //		return new int[] { (color >> 16) % 256, (color >> 8) % 256,
-    //				color % 256 };
-    //	}
 }

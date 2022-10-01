@@ -2,16 +2,14 @@ package org.cbm.ant.data;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.StringTokenizer;
 
 import org.apache.tools.ant.BuildException;
 import org.cbm.ant.util.Util;
 import org.cbm.ant.util.XMLParser;
 
-public class DataFont implements DataCommand
+public class DataFont extends AbstractDataCommand
 {
-
     private File fontFile;
     private String name;
 
@@ -41,7 +39,7 @@ public class DataFont implements DataCommand
     }
 
     /**
-     * @see org.cbm.ant.data.DataCommand#isExecutionNecessary(long, boolean)
+     * @see org.cbm.ant.data.AbstractDataCommand#isExecutionNecessary(long, boolean)
      */
     @Override
     public boolean isExecutionNecessary(long lastModified, boolean exists)
@@ -57,13 +55,11 @@ public class DataFont implements DataCommand
     }
 
     /**
-     * @see org.cbm.ant.data.DataCommand#execute(Data, java.io.OutputStream)
+     * @see org.cbm.ant.data.AbstractDataCommand#execute(Data, DataWriter)
      */
     @Override
-    public void execute(Data task, OutputStream out) throws BuildException, IOException
+    public void execute(Data task, DataWriter writer) throws BuildException, IOException
     {
-        task.log("Extracting font data from: " + fontFile);
-
         XMLParser parser = new XMLParser(fontFile);
 
         for (XMLParser current : parser.into("cbm-font-editor-project").into("fonts").iterator("font"))
@@ -74,7 +70,7 @@ public class DataFont implements DataCommand
 
                 while (tokenizer.hasMoreTokens())
                 {
-                    out.write(Util.parseHex(tokenizer.nextToken()));
+                    writer.writeByte(Util.parseHex(tokenizer.nextToken()));
                 }
 
                 return;
@@ -83,5 +79,4 @@ public class DataFont implements DataCommand
 
         throw new BuildException(String.format("Font %s not found", getName()));
     }
-
 }

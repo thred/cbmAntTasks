@@ -11,9 +11,8 @@ import org.cbm.ant.cbm.bitmap.CBMBitmap;
 import org.cbm.ant.cbm.bitmap.CBMBitmapDither;
 import org.cbm.ant.cbm.bitmap.GraphicsMode;
 
-public class DataCharImage implements DataCommand
+public class DataCharImage extends AbstractDataCommand
 {
-
     private final CBMBitmap bitmap;
 
     private File image;
@@ -96,7 +95,7 @@ public class DataCharImage implements DataCommand
     /**
      * {@inheritDoc}
      *
-     * @see org.cbm.ant.data.DataCommand#isExecutionNecessary(long, boolean)
+     * @see org.cbm.ant.data.AbstractDataCommand#isExecutionNecessary(long, boolean)
      */
     @Override
     public boolean isExecutionNecessary(long lastModified, boolean exists)
@@ -114,13 +113,11 @@ public class DataCharImage implements DataCommand
     /**
      * {@inheritDoc}
      *
-     * @see org.cbm.ant.data.DataCommand#execute(org.cbm.ant.data.Data, java.io.OutputStream)
+     * @see org.cbm.ant.data.AbstractDataCommand#execute(org.cbm.ant.data.Data, DataWriter)
      */
     @Override
-    public void execute(Data task, OutputStream out) throws BuildException, IOException
+    public void execute(Data task, DataWriter writer) throws BuildException, IOException
     {
-        task.log("Extracting image data from: " + image);
-
         bitmap.image(ImageIO.read(getImage()));
 
         for (int dy = 0; dy < height; ++dy)
@@ -129,9 +126,12 @@ public class DataCharImage implements DataCommand
             {
                 bitmap.area((x + dx) * 8, (y + dy) * 8, 8, 8);
 
-                bitmap.writeBitmapData(out);
-                bitmap.writeCharacterData(out);
-                bitmap.writeColorData(out);
+                try (OutputStream stream = writer.createByteStream())
+                {
+                    bitmap.writeBitmapData(stream);
+                    bitmap.writeCharacterData(stream);
+                    bitmap.writeColorData(stream);
+                }
             }
         }
     }

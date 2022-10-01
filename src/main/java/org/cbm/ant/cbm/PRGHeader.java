@@ -200,14 +200,14 @@ public class PRGHeader extends Task
                     }
                     //$FALL-THROUGH$
                 case ADD:
-                    log("Adding header: " + Util.toHex(header[0]) + " " + Util.toHex(header[1]));
+                    log("Adding header: " + Util.toHex("0x", header[0]) + " " + Util.toHex("0x", header[1]));
                     log("Writing " + target.getAbsolutePath());
 
                     write(target, header, bytes);
                     break;
 
                 case MODIFY:
-                    log("Modifying header: " + Util.toHex(header[0]) + " " + Util.toHex(header[1]));
+                    log("Modifying header: " + Util.toHex("0x", header[0]) + " " + Util.toHex("0x", header[1]));
                     log("Writing " + target.getAbsolutePath());
 
                     bytes[0] = header[0];

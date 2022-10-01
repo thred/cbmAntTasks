@@ -1,7 +1,9 @@
 package org.cbm.ant.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
+
+import org.junit.jupiter.api.Test;
 
 public class ConstantStatementTest
 {
@@ -9,35 +11,35 @@ public class ConstantStatementTest
     @Test
     public void constants()
     {
-        Assert.assertEquals(1, ConstantStatement.parse("1").invoke());
-        Assert.assertEquals(0x0a, ConstantStatement.parse("$a").invoke());
-        Assert.assertEquals(0x0b, ConstantStatement.parse("0x0b").invoke());
+        assertThat(ConstantStatement.parse("1").invoke(), equalTo(1));
+        assertThat(ConstantStatement.parse("$a").invoke(), equalTo(0x0a));
+        assertThat(ConstantStatement.parse("0x0b").invoke(), equalTo(0x0b));
     }
 
     @Test
     public void additions()
     {
-        Assert.assertEquals(1 + 2, ConstantStatement.parse("1 + 2").invoke());
-        Assert.assertEquals(0x0f + -0x08, ConstantStatement.parse("$f + -$8").invoke());
+        assertThat(ConstantStatement.parse("1 + 2").invoke(), equalTo(1 + 2));
+        assertThat(ConstantStatement.parse("$f + -$8").invoke(), equalTo(0x0f + -0x08));
     }
 
     @Test
     public void bracets()
     {
-        Assert.assertEquals(2 * (1 + 2), ConstantStatement.parse("2 * (1 + 2)").invoke());
-        Assert.assertEquals("2 * (1 + 2)", ConstantStatement.parse("2 * (1 + 2)").toString());
+        assertThat(ConstantStatement.parse("2 * (1 + 2)").invoke(), equalTo(2 * (1 + 2)));
+        assertThat(ConstantStatement.parse("2 * (1 + 2)").toString(), equalTo("2 * (1 + 2)"));
     }
 
     @Test
     public void ordering()
     {
-        Assert.assertEquals(4 * 3 / 2 * 5, ConstantStatement.parse("4 * 3 / 2 * 5").invoke());
+        assertThat(ConstantStatement.parse("4 * 3 / 2 * 5").invoke(), equalTo(4 * 3 / 2 * 5));
     }
 
     @Test
     public void precedence()
     {
-        Assert.assertEquals(2 + 3 * 4, ConstantStatement.parse("2 + 3 * 4").invoke());
-        Assert.assertEquals(2 * 3 + 4, ConstantStatement.parse("2 * 3 + 4").invoke());
+        assertThat(ConstantStatement.parse("2 + 3 * 4").invoke(), equalTo(2 + 3 * 4));
+        assertThat(ConstantStatement.parse("2 * 3 + 4").invoke(), equalTo(2 * 3 + 4));
     }
 }
