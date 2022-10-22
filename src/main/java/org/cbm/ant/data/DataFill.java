@@ -7,7 +7,7 @@ import org.cbm.ant.util.Util;
 
 public class DataFill extends AbstractDataCommand
 {
-    private int length;
+    private String length;
     private String value;
 
     public DataFill()
@@ -17,10 +17,10 @@ public class DataFill extends AbstractDataCommand
 
     public int getLength()
     {
-        return length;
+        return Util.parseHex(length);
     }
 
-    public void setLength(int length)
+    public void setLength(String length)
     {
         this.length = length;
     }
@@ -52,7 +52,7 @@ public class DataFill extends AbstractDataCommand
     {
         int v = Util.parseHex(value);
 
-        for (int i = 0; i < length; i += 1)
+        for (int i = 0; i < getLength(); i += 1)
         {
             writer.writeByte(v);
         }
