@@ -118,7 +118,7 @@ public class CBMDisk
      * @param format the format
      * @throws IOException on occasion
      */
-    public void read(InputStream in, CBMDiskFormat format) throws IOException
+    protected void read(InputStream in, CBMDiskFormat format) throws IOException
     {
         init(format);
 

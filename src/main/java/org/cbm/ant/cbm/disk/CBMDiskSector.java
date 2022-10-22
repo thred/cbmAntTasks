@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Optional;
 
 public class CBMDiskSector
 {
-
     private static final int NEXT_TRACK_NR_POS = 0x00;
     private static final int NEXT_SECTOR_NR_POS = 0x01;
 
@@ -69,9 +69,17 @@ public class CBMDiskSector
         setByte(NEXT_SECTOR_NR_POS, sectorNr);
     }
 
-    public CBMDiskLocation getNextLocation()
+    public Optional<CBMDiskLocation> getNextLocation()
     {
-        return new CBMDiskLocation(getNextTrackNr(), getNextSectorNr());
+        int nextTrackNr = getNextTrackNr();
+        int nextSectorNr = getNextSectorNr();
+
+        if (nextTrackNr == 0 || nextSectorNr == 0xff)
+        {
+            return Optional.empty();
+        }
+
+        return Optional.of(new CBMDiskLocation(nextTrackNr, nextSectorNr));
     }
 
     public void setNextLocation(CBMDiskLocation location)
@@ -187,5 +195,4 @@ public class CBMDiskSector
     {
         this.mark = mark;
     }
-
 }

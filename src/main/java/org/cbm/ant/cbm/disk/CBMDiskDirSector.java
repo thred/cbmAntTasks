@@ -1,6 +1,7 @@
 package org.cbm.ant.cbm.disk;
 
 import java.io.PrintStream;
+import java.util.Optional;
 
 public class CBMDiskDirSector
 {
@@ -10,7 +11,7 @@ public class CBMDiskDirSector
     private final int id;
     private final CBMDiskDirEntry[] entries = new CBMDiskDirEntry[8];
 
-    private CBMDiskDirSector nextDirSector;
+    private Optional<CBMDiskDirSector> nextDirSector;
 
     public CBMDiskDirSector(CBMDiskDir dir, CBMDiskLocation location, int id)
     {
@@ -28,18 +29,15 @@ public class CBMDiskDirSector
 
     public void scan()
     {
-        CBMDiskLocation location = getNextDirectoryLocation();
+        Optional<CBMDiskLocation> optionalLocation = getNextDirectoryLocation();
 
-        if (location.getTrackNr() == 0x00 || location.getSectorNr() == 0xff)
-        {
-            nextDirSector = null;
-        }
-        else
-        {
-            nextDirSector = new CBMDiskDirSector(dir, location, id + 8);
+        nextDirSector = optionalLocation.map(location -> {
+            CBMDiskDirSector dirSector = new CBMDiskDirSector(dir, location, id + 8);
 
-            nextDirSector.scan();
-        }
+            dirSector.scan();
+
+            return dirSector;
+        });
     }
 
     public void format()
@@ -61,10 +59,7 @@ public class CBMDiskDirSector
             entry.list(out, listKeys, listDeleted);
         }
 
-        if (nextDirSector != null)
-        {
-            nextDirSector.list(out, listKeys, listDeleted);
-        }
+        nextDirSector.ifPresent(dirSector -> dirSector.list(out, listKeys, listDeleted));
     }
 
     public void mark()
@@ -74,10 +69,7 @@ public class CBMDiskDirSector
             entry.mark();
         }
 
-        if (nextDirSector != null)
-        {
-            nextDirSector.mark();
-        }
+        nextDirSector.ifPresent(CBMDiskDirSector::mark);
     }
 
     public CBMDiskDirEntry find(String fileName)
@@ -90,12 +82,7 @@ public class CBMDiskDirSector
             }
         }
 
-        if (nextDirSector != null)
-        {
-            return nextDirSector.find(fileName);
-        }
-
-        return null;
+        return nextDirSector.map(dirSector -> dirSector.find(fileName)).orElse(null);
     }
 
     public CBMDiskDirEntry allocate(CBMSectorInterleaves sectorInterleaves) throws CBMDiskException
@@ -108,21 +95,23 @@ public class CBMDiskDirSector
             }
         }
 
-        if (nextDirSector == null)
+        if (nextDirSector.isEmpty())
         {
             CBMDiskBAM bam = getDir().getOperator().getBAM();
-
             CBMDiskLocation location = bam.findNextFreeDirSector(getLocation(), sectorInterleaves);
 
             bam.setSectorUsed(location, true);
 
-            nextDirSector = new CBMDiskDirSector(dir, location, id + 8);
-            nextDirSector.format();
+            CBMDiskDirSector dirSector = new CBMDiskDirSector(dir, location, id + 8);
+
+            dirSector.format();
 
             setNextDirectoryLocation(location);
+
+            nextDirSector = Optional.of(dirSector);
         }
 
-        return nextDirSector.allocate(sectorInterleaves);
+        return nextDirSector.get().allocate(sectorInterleaves);
     }
 
     public CBMDiskDir getDir()
@@ -165,14 +154,14 @@ public class CBMDiskDirSector
         return entries;
     }
 
-    public CBMDiskDirSector getNextBlock()
+    public Optional<CBMDiskDirSector> getNextBlock()
     {
         return nextDirSector;
     }
 
     public void setNextBlock(CBMDiskDirSector nextBlock)
     {
-        nextDirSector = nextBlock;
+        nextDirSector = Optional.ofNullable(nextBlock);
     }
 
     public int getNextDirectoryTrackNr()
@@ -200,7 +189,7 @@ public class CBMDiskDirSector
         getSector().setNextLocation(nextDirectoryLocation);
     }
 
-    public CBMDiskLocation getNextDirectoryLocation()
+    public Optional<CBMDiskLocation> getNextDirectoryLocation()
     {
         return getSector().getNextLocation();
     }

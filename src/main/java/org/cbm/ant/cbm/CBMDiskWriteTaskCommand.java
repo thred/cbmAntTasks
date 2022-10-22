@@ -2,6 +2,7 @@ package org.cbm.ant.cbm;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -23,6 +24,7 @@ public class CBMDiskWriteTaskCommand extends AbstractCBMDiskTaskCommand
     private Integer track;
     private Integer sector;
     private String sectorInterleaves;
+    private boolean overwrite;
 
     public CBMDiskWriteTaskCommand()
     {
@@ -33,7 +35,7 @@ public class CBMDiskWriteTaskCommand extends AbstractCBMDiskTaskCommand
     {
         if (source == null)
         {
-            throw new BuildException("Missing source");
+            throw new BuildException("Source is missing");
         }
 
         if (!source.exists())
@@ -118,6 +120,16 @@ public class CBMDiskWriteTaskCommand extends AbstractCBMDiskTaskCommand
         this.sectorInterleaves = sectorInterleaves;
     }
 
+    public boolean isOverwrite()
+    {
+        return overwrite;
+    }
+
+    public void setOverwrite(boolean overwrite)
+    {
+        this.overwrite = overwrite;
+    }
+
     /**
      * @see org.cbm.ant.viceteam.C1541Command#isExecutionNecessary(long, boolean)
      */
@@ -171,18 +183,36 @@ public class CBMDiskWriteTaskCommand extends AbstractCBMDiskTaskCommand
 
         CBMDiskOutputStream out;
 
+        String destination = getDestination();
+
+        if (operator.exists(destination))
+        {
+            if (!overwrite)
+            {
+                throw new BuildException(String.format("File \"%s\" already exists", destination));
+            }
+
+            try
+            {
+                operator.delete(destination);
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new BuildException(String.format("Failed to delete file \"%s\"", destination), e);
+            }
+        }
+
         try
         {
-            out = operator.create(location, getDestination(), getFileType(), currentSectorInterleaves);
+            out = operator.create(location, destination, getFileType(), currentSectorInterleaves);
         }
         catch (IOException e)
         {
-            throw new BuildException(String.format("Failed to create file \"%s\"", getDestination()), e);
+            throw new BuildException(String.format("Failed to create file \"%s\"", destination), e);
         }
         catch (CBMDiskException e)
         {
-            throw new BuildException(
-                String.format("Failed to create file \"%s\": %s", getDestination(), e.getMessage()), e);
+            throw new BuildException(String.format("Failed to create file \"%s\": %s", destination, e.getMessage()), e);
         }
 
         try
@@ -197,8 +227,7 @@ public class CBMDiskWriteTaskCommand extends AbstractCBMDiskTaskCommand
             catch (IOException e)
             {
                 throw new BuildException(
-                    String.format("Failed to copy data from file \"%s\" to file \"%s\"", getSource(), getDestination()),
-                    e);
+                    String.format("Failed to copy data from file \"%s\" to file \"%s\"", getSource(), destination), e);
             }
         }
         finally
@@ -209,7 +238,7 @@ public class CBMDiskWriteTaskCommand extends AbstractCBMDiskTaskCommand
             }
             catch (IOException e)
             {
-                throw new BuildException(String.format("Failed to close file \"%s\"", getDestination()), e);
+                throw new BuildException(String.format("Failed to close file \"%s\"", destination), e);
             }
         }
 

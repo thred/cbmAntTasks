@@ -24,7 +24,7 @@ public class CBMDiskReadTaskCommand extends AbstractCBMDiskTaskCommand
     {
         if (source == null || source.trim().length() == 0)
         {
-            throw new BuildException("Destination missing");
+            throw new BuildException("Source is missing");
         }
 
         return source;

@@ -4,7 +4,6 @@ import java.util.Objects;
 
 public class CBMDiskLocation
 {
-
     private final int trackNr;
     private final int sectorNr;
 
@@ -84,5 +83,4 @@ public class CBMDiskLocation
     {
         return String.format("%02d/%02d", trackNr, sectorNr);
     }
-
 }

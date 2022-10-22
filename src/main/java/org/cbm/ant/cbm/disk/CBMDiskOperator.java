@@ -3,6 +3,7 @@ package org.cbm.ant.cbm.disk;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 
 public class CBMDiskOperator
 {
@@ -50,16 +51,46 @@ public class CBMDiskOperator
         getDir().format();
     }
 
+    public boolean exists(String fileName)
+    {
+        return getDir().find(fileName) != null;
+    }
+
     public InputStream open(String fileName) throws IOException
     {
-        CBMDiskDirEntry entry = getDir().find(fileName);
+        CBMDiskDirEntry dirEntry = getDir().find(fileName);
 
-        if (entry == null)
+        if (dirEntry == null)
         {
             throw new FileNotFoundException(String.format("File not found: %s", fileName));
         }
 
-        return new CBMDiskInputStream(this, entry.getFileTrackNr(), entry.getFileSectorNr());
+        return new CBMDiskInputStream(this, dirEntry.getFileTrackNr(), dirEntry.getFileSectorNr());
+    }
+
+    public void delete(String fileName) throws FileNotFoundException
+    {
+        CBMDiskDirEntry dirEntry = getDir().find(fileName);
+
+        if (dirEntry == null)
+        {
+            throw new FileNotFoundException(String.format("File not found: %s", fileName));
+        }
+
+        Optional<CBMDiskLocation> optionalLocation = Optional.of(dirEntry.getFileLocation());
+
+        while (optionalLocation.isPresent())
+        {
+            CBMDiskLocation location = optionalLocation.get();
+            CBMDiskSector sector = getDisk().getSector(location);
+
+            bam.setSectorUsed(location, false);
+
+            optionalLocation = sector.getNextLocation();
+            sector.clear();
+        }
+
+        dirEntry.format();
     }
 
     public CBMDiskOutputStream create(String fileName, CBMFileType fileType, CBMSectorInterleaves sectorInterleaves)

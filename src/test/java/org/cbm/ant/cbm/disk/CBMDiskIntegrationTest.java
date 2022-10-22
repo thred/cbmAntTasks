@@ -2,6 +2,7 @@ package org.cbm.ant.cbm.disk;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -61,6 +62,7 @@ public class CBMDiskIntegrationTest
         writeToDisk(operator, "sample 0", sample0);
         writeToDisk(operator, "sample a", sampleA);
         writeToDisk(operator, "sample b", sampleB);
+        writeToDisk(operator, "sample x", sampleB);
         writeToDisk(operator, "sample c", sampleC);
         writeToDisk(operator, "sample d", sampleD);
         writeToDisk(operator, "sample e", sampleE);
@@ -69,6 +71,8 @@ public class CBMDiskIntegrationTest
         writeToDisk(operator, "sample h", sampleH);
         writeToDisk(operator, "sample i", sampleI);
 
+        operator.delete("sample x");
+
         System.out.println(operator.getBAM());
 
         operator.getDir().list(System.out, false, false);
@@ -76,6 +80,7 @@ public class CBMDiskIntegrationTest
         assertThat(readFromDisk(operator, "sample 0"), equalTo(sample0));
         assertThat(readFromDisk(operator, "sample a"), equalTo(sampleA));
         assertThat(readFromDisk(operator, "sample b"), equalTo(sampleB));
+        assertThrows(IOException.class, () -> readFromDisk(operator, "sample x"));
         assertThat(readFromDisk(operator, "sample c"), equalTo(sampleC));
         assertThat(readFromDisk(operator, "sample d"), equalTo(sampleD));
         assertThat(readFromDisk(operator, "sample e"), equalTo(sampleE));

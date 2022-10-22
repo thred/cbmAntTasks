@@ -42,6 +42,11 @@ public class CBMDiskTask extends AbstractDiskTask
         addCommand(command);
     }
 
+    public void addDelete(CBMDiskDeleteTaskCommand command)
+    {
+        addCommand(command);
+    }
+
     public void addWrite(CBMDiskWriteTaskCommand command)
     {
         addCommand(command);
@@ -143,15 +148,11 @@ public class CBMDiskTask extends AbstractDiskTask
             }
             catch (IOException e)
             {
-                if (!isFailOnError())
-                {
-                    log(String.format("Failed to load image \"%s\" due to %s. Ignoring...", image, e), e,
-                        Project.MSG_INFO);
-                }
-                else
+                if (isFailOnError())
                 {
                     throw new BuildException(String.format("Failed to load image \"%s\"", image), e);
                 }
+                log(String.format("Failed to load image \"%s\" due to %s. Ignoring...", image, e), e, Project.MSG_INFO);
             }
         }
 
@@ -175,25 +176,19 @@ public class CBMDiskTask extends AbstractDiskTask
             }
             catch (BuildException e)
             {
-                if (!isFailOnError() || !command.isFailOnError())
-                {
-                    log("Ignoring error: " + e.getMessage());
-                }
-                else
+                if (isFailOnError() && command.isFailOnError())
                 {
                     throw e;
                 }
+                log("Ignoring error: " + e.getMessage());
             }
             catch (Exception e)
             {
-                if (!isFailOnError() || !command.isFailOnError())
-                {
-                    log("Ignoring error: " + e.getMessage());
-                }
-                else
+                if (isFailOnError() && command.isFailOnError())
                 {
                     throw new BuildException("Unhandled Exception: " + e, e);
                 }
+                log("Ignoring error: " + e.getMessage());
             }
         }
 
@@ -203,19 +198,15 @@ public class CBMDiskTask extends AbstractDiskTask
             {
                 operator.getDisk().save(image);
 
-                image.setLastModified(modification.longValue());
+                image.setLastModified(modification);
             }
             catch (IOException e)
             {
-                if (!isFailOnError())
-                {
-                    log(String.format("Failed to save image \"%s\" due to %s. Ignoring...", image, e), e,
-                        Project.MSG_INFO);
-                }
-                else
+                if (isFailOnError())
                 {
                     throw new BuildException(String.format("Failed to save image \"%s\"", image), e);
                 }
+                log(String.format("Failed to save image \"%s\" due to %s. Ignoring...", image, e), e, Project.MSG_INFO);
             }
         }
     }
@@ -246,14 +237,11 @@ public class CBMDiskTask extends AbstractDiskTask
             }
             catch (BuildException e)
             {
-                if (!command.isFailOnError())
-                {
-                    log("Ignoring error: " + e.getMessage(), Project.MSG_WARN);
-                }
-                else
+                if (command.isFailOnError())
                 {
                     throw e;
                 }
+                log("Ignoring error: " + e.getMessage(), Project.MSG_WARN);
             }
         }
 
