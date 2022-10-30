@@ -11,7 +11,7 @@ public class ConstantStatementTest
     @Test
     public void constants()
     {
-        assertThat(ConstantStatement.parse("1").invoke(), equalTo(1));
+        assertThat(ConstantStatement.parse("1972").invoke(), equalTo(1972));
         assertThat(ConstantStatement.parse("$a").invoke(), equalTo(0x0a));
         assertThat(ConstantStatement.parse("0x0b").invoke(), equalTo(0x0b));
     }

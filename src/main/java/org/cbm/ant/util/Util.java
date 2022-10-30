@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -317,5 +318,49 @@ public class Util
         }
 
         return true;
+    }
+
+    public static byte[] byteArrayOf(byte value, int size)
+    {
+        byte[] array = new byte[size];
+
+        Arrays.fill(array, value);
+
+        return array;
+    }
+
+    public static int[] intArrayOf(int value, int size)
+    {
+        int[] array = new int[size];
+
+        Arrays.fill(array, value);
+
+        return array;
+    }
+
+    /**
+     * Escapes all chars other than [a-zA-Z0-9]
+     *
+     * @param s the string
+     * @return the escaped string
+     */
+    public static String escape(String s)
+    {
+        //		StringBuilder result = new StringBuilder();
+        //
+        //		for (int i = 0; i < s.length(); i += 1)
+        //		{
+        //			char c = s.charAt(i);
+        //
+        //			if (!Character.isLetterOrDigit(c))
+        //			{
+        //				result.append("\\");
+        //			}
+        //
+        //			result.append(c);
+        //		}
+        //
+        //		return result.toString();
+        return "\"" + s + "\"";
     }
 }

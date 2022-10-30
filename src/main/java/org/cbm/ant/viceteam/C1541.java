@@ -1,18 +1,14 @@
 package org.cbm.ant.viceteam;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.tools.ant.BuildException;
+import org.cbm.ant.disk.AbstractDiskTask;
 import org.cbm.ant.util.OS;
-import org.cbm.ant.util.ProcessHandler;
 
-public class C1541 extends AbstractViceTask
+public class C1541 extends AbstractDiskTask<C1541>
 {
-    private static final Map<OS, String> EXECUTABLES = new HashMap<>();
+    static final Map<OS, String> EXECUTABLES = new HashMap<>();
 
     static
     {
@@ -20,16 +16,15 @@ public class C1541 extends AbstractViceTask
         EXECUTABLES.put(OS.WINDOWS, "c1541.exe");
     }
 
-    private final List<C1541Command> commands;
-
-    private File image;
-    private boolean failOnError = true;
-
     public C1541()
     {
         super();
+    }
 
-        commands = new ArrayList<>();
+    @Override
+    protected String getHomePropertyKeyPrefix()
+    {
+        return "vice";
     }
 
     @Override
@@ -44,157 +39,63 @@ public class C1541 extends AbstractViceTask
         return EXECUTABLES;
     }
 
-    /**
-     * Adds an format command
-     *
-     * @param format the command
-     */
     public void addFormat(C1541Format format)
     {
-        commands.add(format);
+        super.addFormat(format);
     }
 
-    /**
-     * Adds a read command
-     *
-     * @param read the command
-     */
+    public C1541 format(C1541Format format)
+    {
+        addFormat(format);
+
+        return this;
+    }
+
     public void addRead(C1541Read read)
     {
-        commands.add(read);
+        super.addRead(read);
     }
 
-    /**
-     * Adds a write command
-     *
-     * @param write the command
-     */
+    public C1541 read(C1541Read read)
+    {
+        addRead(read);
+
+        return this;
+    }
+
+    public void addDelete(C1541Delete delete)
+    {
+        super.addDelete(delete);
+    }
+
+    public C1541 delete(C1541Delete delete)
+    {
+        addDelete(delete);
+
+        return this;
+    }
+
     public void addWrite(C1541Write write)
     {
-        commands.add(write);
+        super.addWrite(write);
     }
 
-    /**
-     * Adds a list command
-     *
-     * @param list the list
-     */
+    public C1541 write(C1541Write write)
+    {
+        addWrite(write);
+
+        return this;
+    }
+
     public void addList(C1541List list)
     {
-        commands.add(list);
+        super.addList(list);
     }
 
-    /**
-     * Returns the image file
-     *
-     * @return the image file
-     */
-    public File getImage()
+    public C1541 list(C1541List list)
     {
-        return image;
-    }
+        addList(list);
 
-    /**
-     * Sets the image file
-     *
-     * @param image the image file
-     */
-    public void setImage(File image)
-    {
-        this.image = image;
-    }
-
-    public boolean isFailOnError()
-    {
-        return failOnError;
-    }
-
-    public void setFailOnError(boolean failOnError)
-    {
-        this.failOnError = failOnError;
-    }
-
-    /**
-     * @see org.apache.tools.ant.Task#execute()
-     */
-    @Override
-    public void execute() throws BuildException
-    {
-        File image = getImage();
-
-        if (!isExecutionNecessary(image))
-        {
-            return;
-        }
-
-        for (C1541Command command : commands)
-        {
-            ProcessHandler handler = createProcessHandler();
-
-            try
-            {
-                log("Result: " + command.execute(this, handler, image));
-            }
-            catch (BuildException e)
-            {
-                if (!command.isFailOnError())
-                {
-                    log("Ignoring error: " + e.getMessage());
-                }
-                else
-                {
-                    throw e;
-                }
-            }
-        }
-    }
-
-    private boolean isExecutionNecessary(File image)
-    {
-        long lastModified = -1;
-        boolean exists = image.exists();
-
-        if (!exists)
-        {
-            return true;
-        }
-
-        if (exists)
-        {
-            lastModified = image.lastModified();
-        }
-
-        for (C1541Command command : commands)
-        {
-            try
-            {
-                if (command.isExecutionNecessary(lastModified, exists))
-                {
-                    return true;
-                }
-            }
-            catch (BuildException e)
-            {
-                if (!command.isFailOnError())
-                {
-                    log("Ignoring error: " + e.getMessage());
-                }
-                else
-                {
-                    throw e;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @see org.cbm.ant.util.ProcessConsumer#processOutput(java.lang.String, boolean)
-     */
-    @Override
-    public void processOutput(String output, boolean isError)
-    {
-        log(output);
+        return this;
     }
 }

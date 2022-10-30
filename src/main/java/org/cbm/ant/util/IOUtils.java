@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.function.Consumer;
 
 public class IOUtils
 {
@@ -45,6 +47,23 @@ public class IOUtils
             copy(in, out);
 
             return out.toByteArray();
+        }
+    }
+
+    public static String printToStream(Consumer<PrintStream> consumer)
+    {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream())
+        {
+            try (PrintStream stream = new PrintStream(out, true))
+            {
+                consumer.accept(stream);
+            }
+
+            return out.toString();
+        }
+        catch (IOException e)
+        {
+            throw new IllegalStateException("Failed to print to stream", e);
         }
     }
 }
