@@ -490,4 +490,12 @@ public abstract class AbstractCbmDisk implements CbmDisk
         bob.append(String.format("Size: %s bytes\n", size));
         bob.append("------------------------------------------------------------------------");
     }
+
+    @Override
+    public void printSector(StringBuilder bob, CbmSectorLocation location)
+    {
+        CbmSector sector = image.sectorAt(location);
+
+        sector.print(bob);
+    }
 }

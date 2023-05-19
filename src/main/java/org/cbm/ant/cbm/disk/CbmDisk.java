@@ -270,4 +270,12 @@ public interface CbmDisk
      * @param location the location of the sector to start with
      */
     void printSectorChain(StringBuilder bob, CbmSectorLocation location);
+
+    /**
+     * Prints the specified sectors to the specified steam.
+     *
+     * @param bob the builder
+     * @param location the location of the sector
+     */
+    void printSector(StringBuilder bob, CbmSectorLocation location);
 }

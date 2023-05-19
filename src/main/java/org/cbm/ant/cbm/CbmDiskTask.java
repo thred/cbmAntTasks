@@ -36,6 +36,11 @@ public class CbmDiskTask extends AbstractDiskTask
         addCommand(command);
     }
 
+    public void addDump(CbmDiskDumpTaskCommand command)
+    {
+        addCommand(command);
+    }
+
     public void addList(CbmDiskListTaskCommand command)
     {
         addCommand(command);
