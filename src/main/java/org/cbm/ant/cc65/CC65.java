@@ -193,10 +193,7 @@ public class CC65 extends AbstractCC65Task
             {
                 ProcessHandler handler = createProcessHandler();
 
-                if (getTarget() != null)
-                {
-                    handler.parameter("-t").parameter(getTarget().getName());
-                }
+                populateHandler(handler);
 
                 if (isAnnotate())
                 {
@@ -280,14 +277,11 @@ public class CC65 extends AbstractCC65Task
 
         long lastModified = Dependencies.load(getProject().getBaseDir(), dependencyFile).getLastModified(outputFile);
 
-        if (outputFile.lastModified() > lastModified)
-        {
-            log("\"" + outputFile.getAbsolutePath() + "\" got modified in the future");
-        }
-        else
+        if (outputFile.lastModified() <= lastModified)
         {
             return outputFile.lastModified() < lastModified;
         }
+        log("\"" + outputFile.getAbsolutePath() + "\" got modified in the future");
 
         return false;
     }

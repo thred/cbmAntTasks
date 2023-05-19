@@ -120,10 +120,7 @@ public class CL65 extends AbstractCC65Task
         Collection<AntFile> inputFiles = collect(files);
         ProcessHandler handler = createProcessHandler();
 
-        if (getTarget() != null)
-        {
-            handler.parameter("-t").parameter(getTarget().getName());
-        }
+        populateHandler(handler);
 
         if (configFile != null)
         {

@@ -15,7 +15,6 @@ import org.cbm.ant.util.ProcessHandler;
 
 public class CA65 extends AbstractCC65Task
 {
-
     private static final Map<OS, String> EXECUTABLES = new HashMap<>();
 
     static
@@ -115,11 +114,8 @@ public class CA65 extends AbstractCC65Task
             {
                 ProcessHandler handler = createProcessHandler();
 
-                if (getTarget() != null)
-                {
-                    handler.parameter("-t").parameter(getTarget().getName());
-                }
-
+                populateHandler(handler);
+                
                 if (isDebug())
                 {
                     handler.parameter("-g");
@@ -129,6 +125,7 @@ public class CA65 extends AbstractCC65Task
                 {
                     handler.parameter("-l").parameter(outputFile.withExtension("l"));
                 }
+
 
                 handler.parameter("-o").parameter(outputFile.ensureDirectory());
                 handler.parameter(inputFile);
@@ -161,14 +158,11 @@ public class CA65 extends AbstractCC65Task
             return result;
         }
 
-        if (outputFile.lastModified() > inputFile.lastModified())
-        {
-            log("\"" + outputFile.getAbsolutePath() + "\" got modified in the future");
-        }
-        else
+        if (outputFile.lastModified() <= inputFile.lastModified())
         {
             return outputFile.lastModified() < inputFile.lastModified();
         }
+        log("\"" + outputFile.getAbsolutePath() + "\" got modified in the future");
 
         return false;
     }
