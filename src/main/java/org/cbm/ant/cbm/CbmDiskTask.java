@@ -61,6 +61,11 @@ public class CbmDiskTask extends AbstractDiskTask
         addCommand(command);
     }
 
+    public void addVerify(CbmDiskVerifyTaskCommand command)
+    {
+        addCommand(command);
+    }
+
     private void addCommand(CbmDiskTaskCommand command)
     {
         commands.add(command);
