@@ -13,6 +13,7 @@ public abstract class AbstractViceLaunchTask extends AbstractViceTask
     private File drive9;
     private File drive10;
     private File drive11;
+    private File flipname;
     private Boolean drive8Readonly;
     private Boolean drive9Readonly;
     private Boolean drive10Readonly;
@@ -85,6 +86,16 @@ public abstract class AbstractViceLaunchTask extends AbstractViceTask
     public void setDrive11(File drive11)
     {
         this.drive11 = drive11;
+    }
+
+    public File getFlipname()
+    {
+        return flipname;
+    }
+
+    public void setFlipname(File flipname)
+    {
+        this.flipname = flipname;
     }
 
     public Boolean getDrive8Readonly()
@@ -188,6 +199,11 @@ public abstract class AbstractViceLaunchTask extends AbstractViceTask
         if (getDrive11() != null)
         {
             handler.parameter("-11").parameter(getDrive11());
+        }
+
+        if (getFlipname() != null)
+        {
+            handler.parameter("-flipname").parameter(getFlipname());
         }
 
         if (getDrive8Readonly() != null)
