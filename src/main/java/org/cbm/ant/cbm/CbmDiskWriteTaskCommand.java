@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.apache.tools.ant.BuildException;
 import org.cbm.ant.cbm.disk.CbmAllocateSectorStrategies;
+import org.cbm.ant.cbm.disk.CbmAllocateSectorStrategy;
 import org.cbm.ant.cbm.disk.CbmDisk;
 import org.cbm.ant.cbm.disk.CbmFile;
 import org.cbm.ant.cbm.disk.CbmFileOutputStream;
@@ -23,10 +24,9 @@ public class CbmDiskWriteTaskCommand extends AbstractCbmDiskTaskCommand
     private File source;
     private String destination;
     private CbmFileType fileType = CbmFileType.PRG;
-    private Integer track;
-    private Integer sector;
-    private String allocateSectorStrategy;
-    private String sectorInterleaves;
+    private CbmSectorLocation location;
+    private CbmAllocateSectorStrategy allocateSectorStrategy;
+    private CbmSectorInterleaves sectorInterleaves;
     private boolean overwrite;
 
     public CbmDiskWriteTaskCommand()
@@ -84,40 +84,44 @@ public class CbmDiskWriteTaskCommand extends AbstractCbmDiskTaskCommand
         this.fileType = fileType;
     }
 
-    public Integer getTrack()
+    public CbmSectorLocation getLocation()
     {
-        return track;
+        return location;
     }
 
-    public void setTrack(Integer track)
+    public void setLocation(String location)
     {
-        this.track = track;
+        try
+        {
+            this.location = CbmSectorLocation.parse(location);
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new BuildException("Invalid location: " + location, e);
+        }
     }
 
-    public Integer getSector()
-    {
-        return sector;
-    }
-
-    public void setSector(Integer sector)
-    {
-        this.sector = sector;
-    }
-
-    public String getAllocateSectorStrategy()
+    public CbmAllocateSectorStrategy getAllocateSectorStrategy()
     {
         return allocateSectorStrategy;
     }
 
     public void setAllocateSectorStrategy(String allocateSectorStrategy)
     {
-        this.allocateSectorStrategy = allocateSectorStrategy;
+        try
+        {
+            this.allocateSectorStrategy = CbmAllocateSectorStrategies.parse(allocateSectorStrategy);
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new BuildException("Invalid allocate sector strategy: " + allocateSectorStrategy, e);
+        }
     }
 
     /**
      * @return the sector interleaves
      */
-    public String getSectorInterleaves()
+    public CbmSectorInterleaves getSectorInterleaves()
     {
         return sectorInterleaves;
     }
@@ -130,7 +134,14 @@ public class CbmDiskWriteTaskCommand extends AbstractCbmDiskTaskCommand
      */
     public void setSectorInterleaves(String sectorInterleaves)
     {
-        this.sectorInterleaves = sectorInterleaves;
+        try
+        {
+            this.sectorInterleaves = CbmSectorInterleaves.parse(sectorInterleaves);
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new BuildException("Invalid sector interleaves: " + sectorInterleaves, e);
+        }
     }
 
     public boolean isOverwrite()
@@ -171,12 +182,12 @@ public class CbmDiskWriteTaskCommand extends AbstractCbmDiskTaskCommand
 
         if (allocateSectorStrategy != null)
         {
-            disk = disk.withAllocateSectorStrategy(CbmAllocateSectorStrategies.parse(allocateSectorStrategy));
+            disk = disk.withAllocateSectorStrategy(allocateSectorStrategy);
         }
 
         if (sectorInterleaves != null)
         {
-            disk = disk.withSectorInterleaves(CbmSectorInterleaves.parse(sectorInterleaves));
+            disk = disk.withSectorInterleaves(sectorInterleaves);
         }
 
         String destination = getDestination();
@@ -209,19 +220,9 @@ public class CbmDiskWriteTaskCommand extends AbstractCbmDiskTaskCommand
             throw new BuildException("Failed to allocate file: " + destination);
         }
 
-        if (track != null || sector != null)
+        if (location != null)
         {
-            if (track == null)
-            {
-                throw new BuildException("Sector is set, but track is missing");
-            }
-
-            if (sector == null)
-            {
-                throw new BuildException("Track is set, but sector is missing");
-            }
-
-            file.setLocation(Optional.of(CbmSectorLocation.of(track, sector)));
+            file.setLocation(Optional.of(location));
         }
 
         if (fileType != null)
