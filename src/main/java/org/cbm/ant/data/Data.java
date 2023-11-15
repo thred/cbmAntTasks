@@ -1,5 +1,6 @@
 package org.cbm.ant.data;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,12 +17,13 @@ import org.apache.tools.ant.Task;
  *
  * @author thred
  */
-public class Data extends Task
+public class Data extends Task implements DataCommand
 {
     private File target;
     private DataFormat format;
     private Charset charset;
-    private final List<AbstractDataCommand> commands;
+
+    private final List<DataCommand> commands;
 
     public Data()
     {
@@ -70,9 +72,19 @@ public class Data extends Task
         this.charset = charset;
     }
 
-    private void addCommand(AbstractDataCommand command)
+    private void addCommand(DataCommand command)
     {
         commands.add(command);
+    }
+
+    public void addAt(DataAt at)
+    {
+        addCommand(at);
+    }
+
+    public void addAtEnd(DataAtEnd atEnd)
+    {
+        addCommand(atEnd);
     }
 
     public void addCharImage(DataCharImage image)
@@ -83,6 +95,11 @@ public class Data extends Task
     public void addComment(DataComment comment)
     {
         addCommand(comment);
+    }
+
+    public void addData(Data data)
+    {
+        addCommand(data);
     }
 
     public void addFill(DataFill fill)
@@ -105,6 +122,11 @@ public class Data extends Task
         addCommand(manual);
     }
 
+    public void addRaw(DataRaw raw)
+    {
+        addCommand(raw);
+    }
+
     public void addSprite(DataSprite sprite)
     {
         addCommand(sprite);
@@ -121,13 +143,11 @@ public class Data extends Task
     }
 
     @Override
-    public void execute() throws BuildException
+    public boolean isExecutionNecessary(long lastModified, boolean exists)
     {
         boolean executionNecessary = false;
-        boolean exists = target.exists();
-        long lastModified = exists ? target.lastModified() : -1;
 
-        for (AbstractDataCommand command : commands)
+        for (DataCommand command : commands)
         {
             if (command.isExecutionNecessary(lastModified, exists))
             {
@@ -135,6 +155,15 @@ public class Data extends Task
                 break;
             }
         }
+        return executionNecessary;
+    }
+
+    @Override
+    public void execute() throws BuildException
+    {
+        boolean exists = target.exists();
+        long lastModified = exists ? target.lastModified() : -1;
+        boolean executionNecessary = isExecutionNecessary(lastModified, exists);
 
         if (!executionNecessary)
         {
@@ -147,32 +176,42 @@ public class Data extends Task
         {
             try (FileOutputStream out = new FileOutputStream(target))
             {
+                DataFormat format = getFormat();
                 Charset charset = getCharset();
-                DataWriter writer = null;
-                DataFormat format = null;
+                DataWriter writer = format.createWriter(out, charset);
 
-                for (AbstractDataCommand command : commands)
-                {
-                    DataFormat currentFormat = command.getFormat();
-
-                    if (currentFormat == null)
-                    {
-                        currentFormat = getFormat();
-                    }
-
-                    if (format != currentFormat)
-                    {
-                        format = currentFormat;
-                        writer = format.createWriter(out, charset);
-                    }
-
-                    command.execute(this, writer);
-                }
+                executeCommands(writer);
             }
         }
         catch (IOException e)
         {
             throw new BuildException("Failed to write file: " + target, e);
         }
+    }
+
+    @Override
+    public void execute(DataWriter writer) throws BuildException, IOException
+    {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream())
+        {
+            DataFormat format = getFormat();
+            Charset charset = getCharset();
+
+            executeCommands(format.createWriter(out, charset));
+
+            out.close();
+
+            writer.writeBytes(out.toByteArray());
+        }
+    }
+
+    protected void executeCommands(DataWriter writer) throws IOException
+    {
+        for (DataCommand command : commands)
+        {
+            command.execute(writer);
+        }
+
+        writer.flush();
     }
 }

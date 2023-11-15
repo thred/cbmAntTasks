@@ -20,6 +20,12 @@ public class DataCBMWriter implements DataWriter
     }
 
     @Override
+    public boolean isRandomAccessSupported()
+    {
+        return false;
+    }
+
+    @Override
     public void writeBytes(byte[] b, int offset, int length) throws IOException
     {
         out.write(b, offset, length);
@@ -173,5 +179,19 @@ public class DataCBMWriter implements DataWriter
     public void writeComment(String comment) throws IOException
     {
         // ignore
+    }
+
+    @Override
+    public void flush() throws IOException
+    {
+        out.flush();
+    }
+
+    @Override
+    public void close() throws IOException
+    {
+        DataWriter.super.close();
+
+        out.close();
     }
 }

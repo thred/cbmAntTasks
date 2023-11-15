@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.apache.tools.ant.BuildException;
 import org.cbm.ant.util.Util;
 
-public class DataHeader extends AbstractDataCommand
+public class DataHeader implements DataCommand
 {
     private byte[] header;
 
@@ -32,7 +32,7 @@ public class DataHeader extends AbstractDataCommand
     }
 
     /**
-     * @see org.cbm.ant.data.AbstractDataCommand#isExecutionNecessary(long, boolean)
+     * @see org.cbm.ant.data.DataCommand#isExecutionNecessary(long, boolean)
      */
     @Override
     public boolean isExecutionNecessary(long lastModified, boolean exists)
@@ -41,10 +41,10 @@ public class DataHeader extends AbstractDataCommand
     }
 
     /**
-     * @see org.cbm.ant.data.AbstractDataCommand#execute(Data, DataWriter)
+     * @see org.cbm.ant.data.DataCommand#execute(DataWriter)
      */
     @Override
-    public void execute(Data task, DataWriter writer) throws BuildException, IOException
+    public void execute(DataWriter writer) throws BuildException, IOException
     {
         writer.writeBytes(header);
     }

@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.apache.tools.ant.BuildException;
 
-public class DataComment extends AbstractDataCommand
+public class DataComment implements DataCommand
 {
 
     private final StringBuilder builder = new StringBuilder();
@@ -20,7 +20,7 @@ public class DataComment extends AbstractDataCommand
     }
 
     /**
-     * @see org.cbm.ant.data.AbstractDataCommand#isExecutionNecessary(long, boolean)
+     * @see org.cbm.ant.data.DataCommand#isExecutionNecessary(long, boolean)
      */
     @Override
     public boolean isExecutionNecessary(long lastModified, boolean exists)
@@ -29,10 +29,10 @@ public class DataComment extends AbstractDataCommand
     }
 
     /**
-     * @see org.cbm.ant.data.AbstractDataCommand#execute(Data, DataWriter)
+     * @see org.cbm.ant.data.DataCommand#execute(DataWriter)
      */
     @Override
-    public void execute(Data task, DataWriter writer) throws BuildException, IOException
+    public void execute(DataWriter writer) throws BuildException, IOException
     {
         writer.writeComment(builder.toString());
     }

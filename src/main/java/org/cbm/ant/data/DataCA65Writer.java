@@ -21,6 +21,12 @@ public class DataCA65Writer implements DataWriter
         this.charset = charset;
     }
 
+    @Override
+    public boolean isRandomAccessSupported()
+    {
+        return false;
+    }
+
     protected void print(String s) throws IOException
     {
         out.write(s.getBytes(charset));
@@ -71,5 +77,19 @@ public class DataCA65Writer implements DataWriter
         {
             print(System.getProperty("line.separator") + "; " + line);
         }
+    }
+
+    @Override
+    public void flush() throws IOException
+    {
+        out.flush();
+    }
+
+    @Override
+    public void close() throws IOException
+    {
+        DataWriter.super.close();
+
+        out.close();
     }
 }

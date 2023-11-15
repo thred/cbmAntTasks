@@ -3,8 +3,20 @@ package org.cbm.ant.data;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public interface DataWriter
+public interface DataWriter extends AutoCloseable
 {
+    boolean isRandomAccessSupported();
+
+    default void at(int writeOffset)
+    {
+        // ignore
+    }
+
+    default void atEnd()
+    {
+        // ignore
+    }
+
     default void writeByte(int b) throws IOException
     {
         writeBytes(new byte[]{(byte) b});
@@ -37,5 +49,13 @@ public interface DataWriter
                 writeByte(b);
             }
         };
+    }
+
+    void flush() throws IOException;
+
+    @Override
+    default void close() throws IOException
+    {
+        flush();
     }
 }

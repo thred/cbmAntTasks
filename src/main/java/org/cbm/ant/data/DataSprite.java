@@ -11,7 +11,7 @@ import org.cbm.ant.cbm.bitmap.CBMBitmap;
 import org.cbm.ant.cbm.bitmap.CBMBitmapDither;
 import org.cbm.ant.cbm.bitmap.GraphicsMode;
 
-public class DataSprite extends AbstractDataCommand
+public class DataSprite implements DataCommand
 {
     private final CBMBitmap bitmap;
 
@@ -101,7 +101,7 @@ public class DataSprite extends AbstractDataCommand
     }
 
     /**
-     * @see org.cbm.ant.data.AbstractDataCommand#isExecutionNecessary(long, boolean)
+     * @see org.cbm.ant.data.DataCommand#isExecutionNecessary(long, boolean)
      */
     @Override
     public boolean isExecutionNecessary(long lastModified, boolean exists)
@@ -119,10 +119,10 @@ public class DataSprite extends AbstractDataCommand
     /**
      * {@inheritDoc}
      *
-     * @see org.cbm.ant.data.AbstractDataCommand#execute(org.cbm.ant.data.Data, DataWriter)
+     * @see org.cbm.ant.data.DataCommand#execute(DataWriter)
      */
     @Override
-    public void execute(Data task, DataWriter writer) throws BuildException, IOException
+    public void execute(DataWriter writer) throws BuildException, IOException
     {
         bitmap.image(ImageIO.read(getImage()));
 

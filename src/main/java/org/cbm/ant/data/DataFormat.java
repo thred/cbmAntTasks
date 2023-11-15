@@ -1,6 +1,5 @@
 package org.cbm.ant.data;
 
-import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.function.BiFunction;
@@ -20,7 +19,7 @@ public enum DataFormat
         this.factory = factory;
     }
 
-    public DataWriter createWriter(FileOutputStream out, Charset charset)
+    public DataWriter createWriter(OutputStream out, Charset charset)
     {
         return factory.apply(out, charset);
     }

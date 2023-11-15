@@ -8,7 +8,7 @@ import org.apache.tools.ant.BuildException;
 import org.cbm.ant.util.Util;
 import org.cbm.ant.util.XMLParser;
 
-public class DataFont extends AbstractDataCommand
+public class DataFont implements DataCommand
 {
     private File fontFile;
     private String name;
@@ -39,7 +39,7 @@ public class DataFont extends AbstractDataCommand
     }
 
     /**
-     * @see org.cbm.ant.data.AbstractDataCommand#isExecutionNecessary(long, boolean)
+     * @see org.cbm.ant.data.DataCommand#isExecutionNecessary(long, boolean)
      */
     @Override
     public boolean isExecutionNecessary(long lastModified, boolean exists)
@@ -55,10 +55,10 @@ public class DataFont extends AbstractDataCommand
     }
 
     /**
-     * @see org.cbm.ant.data.AbstractDataCommand#execute(Data, DataWriter)
+     * @see org.cbm.ant.data.DataCommand#execute(DataWriter)
      */
     @Override
-    public void execute(Data task, DataWriter writer) throws BuildException, IOException
+    public void execute(DataWriter writer) throws BuildException, IOException
     {
         XMLParser parser = new XMLParser(fontFile);
 

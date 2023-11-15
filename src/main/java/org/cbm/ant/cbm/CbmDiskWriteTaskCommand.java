@@ -178,6 +178,8 @@ public class CbmDiskWriteTaskCommand extends AbstractCbmDiskTaskCommand
     @Override
     public Long execute(CbmDiskTask task, CbmDisk disk) throws BuildException
     {
+        File source = getSource();
+        
         task.log(String.format("Writing \"%s\" to disk image...", source));
 
         if (allocateSectorStrategy != null)
@@ -232,7 +234,7 @@ public class CbmDiskWriteTaskCommand extends AbstractCbmDiskTaskCommand
 
         try (CbmFileOutputStream out = file.write())
         {
-            try (InputStream in = new FileInputStream(getSource()))
+            try (InputStream in = new FileInputStream(source))
             {
                 IOUtils.copy(in, out);
             }
@@ -240,11 +242,11 @@ public class CbmDiskWriteTaskCommand extends AbstractCbmDiskTaskCommand
         catch (IOException e)
         {
             throw new BuildException(String
-                .format("Failed to copy data from file \"%s\" to file \"%s\": %s", getSource(), destination,
+                .format("Failed to copy data from file \"%s\" to file \"%s\": %s", source, destination,
                     e.getMessage()),
                 e);
         }
 
-        return getSource().lastModified();
+        return source.lastModified();
     }
 }
