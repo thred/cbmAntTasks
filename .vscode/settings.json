@@ -1,0 +1,4 @@
+{
+    "java.dependency.packagePresentation": "hierarchical",
+    "java.format.settings.url": "cfg/eclipse-formatter.xml"
+}

@@ -27,7 +27,7 @@ public class CA65 extends AbstractCC65Task
     private final Collection<DirSet> includes;
 
     private File outputDir;
-    private boolean debug = false;
+    private boolean debugInfo = false;
     private boolean listing = false;
 
     public CA65()
@@ -60,14 +60,14 @@ public class CA65 extends AbstractCC65Task
         this.outputDir = outputDir;
     }
 
-    public boolean isDebug()
+    public boolean isDebugInfo()
     {
-        return debug;
+        return debugInfo;
     }
 
-    public void setDebug(boolean debug)
+    public void setDebugInfo(boolean debug)
     {
-        this.debug = debug;
+        this.debugInfo = debug;
     }
 
     public boolean isListing()
@@ -116,7 +116,7 @@ public class CA65 extends AbstractCC65Task
 
                 populateHandler(handler);
                 
-                if (isDebug())
+                if (isDebugInfo())
                 {
                     handler.parameter("-g");
                 }

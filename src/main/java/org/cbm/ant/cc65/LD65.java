@@ -15,7 +15,6 @@ import org.cbm.ant.util.ProcessHandler;
 
 public class LD65 extends AbstractCC65Task
 {
-
     private static final Map<OS, String> EXECUTABLES = new HashMap<>();
 
     static
@@ -31,6 +30,7 @@ public class LD65 extends AbstractCC65Task
     private File configFile;
     private File labelFile;
     private File mapFile;
+    private File dbgFile;
 
     public LD65()
     {
@@ -90,6 +90,16 @@ public class LD65 extends AbstractCC65Task
     public void setMapFile(File mapFile)
     {
         this.mapFile = mapFile;
+    }
+
+    public File getDbgFile()
+    {
+        return dbgFile;
+    }
+
+    public void setDbgFile(File dbgFile)
+    {
+        this.dbgFile = dbgFile;
     }
 
     public void addFiles(FileSet files)
@@ -165,6 +175,11 @@ public class LD65 extends AbstractCC65Task
         if (mapFile != null)
         {
             handler.parameter("-m").parameter(mapFile);
+        }
+
+        if (dbgFile != null)
+        {
+            handler.parameter("--dbgfile").parameter(dbgFile);
         }
 
         if (configFile != null)

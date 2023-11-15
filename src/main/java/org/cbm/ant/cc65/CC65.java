@@ -29,7 +29,8 @@ public class CC65 extends AbstractCC65Task
     private File file;
     private File outputDir;
     private boolean annotate = false;
-    private boolean debug = false;
+    private boolean debugInfo = false;
+    private boolean debugTables = false;
     private boolean optimize = false;
     private boolean inlining = false;
     private boolean registerVariables = false;
@@ -97,14 +98,24 @@ public class CC65 extends AbstractCC65Task
         this.annotate = annotate;
     }
 
-    public boolean isDebug()
+    public boolean isDebugInfo()
     {
-        return debug;
+        return debugInfo;
     }
 
-    public void setDebug(boolean debug)
+    public void setDebugInfo(boolean debug)
     {
-        this.debug = debug;
+        this.debugInfo = debug;
+    }
+
+    public boolean isDebugTables()
+    {
+        return debugTables;
+    }
+
+    public void setDebugTables(boolean debugTables)
+    {
+        this.debugTables = debugTables;
     }
 
     public boolean isOptimize()
@@ -200,9 +211,14 @@ public class CC65 extends AbstractCC65Task
                     handler.parameter("--add-source");
                 }
 
-                if (isDebug())
+                if (isDebugInfo() || isDebugTables())
                 {
                     handler.parameter("-g");
+                }
+
+                if (isDebugTables())
+                {
+                    handler.parameter("--debug-tables").parameter(outputFile.withExtension("tab"));
                 }
 
                 if (isOptimize() || isInlining() || isRegisterVariables())
