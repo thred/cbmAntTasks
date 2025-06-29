@@ -1,4 +1,22 @@
 {
-    "java.dependency.packagePresentation": "hierarchical",
-    "java.format.settings.url": "cfg/eclipse-formatter.xml"
+  "java.dependency.packagePresentation": "hierarchical",
+  "java.format.settings.url": "cfg/eclipse-formatter.xml",
+  "java.sources.organizeImports.staticStarThreshold": 1,
+  "java.saveActions.organizeImports": true,
+  "java.cleanup.actions": [
+    "renameFileToType",
+    "addOverride",
+    "addDeprecated",
+    "invertEquals",
+    "instanceofPatternMatch",
+    "lambdaExpressionFromAnonymousClass",
+    "lambdaExpression",
+    "switchExpression",
+    "tryWithResource",
+    "useSwitchForInstanceofPattern"
+  ],
+  "java.codeGeneration.useBlocks": true,
+  "java.codeGeneration.hashCodeEquals.useJava7Objects": true,
+  "java.codeGeneration.hashCodeEquals.useInstanceof": true,
+  "java.codeGeneration.addFinalForNewDeclaration": "fields"
 }

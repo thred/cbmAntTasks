@@ -103,13 +103,16 @@ public class Util
             }
         }
 
-        for (FileSet fileSet : fileSets)
+        if (fileSets != null)
         {
-            DirectoryScanner scanner = fileSet.getDirectoryScanner(project);
-
-            for (String filename : scanner.getIncludedFiles())
+            for (FileSet fileSet : fileSets)
             {
-                files.add(AntFile.create(project.getBaseDir(), scanner.getBasedir(), filename));
+                DirectoryScanner scanner = fileSet.getDirectoryScanner(project);
+
+                for (String filename : scanner.getIncludedFiles())
+                {
+                    files.add(AntFile.create(project.getBaseDir(), scanner.getBasedir(), filename));
+                }
             }
         }
 

@@ -7,6 +7,18 @@ public class AntFile extends File
 
     private static final long serialVersionUID = 1L;
 
+    public static AntFile create(File buildDir, File file)
+    {
+        File base = file.getParentFile();
+
+        if (base == null)
+        {
+            file = Util.toRelativeForm(base, file);
+        }
+
+        return create(buildDir, base, file);
+    }
+
     public static AntFile create(File buildDir, File base, File file)
     {
         return create(buildDir, base, Util.getCanonicalPath(file));

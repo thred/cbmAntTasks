@@ -69,6 +69,20 @@ public class ProcessHandler
         return executable(executable);
     }
 
+    public ProcessHandler parameter(String parameter, String value)
+    {
+        parameters.add(parameter + "=" + value);
+
+        return this;
+    }
+
+    public ProcessHandler parameter(String parameter, File file)
+    {
+        parameters.add(parameter + "=" + file.getPath().replace('\\', '/'));
+
+        return this;
+    }
+
     public ProcessHandler parameter(String parameter)
     {
         parameters.add(parameter);
